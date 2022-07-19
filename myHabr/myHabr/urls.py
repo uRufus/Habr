@@ -16,6 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from mainapp.views import index
+from profiles.views import profile, create_update_profile
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('', index, name='index'),
+    path('', index),
+    path('profile/<int:id>/', profile, name='Profile'),
+    path('create_update_profile/<int:id>/<str:action>/', create_update_profile, name='CUProfile'),
 ]
