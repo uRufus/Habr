@@ -10,7 +10,8 @@ def index(request):
     context = {
         'title': 'Habr',
     }
-    return render(request, 'index.html', context)
+    return render(request, 'mainapp/index.html', context)
+    # return render(request, 'index.html', context)
 
 
 class BlogPostView(ListView):
@@ -36,4 +37,3 @@ class BlogPostUpdate(UpdateView):
     form_class = BlogPostForm
     template_name = "blogpost/blogpost_update.html"
     success_url = reverse_lazy("blogpost")
-
