@@ -9,13 +9,13 @@ from .models import Post
 
 
 def home(request):
-    posts = Post.objects.filter(visible='1')
-    paginator = Paginator(posts, 4)
+    postList = Post.objects.filter(visible='1')
+    paginator = Paginator(postList, 2)
     page = request.GET.get('page')
-    querysetGoods = paginator.get_page(page)
+    posts = paginator.get_page(page)
 
     context = {
-        "postList": posts,
+        "posts": posts,
         "title": "Главная страница блога",
         "desc": "Описание для главной страницы",
         "key": "ключевые, слова",

@@ -20,7 +20,7 @@ class Post(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return "/%s/" % (self)
+        return "/%s/" % (self.id)
 
     class Meta:
         ordering = ["-id", "-timestamp"]
