@@ -15,11 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
-from mainapp.views import index
+from mainapp import views as mainapp
 
 urlpatterns = [
-    path('', index),
-    # path('', mainapp.main, name='main'),
+    path('admin/', admin.site.urls),
+    path('', mainapp.index, name='index'),
+     # path('', mainapp.main, name='main'),
     path('auth/', include('authapp.urls', namespace='authapp')),
+    path('blog/', mainapp.BlogPostView.as_view(), name='blogpost'),
+    path('blog/<int:pk>', mainapp.BlogPostDetail.as_view(), name='blogpost_detail'),
+    path('blog/<int:pk>/edit/', mainapp.BlogPostUpdate.as_view(), name='blogpost_update'),
+    path('blog/create/new/', mainapp.BlogPostCreate.as_view(), name='blogpost_create'),
 ]
