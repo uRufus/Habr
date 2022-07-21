@@ -18,6 +18,11 @@ def index(request):
 class BlogPostView(ListView):
     model = BlogPost
     template_name = "blogpost.html"
+    ordering = ['-create_date']
+
+    def get_queryset(self):
+        user = self.request.user
+        return BlogPost.objects.filter(author=user)
 
 
 class BlogPostDetail(DetailView):
@@ -44,11 +49,11 @@ class BlogPostCreate(CreateView):
 
 
 class BlogPostUpdate(UpdateView):
-
     model = BlogPost
     form_class = BlogPostForm
     template_name = "blogpost/blogpost_update.html"
     success_url = reverse_lazy("blogpost")
+
 
 def blog_comment(request):
     text = request.POST['comment_text']
