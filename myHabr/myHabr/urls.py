@@ -26,4 +26,5 @@ urlpatterns = [
     path('blog/<int:pk>', mainapp.BlogPostDetail.as_view(), name='blogpost_detail'),
     path('blog/<int:pk>/edit/', mainapp.BlogPostUpdate.as_view(), name='blogpost_update'),
     path('blog/create/new/', mainapp.BlogPostCreate.as_view(), name='blogpost_create'),
+    path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
 ]

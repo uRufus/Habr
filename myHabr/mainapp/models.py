@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
+
+User = settings.AUTH_USER_MODEL
 
 
 # Create your models here.
@@ -34,3 +36,28 @@ class BlogPost(models.Model):
     class Meta:
         verbose_name = 'статья'
         verbose_name_plural = 'статьи'
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True,
+                             null=True)
+    text = models.TextField(blank=False, null=False)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = 'comments'
+
+class CommentsLink(models.Model):
+    types = (
+        ('comment', 'комментарий'),
+        ('article', 'статья'),
+        ('blog', 'блог'),
+    )
+    type = models.CharField(max_length=20, choices=types, null=False,
+                             blank=False)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE,
+                                   null=False, blank=False)
+    assigned_id = models.IntegerField(null=False, blank=False)
+
+    class Meta:
+        db_table = 'comments_link'
