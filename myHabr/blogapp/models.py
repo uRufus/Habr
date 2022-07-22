@@ -1,14 +1,14 @@
 from django.db import models
 
 # Create your models here.
-from Habr.myHabr.mainapp.models import User
+from mainapp.models import User
 
 
-class BlogCategories:
+class BlogCategories(models.Model):
     name = models.CharField(max_length=255, verbose_name="название")
 
 
 class Blogs(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL)
-    category = models.ForeignKey(BlogCategories, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(BlogCategories, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, verbose_name="название")
