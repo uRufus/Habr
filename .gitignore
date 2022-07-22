@@ -3,3 +3,4 @@ myHabr/run.bat
 .idea
 /myHabr/mainapp/__pycache__
 /myHabr/myHabr__pycache__
+/venv/
