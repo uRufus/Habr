@@ -8,28 +8,32 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'authapp:register' %}">Профиль</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'authapp:login' %}">Админка </a>
+
+
+                    {% if user.is_authenticated %}
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'blogpost' %}">Блоги</a>
+                        <a class="nav-link" href="{% url 'blogpost' %}">Мои статьи</a>
                     </li>
-                    {% if not user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'authapp:login' %}">Войти <i
-                                    class="fas fa-sign-in-alt"></i></a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'authapp:logout' %}">Выйти
+                    <i class="fas fa-sign-out-alt"></i></a>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'authapp:logout' %}">Выйти <i
-                                    class="fas fa-sign-out-alt"></i></a>
+
+                    <li class="nav-item">
+                            <a class="nav-link" href="{% url 'authapp:login' %}">Войти
+                                <i class="fas fa-sign-in-alt"></i></a>
                         </li>
                     {% endif %}
-                    {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'authapp:login' %}">Админка </a>
+                    {% endif %}
+                    </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'authapp:login' %}">[{{ user.username }}]</a>
                         </li>
-                    {% endif %}
+
                 </ul>
             </div>
         </div>
