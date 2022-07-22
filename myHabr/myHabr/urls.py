@@ -18,9 +18,20 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from mainapp import views as mainapp
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('faq.urls')),
+    path('', mainapp.index, name='index'),
+    path('admin/', admin.site.urls),
+    path('faq/', include('faq.urls')),
+     # path('', mainapp.main, name='main'),
+    path('auth/', include('authapp.urls', namespace='authapp')),
+    path('blog/', mainapp.BlogPostView.as_view(), name='blogpost'),
+    path('blog/<int:pk>', mainapp.BlogPostDetail.as_view(), name='blogpost_detail'),
+    path('blog/<int:pk>/edit/', mainapp.BlogPostUpdate.as_view(), name='blogpost_update'),
+    path('blog/create/new/', mainapp.BlogPostCreate.as_view(), name='blogpost_create'),
+    path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

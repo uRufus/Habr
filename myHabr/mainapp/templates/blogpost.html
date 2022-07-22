@@ -1,0 +1,21 @@
+{% extends 'authapp/base.html' %}
+{% block content %}
+    <div class="container">
+        <h1>Ваши посты {{ request.user.username }}</h1>
+        <ul>
+            {% for post in object_list %}
+                {% if post.status == "1"  %}
+                <li>
+                    <a href="{% url 'blogpost_detail' post.pk %}"> {{ post.title }} </a> - {{ post.author }}
+                    <a href="{% url 'blogpost_update' post.pk %}"> Изм. </a><br/>
+                    {{ post.body }}<br/>
+                    Статус статьи: {{ post.get_status_display }}<br/>
+                    Дата создания: {{ post.create_date|date:'Y-m-d H:i' }}<br/><br/><br/></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <br/>
+        <a href="{% url 'blogpost_create' %}"> Cоздать </a><br/>
+        <a href="{% url 'index' %}"> Назад </a>
+    </div>
+{% endblock %}

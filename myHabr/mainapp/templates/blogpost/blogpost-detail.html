@@ -1,0 +1,69 @@
+{% extends 'authapp/base.html' %}
+{% block content %}
+    <div class="container">
+        <h1>{{ object.title }}</h1>
+        <h2>Автор: {{ object.author }}</h2></br>
+        <hr>
+        </br>
+        {{ object.body }}
+        <hr>
+        </br>
+        <a href="{% url 'blogpost_update' object.pk %}"> РЕДАКТИРОВАТЬ </a> </br>
+        {% if object.status == "1" %}
+            <a href="#">ОПУБЛИКОВАТЬ</a>
+        {% endif %}</br>
+        <a href="{% url 'blogpost'  %}"> НАЗАД </a> </br>
+        <hr>
+        </br>
+        <form id="comment_form" hidden>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="comment_text">Ваш комментарий:</label>
+                <textarea name="comment_text" class="form-control" id="comment_text" rows="4"></textarea>
+            </div>
+            <button hidden id="comment_send" type="submit" class="btn btn-success">Комментировать</button>
+        </form>
+        <button id="comment_open" type="button" class="btn btn-primary">Комментировать</button>
+        {% include 'comments/comments.html' %}
+
+    </div>
+
+    <script>
+        let form = $('#comment_form');
+        let open_comment = $('#comment_open');
+        let send_comment = $('#comment_send');
+        open_comment.on('click', () => {
+            form.attr("hidden", false);
+            open_comment.attr("hidden", true);
+            send_comment.attr("hidden", false);
+        })
+        form.on('submit', function(event){
+            event.preventDefault();
+            create_post();
+        });
+
+        function create_post() {
+        console.log("form submitted!")
+        var comment_text = $('[name="comment_text"]').val();
+        $.ajax({
+            url : "/blog/comment/", // the endpoint
+            type : "POST", // http method
+            data : { comment_text : comment_text,
+                     blog_id: {{ object.pk }},
+                     csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            success : function(json) {
+                console.log(json);
+                $('#comments').replaceWith(json.comments);
+                form.attr("hidden", true);
+                open_comment.attr("hidden", false);
+                send_comment.attr("hidden", true);
+            },
+            error : function(xhr, errmsg, err) {
+                console.log('error');
+            }
+        })
+        }
+
+    </script>
+{% endblock %}
