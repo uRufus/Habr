@@ -12,7 +12,7 @@
                         <a class="nav-link" href="{% url 'authapp:login' %}">Админка </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'blogpost' %}">Блоги</a>
+                        <a class="nav-link" href="{% url 'blogpost' %}">Мои статьи</a>
                     </li>
                     {% if not user.is_authenticated %}
                         <li class="nav-item">
