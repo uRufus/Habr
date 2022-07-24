@@ -1,7 +1,7 @@
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from django.urls import reverse_lazy
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse, reverse_lazy
 from django.template.loader import render_to_string
 from .models import BlogPost, Comment, CommentsLink
 from .forms import BlogPostForm
@@ -20,20 +20,33 @@ class BlogPostView(ListView):
     template_name = "blogpost.html"
 
 
-class BlogPostDetail(DetailView):
+class BlogPostPublicDetail(DetailView):
+    """Для отображения всем пользователям"""
     model = BlogPost
     template_name = "blogpost/blogpost-detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(type(self.object))
-        print(self.object.id)
         comments = Comment.objects\
                           .filter(commentslink__type='post',
                                   commentslink__assigned_id=self.object.id)\
                          .prefetch_related('user')
         context['comments'] = comments
         return context
+
+
+class BlogPostPrivateDetail(DetailView):
+    """Для отображения в личном кабинете пользователя"""
+    model = BlogPost
+    template_name = "blogpost/blogpost-detail-private.html"
+
+
+def send_under_review(request, pk):
+    """функция для перевода блога статуса блога из 'черновик' в 'статья на проверке' """
+    obj = get_object_or_404(BlogPost, pk=pk)
+    obj.status = BlogPost.UNDER_REVIEW
+    obj.save()
+    return HttpResponseRedirect(reverse('blogpost'))
 
 
 class BlogPostCreate(CreateView):
@@ -44,11 +57,17 @@ class BlogPostCreate(CreateView):
 
 
 class BlogPostUpdate(UpdateView):
-
     model = BlogPost
     form_class = BlogPostForm
     template_name = "blogpost/blogpost_update.html"
     success_url = reverse_lazy("blogpost")
+
+
+class BlogPostDelete(DeleteView):
+    model = BlogPost
+    template_name = "blogpost/blogpost_delete.html"
+    success_url = reverse_lazy("blogpost")
+
 
 def blog_comment(request):
     text = request.POST['comment_text']

@@ -1,14 +1,16 @@
 {% extends 'authapp/base.html' %}
+{% block title %} {{ object.title }} - MyHabr {% endblock %}
 {% block content %}
     <div class="container">
-        <a href="{% url 'blogpost_update' object.pk %}"> Изм. </a>
-
         <h1>{{ object.title }}</h1>
         <h2>Автор: {{ object.author }}</h2></br>
         <hr>
         </br>
         {{ object.body }}
         <hr>
+        </br>
+        <a href="{% url 'blogpost' %}"> Назад </a>
+        </br>
         </br>
         <form id="comment_form" hidden>
             {% csrf_token %}

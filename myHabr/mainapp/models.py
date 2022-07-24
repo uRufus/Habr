@@ -16,7 +16,7 @@ class BlogPost(models.Model):
         (DELETED, 'статья удалена'),
         (DRAFT, 'черновик'),
         (UNDER_REVIEW, 'статья на проверке'),
-        (PUBLISHED, 'обубликован'),
+        (PUBLISHED, 'опубликован'),
         (BLOCKED, 'статья заблокирована'),
 
     )
@@ -27,15 +27,29 @@ class BlogPost(models.Model):
     category = models.CharField(max_length=255, verbose_name="категория")
     body = models.TextField(verbose_name="текст статьи")
     status = models.CharField(max_length=1, choices=BLOGPOST_STATUS, default=DRAFT, verbose_name="статус блогпоста")
-    create_date = models.DateField(auto_now_add=True, verbose_name="дата создания")
-    update_date = models.DateField(auto_now=True, verbose_name="дата обновления")
+    create_date = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="дата создания")
+    update_date = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="дата обновления")
 
     def __str__(self):
         return f'{self.title}  |  {self.author}'
 
+    def delete(self, using=None, keep_parents=False):
+        if self.status != "0":
+            self.status = "0"
+        else:
+            self.status = "1"
+        self.save()
+
+    def send_verify(self):
+        if self.status:
+            if self.status == "1":
+                self.status = "2"
+        self.save()
+
     class Meta:
         verbose_name = 'статья'
         verbose_name_plural = 'статьи'
+
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True,
