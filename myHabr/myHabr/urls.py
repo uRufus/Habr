@@ -31,6 +31,9 @@ urlpatterns = [
     path('blog/<int:pk>', mainapp.BlogPostDetail.as_view(), name='blogpost_detail'),
     path('blog/<int:pk>/edit/', mainapp.BlogPostUpdate.as_view(), name='blogpost_update'),
     path('blog/create/new/', mainapp.BlogPostCreate.as_view(), name='blogpost_create'),
+    path('blog/<int:pk>/delete/', mainapp.BlogPostDelete.as_view(), name='blogpost_delete'),
+    path('blog/<int:pk>/verify/', mainapp.send_under_review, name='send_under_review'),
+    path('blog/<int:pk>/private/', mainapp.BlogPostPrivateDetail.as_view(), name='blogpost_detail-private'),
     path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
 ]
 
