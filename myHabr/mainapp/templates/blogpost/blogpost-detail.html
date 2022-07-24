@@ -1,4 +1,5 @@
 {% extends 'authapp/base.html' %}
+{% block title %} {{ object.title }} - MyHabr {% endblock %}
 {% block content %}
     <div class="container">
         <h1>{{ object.title }}</h1>
@@ -8,10 +9,7 @@
         {{ object.body }}
         <hr>
         </br>
-        <a href="{% url 'blogpost_update' object.pk %}"> РЕДАКТИРОВАТЬ </a> </br>
-        {% if object.status == "1" %}
-            <a href="#">ОПУБЛИКОВАТЬ</a>
-        {% endif %}</br>
+        </br>
         <a href="{% url 'blogpost'  %}"> НАЗАД </a> </br>
         <hr>
         </br>

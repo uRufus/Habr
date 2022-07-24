@@ -1,4 +1,5 @@
 {% extends 'authapp/base.html' %}
+{% block title %} Статья создание - MyHabr {% endblock %}
 {% block content %}
     <div class="container">
         <h1>Создание статьи</h1>
@@ -9,5 +10,6 @@
                 <input type="submit">
             </form>
         </div>
+                <a href="{% url 'blogpost' %}"> Назад </a>
     </div>
 {% endblock %}
