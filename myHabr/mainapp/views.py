@@ -20,7 +20,7 @@ class BlogPostView(ListView):
     template_name = "blogpost.html"
 
 
-class BlogPostPublicDetail(DetailView):
+class BlogPostDetail(DetailView):
     """Для отображения всем пользователям"""
     model = BlogPost
     template_name = "blogpost/blogpost-detail.html"
