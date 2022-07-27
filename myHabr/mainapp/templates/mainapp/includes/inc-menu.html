@@ -1,0 +1,44 @@
+<header>
+    <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">{{ title }}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02"
+                    aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsExample02">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'authapp:register' %}">Профиль</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'blogpost' %}">Мои статьи</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'authapp:logout' %}">Выйти
+                                <i class="fas fa-sign-out-alt"></i></a>
+                            {% else %}
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'authapp:login' %}">Войти
+                                <i class="fas fa-sign-in-alt"></i></a>
+                        </li>
+                    {% endif %}
+                    {% if user.is_superuser %}
+                        <li class="nav-item">
+                        <a class="nav-link" href="{% url 'authapp:login' %}">Админка </a>
+                    {% endif %}
+                    </li>
+                </ul>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="nav-item">
+                    <form role="search">
+                        <input class="form-control" type="search" placeholder="Поиск" aria-label="Search">
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
