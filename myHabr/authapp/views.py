@@ -48,7 +48,7 @@ def login(request):
                 return HttpResponseRedirect(request.POST['next'])
             else:
                 return HttpResponseRedirect('/')
-                #return render(request, 'mainapp/index.html', {})
+                #return render(request, 'mainapp/base.html', {})
 
     content = {
         'title': title,

@@ -11,8 +11,7 @@ def index(request):
     context = {
         'title': 'Habr',
     }
-    return render(request, 'mainapp/index.html', context)
-    # return render(request, 'index.html', context)
+    return render(request, 'mainapp/base.html', context)
 
 
 class BlogPostView(ListView):
