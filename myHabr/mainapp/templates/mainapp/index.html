@@ -1,41 +1,22 @@
+{% extends 'mainapp/base.html' %}
 {% load static %}
-<section>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6">
-                <h1 class="mt-5">{{ title }}</h1>
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'authapp:register' %}">Профиль</a>
-                    </li>
 
+{% block content %}
+    <h1>test</h1>
+    <main>
+        {% for post in object_list %}
+            {% if post.status != "0" %}
+                <li>
+                    <a href="{% url 'blogpost_detail-private' post.pk %}"> {{ post.title }} </a> - {{ post.author }}
+                    <a href="{% url 'blogpost_update' post.pk %}"> Изм. </a>
+                    <a href="{% url 'blogpost_delete' post.pk %}"> Удл. </a><br/>
+                    {{ post.body }}<br/>
+                    Статус статьи: {{ post.get_status_display }}<br/>
+                    Дата создания: {{ post.create_date|date:'Y-m-d H:i' }}<br/>
+                    <a href="{% url 'blogpost_detail' post.pk %}"> **Показать публичную страницу статьи**. </a>
+                    <br/><br/></li>
+            {% endif %}
+        {% endfor %}
+    </main>
 
-                    {% if user.is_authenticated %}
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'blogpost' %}">Мои статьи</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'authapp:logout' %}">Выйти
-                    <i class="fas fa-sign-out-alt"></i></a>
-                    {% else %}
-
-                    <li class="nav-item">
-                            <a class="nav-link" href="{% url 'authapp:login' %}">Войти
-                                <i class="fas fa-sign-in-alt"></i></a>
-                        </li>
-                    {% endif %}
-                    {% if user.is_superuser %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'authapp:login' %}">Админка </a>
-                    {% endif %}
-                    </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'authapp:login' %}">[{{ user.username }}]</a>
-                        </li>
-
-                </ul>
-            </div>
-        </div>
-    </div>
-</section>
+{% endblock %}
