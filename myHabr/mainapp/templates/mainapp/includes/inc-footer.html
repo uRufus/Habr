@@ -1,0 +1,70 @@
+<footer class="footer fixed-bottom mt-auto py-3 bg-dark">
+    <div class="container">
+        <div class="d-flex justify-content-around">
+            <div class="">
+                <div class="text-bg-dark">Ваш аккаунт</div>
+                <hr class="border border-light">
+                {% if user.is_authenticated %}
+                    <div>
+                        <a class="link-light" href="{% url 'authapp:logout' %}">Выйти
+                        </a>
+                    </div>
+                {% else %}
+                    <div>
+                        <a class="link-light" href="{% url 'authapp:login' %}">Войти
+                        </a>
+                    </div>
+                {% endif %}
+                <div class=""><a class="link-light" href="{% url 'authapp:register' %}">Регистрация</a></div>
+            </div>
+            <div class="">
+                <div class="text-bg-dark">Разделы</div>
+                <hr class="border border-light">
+                <div class="">
+                    <div class=""><a href="" class="link-light">
+                        Публикации
+                    </a></div>
+                    <div class=""><a href="" class="link-light">
+                        Новости
+                    </a></div>
+                    <div class=""><a href="" class="link-light">
+                        Хабы
+                    </a></div>
+                    <div class=""><a href="" class="link-light">
+                        Компании
+                    </a></div>
+                    <div class=""><a href="" class="link-light">
+                        Авторы
+                    </a></div>
+                    <div class=""><a href="" class="link-light">
+                        Песочница
+                    </a></div>
+                </div>
+            </div>
+            <div class="text-bg-dark">
+                <div class="">Информация</div>
+                <hr class="border border-light">
+                <div class="">
+                    <div class=""><a href="" class="link-light">
+                        Устройство сайта
+                    </a></div>
+                    <div class=""><a href="" class="link-light">
+                        Для авторов
+                    </a></div>
+                    <div class=""><a href="" class="link-light">
+                        Для компаний
+                    </a></div>
+                    <div class=""><a href="" class="link-light">
+                        Документы
+                    </a></div>
+                    <div class=""><a href="" target="_blank" class="link-light">
+                        Соглашение
+                    </a></div>
+                    <div class=""><a href="" target="_blank" class="link-light">
+                        Конфиденциальность
+                    </a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
