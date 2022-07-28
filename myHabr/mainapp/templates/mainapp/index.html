@@ -1,22 +1,26 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
-
 {% block content %}
-    <h1>test</h1>
-    <main>
-        {% for post in object_list %}
-            {% if post.status != "0" %}
-                <li>
-                    <a href="{% url 'blogpost_detail-private' post.pk %}"> {{ post.title }} </a> - {{ post.author }}
-                    <a href="{% url 'blogpost_update' post.pk %}"> Изм. </a>
-                    <a href="{% url 'blogpost_delete' post.pk %}"> Удл. </a><br/>
-                    {{ post.body }}<br/>
-                    Статус статьи: {{ post.get_status_display }}<br/>
-                    Дата создания: {{ post.create_date|date:'Y-m-d H:i' }}<br/>
-                    <a href="{% url 'blogpost_detail' post.pk %}"> **Показать публичную страницу статьи**. </a>
-                    <br/><br/></li>
-            {% endif %}
-        {% endfor %}
+    <main class="vh-100 bg-light">
+        <div class="container">
+            {% for post in object_list %}
+                <div class="row">
+                    <div class="col">
+                        <div class="row g-3 p-2">
+                            <div class="col" style="background-color: white">
+                                <div class="my-2">
+                                    <b>{{ post.author }}</b>
+                                    <small>{{ post.create_date }}</small>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    {{ post.body }}
+                                </div>
+                                <div class="d-flex mb-2"><a href=""> Читать дальше -></a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </main>
-
 {% endblock %}
