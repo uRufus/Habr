@@ -8,9 +8,11 @@
   {% if not posts %}
   <b>У вас нет статей</b>
   {% else %}
-    {% for obj in posts %}
-
-    <br>
+    {% for post in posts %}
+      <li>
+       {{ post.author }} <br/>
+       {{ post.body }} <br/>
+      </li>
     {% endfor %}
   {% endif %}
 
