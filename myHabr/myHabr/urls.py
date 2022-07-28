@@ -25,6 +25,7 @@ urlpatterns = [
     path('', mainapp.index, name='index'),
     path('admin/', admin.site.urls),
     path('faq/', include('faq.urls')),
+    path('myblog/', include('blogapp.urls')),
      # path('', mainapp.main, name='main'),
     path('auth/', include('authapp.urls', namespace='authapp')),
     path('blog/', mainapp.BlogPostView.as_view(), name='blogpost'),
