@@ -22,9 +22,8 @@ from mainapp import views as mainapp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', mainapp.index, name='index'),
+    path('', mainapp.BlogListView.as_view(), name='index'),
     path('faq/', include('faq.urls')),
-     # path('', mainapp.main, name='main'),
     path('auth/', include('authapp.urls', namespace='authapp')),
     path('blog/', mainapp.BlogPostView.as_view(), name='blogpost'),
     path('blog/<int:pk>', mainapp.BlogPostDetail.as_view(), name='blogpost_detail'),
