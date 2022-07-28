@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class HabrFaqConfig(AppConfig):
+class BlogappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'faq'
+    name = 'blogapp'
+
