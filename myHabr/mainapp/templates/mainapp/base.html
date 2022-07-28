@@ -8,15 +8,14 @@
     <title>{{ title }}</title>
 </head>
 <body>
-<div class="container">
-{#    {% include "mainapp/includes/inc-menu.html" %}#}
 
-    {% block content %}
-    {% endblock %}
+{% include "mainapp/includes/inc-menu.html" %}
 
-    {% block bottom %}
-    {% endblock %}
-</div>
+{% block content %}
+{% endblock %}
+
+{% include "mainapp/includes/inc-footer.html" %}
+
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 </body>
