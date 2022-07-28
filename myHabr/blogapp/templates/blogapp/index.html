@@ -9,9 +9,8 @@
   <b>У вас нет статей</b>
   {% else %}
     {% for obj in posts %}
-      {% %}
-    <p>{{ obj.content|truncatechars:70 }}</p>
-    <br><br><br>
+
+    <br>
     {% endfor %}
   {% endif %}
 
