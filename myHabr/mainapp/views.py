@@ -1,17 +1,20 @@
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse, reverse_lazy
 from django.template.loader import render_to_string
-from .models import BlogPost, Comment, CommentsLink
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+
 from .forms import BlogPostForm
+from .models import BlogPost, Comment, CommentsLink
 
 
-def index(request):
-    context = {
-        'title': 'Habr',
-    }
-    return render(request, 'mainapp/base.html', context)
+class BlogListView(ListView):
+    """Главная страница сайта - сначала новые посты"""
+    model = BlogPost
+    template_name = 'mainapp/index.html'
+
+    def get_queryset(self):
+        return BlogPost.objects.order_by('-create_date')
 
 
 class BlogPostView(ListView):
@@ -33,10 +36,10 @@ class BlogPostDetail(DetailView):
         context = super().get_context_data(**kwargs)
         print(type(self.object))
         print(self.object.id)
-        comments = Comment.objects\
-                          .filter(commentslink__type='post',
-                                  commentslink__assigned_id=self.object.id)\
-                         .prefetch_related('user')
+        comments = Comment.objects \
+            .filter(commentslink__type='post',
+                    commentslink__assigned_id=self.object.id) \
+            .prefetch_related('user')
         context['comments'] = comments
         return context
 
@@ -68,6 +71,7 @@ class BlogPostUpdate(UpdateView):
     template_name = "blogpost/blogpost_update.html"
     success_url = reverse_lazy("blogpost")
 
+
 class BlogPostDelete(DeleteView):
     model = BlogPost
     template_name = "blogpost/blogpost_delete.html"
@@ -81,10 +85,10 @@ def blog_comment(request):
     comment = Comment.objects.create(user=user, text=text)
     CommentsLink.objects.create(comment=comment, type='post',
                                 assigned_id=blog_id)
-    comments = Comment.objects\
-                      .filter(commentslink__type='post',
-                              commentslink__assigned_id=blog_id) \
-                      .prefetch_related('user')
+    comments = Comment.objects \
+        .filter(commentslink__type='post',
+                commentslink__assigned_id=blog_id) \
+        .prefetch_related('user')
     comments[0].text = 'REPLACEMENT'
     comments = render_to_string('comments/comments.html',
                                 {'comments': comments})
