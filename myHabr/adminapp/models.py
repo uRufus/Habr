@@ -5,10 +5,10 @@ from authapp.models import MyHabrUser
 
 class Message(models.Model):
 
-    USER_TO_USER = 0
-    USER_TO_MODERATOR = 1
-    MODERATOR_TO_USER =2
-    MODERATOR_TO_MODERATOR = 3
+    USER_TO_USER = '0'
+    USER_TO_MODERATOR = '1'
+    MODERATOR_TO_USER = '2'
+    MODERATOR_TO_MODERATOR = '3'
 
     TYPE_MESSAGE = (
         (USER_TO_USER, 'Пользовательское сообщение'),
