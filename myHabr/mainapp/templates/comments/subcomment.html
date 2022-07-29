@@ -1,0 +1,12 @@
+{% for comm in children %}
+    <div class="sub_comment my-1">
+    <p><b>Автор: </b>{{ comm.user.username }}</p>
+    <p>{{ comm.text }}</p>
+    <p>время: {{ comm.created_at }}</p>
+    <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
+    <button class="btn btn-warning sub_comment_button" value="{{ comm.id }}" onclick="sub_comment(this)">Ответить</button>
+    {% if comm.has_children %}
+        {% include 'comments/subcomment.html' with children=comm.children %}
+    {% endif %}
+    </div>
+{% endfor %}
