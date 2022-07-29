@@ -16,4 +16,4 @@ class PostModelAdmin(admin.ModelAdmin):
         model = Post
 
 
-admin.site.register(Post, PostModelAdmin)
+# admin.site.register(Post, PostModelAdmin)
