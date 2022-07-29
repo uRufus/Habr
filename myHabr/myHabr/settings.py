@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'authapp',
     'faq',
     'blogapp',
+    'adminapp'
 ]
 
 MIDDLEWARE = [
