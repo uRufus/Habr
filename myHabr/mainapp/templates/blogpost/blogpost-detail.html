@@ -1,5 +1,25 @@
 {% extends 'authapp/base.html' %}
-{% block title %} {{ object.title }} - MyHabr {% endblock %}
+{% block title %}
+    <title>
+    {{ object.title }} - MyHabr
+    </title>
+{% endblock %}
+{% block css %}
+{{ block.super }}
+    <style>
+        .sub_comment {
+            {#position: relative;#}
+            margin-left: 3em;
+        }
+        .sub_comment_button {
+            width: fit-content;
+            font-size: 14px;
+            margin-top: 2px;
+            margin-left: 2em;
+            padding: 3px;
+        }
+    </style>
+{%  endblock %}
 {% block content %}
     <div class="container">
         <h1>{{ object.title }}</h1>
@@ -41,7 +61,6 @@
         });
 
         function create_post() {
-        console.log("form submitted!")
         var comment_text = $('[name="comment_text"]').val();
         $.ajax({
             url : "/blog/comment/", // the endpoint
@@ -51,7 +70,6 @@
                      csrfmiddlewaretoken: '{{ csrf_token }}',
             },
             success : function(json) {
-                console.log(json);
                 $('#comments').replaceWith(json.comments);
                 form.attr("hidden", true);
                 open_comment.attr("hidden", false);
@@ -61,6 +79,40 @@
                 console.log('error');
             }
         })
+        }
+        function sub_comment(e) {
+            let comment_id = $(e).val();
+            let subcomment = $(e).parent();
+            let subcomment_text = subcomment.find('textarea').first();
+            if (subcomment_text.is(":hidden")) {
+                subcomment_text.attr("hidden", false);
+            }
+            else {
+                let comment_text = subcomment_text.val()
+                $.ajax({
+                    url : "/blog/sub_comment/",
+                    type : "POST",
+                    data : { comment_text : comment_text,
+                             comment_id: comment_id,
+                             blog_id: {{ object.pk }},
+                             csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    success : function(json) {
+                        $(e).parent().find('.sub_comment').remove();
+                        $(e).parent().append(json.comment);
+
+                        form.attr("hidden", true);
+                        open_comment.attr("hidden", false);
+                        send_comment.attr("hidden", true);
+                    },
+                    error : function(xhr, errmsg, err) {
+                        console.log('error');
+                    }
+                }
+               )
+                subcomment_text.attr("hidden", true);
+            }
+
         }
 
     </script>

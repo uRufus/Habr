@@ -32,12 +32,13 @@ class BlogPostDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(type(self.object))
-        print(self.object.id)
         comments = Comment.objects\
                           .filter(commentslink__type='post',
                                   commentslink__assigned_id=self.object.id)\
                          .prefetch_related('user')
+        for comment in comments:
+            comment.find_children()
+
         context['comments'] = comments
         return context
 
@@ -86,7 +87,26 @@ def blog_comment(request):
                       .filter(commentslink__type='post',
                               commentslink__assigned_id=blog_id) \
                       .prefetch_related('user')
-    comments[0].text = 'REPLACEMENT'
+    for comment in comments:
+        comment.find_children()
     comments = render_to_string('comments/comments.html',
                                 {'comments': comments})
     return JsonResponse({'comments': comments})
+
+
+def blog_sub_comment(request):
+    text = request.POST['comment_text']
+    comment_id = request.POST['comment_id']
+    user = request.user if request.user.is_authenticated else None
+    comment = Comment.objects.create(user=user, text=text)
+    CommentsLink.objects.create(comment=comment, type='comment',
+                                assigned_id=comment_id)
+
+    parent_comment = Comment.objects.get(id=comment_id)
+    parent_comment.has_children = True
+    parent_comment.save()
+    parent_comment.find_children()
+
+    comment = render_to_string('comments/subcomment.html',
+                               {'children': parent_comment.children})
+    return JsonResponse({'comment': comment})
