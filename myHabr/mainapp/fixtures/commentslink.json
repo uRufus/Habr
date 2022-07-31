@@ -1,0 +1,20 @@
+[
+  {
+    "model": "mainapp.CommentsLink",
+    "pk": 1,
+    "fields": {
+      "type": "article",
+      "comment": 1,
+      "assigned_id": 2
+    }
+  },
+  {
+    "model": "mainapp.CommentsLink",
+    "pk": 2,
+    "fields": {
+      "type": "article",
+      "comment": 2,
+      "assigned_id": 1
+    }
+  }
+]

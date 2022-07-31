@@ -1,0 +1,28 @@
+[
+  {
+    "model": "mainapp.BlogPost",
+    "pk": 1,
+    "fields": {
+      "title": "Мой первый пост",
+      "author": 3,
+      "category": 1,
+      "body": "Мой первый пост созданный для теста. В этом посте я пока ничего не придумал",
+      "status": "PUBLISHED",
+      "create_date":"2021-11-25T18:52:21.303Z",
+      "update_date": "2021-11-25T18:52:21.303Z"
+    }
+  },
+  {
+    "model": "mainapp.BlogPost",
+    "pk": 2,
+    "fields": {
+      "title": "Мой первый пост админа",
+      "author": 1,
+      "category": 1,
+      "body": "Мой первый пост созданный для теста. В этом посте я пока ничего не придумал",
+      "status": "PUBLISHED",
+      "create_date":"2021-11-25T18:52:21.303Z",
+      "update_date": "2021-11-25T18:52:21.303Z"
+    }
+  }
+]

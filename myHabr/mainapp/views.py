@@ -5,12 +5,17 @@ from django.urls import reverse, reverse_lazy
 from django.template.loader import render_to_string
 from .models import BlogPost, Comment, CommentsLink
 from .forms import BlogPostForm
+from blogapp.models import BlogCategories
+
+
 
 
 def index(request):
     context = {
         'title': 'Habr',
     }
+    bl = BlogCategories.objects.all().order_by('id')[:50]
+    context['BlogCategories'] = bl
     return render(request, 'mainapp/index.html', context)
     # return render(request, 'index.html', context)
 
