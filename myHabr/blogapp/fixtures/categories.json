@@ -1,0 +1,30 @@
+[
+  {
+    "model": "blogapp.BlogCategories",
+    "pk": 1,
+    "fields": {
+      "name": "Дизайн"
+    }
+  },
+  {
+    "model": "blogapp.BlogCategories",
+    "pk": 2,
+    "fields": {
+      "name": "Веб-разработка"
+    }
+  },
+  {
+    "model": "blogapp.BlogCategories",
+    "pk": 3,
+    "fields": {
+      "name": "Мобильная разработка"
+    }
+  },
+  {
+    "model": "blogapp.BlogCategories",
+    "pk": 4,
+    "fields": {
+      "name": "Маркетинг"
+    }
+  }
+]

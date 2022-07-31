@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Мои блоги</title>
+{% endblock %}
+
+{% block body %}
+  <h1>Мои блоги</h1>
+  {% if not posts %}
+  <b>У вас нет статей</b>
+  {% else %}
+    {% for post in posts %}
+      <li>
+       {{ post.author }} <br/>
+       {{ post.body }} <br/>
+      </li>
+    {% endfor %}
+  {% endif %}
+
+  {% if posts.has_previous %}
+  <a href="?page={{ posts.previous_page_number }}">Назад</a>
+  {% endif %}
+  <span>{{ posts.number }} / {{ posts.num_pages }}</span>
+  {% if posts.has_next %}
+  <a href="?page={{ posts.next_page_number }}" >Вперед</a>
+  {% endif %}
+{% endblock %}

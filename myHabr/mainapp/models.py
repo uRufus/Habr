@@ -1,9 +1,11 @@
 from django.db import models
 from django.conf import settings
 
-
-
 # Create your models here.
+from blogapp.models import BlogCategories
+
+
+
 class BlogPost(models.Model):
     DELETED = "0"
     DRAFT = '1'
@@ -23,7 +25,7 @@ class BlogPost(models.Model):
     title = models.CharField(max_length=255, verbose_name="название")
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор")
     tag = models.CharField(max_length=30, verbose_name="тег")
-    category = models.CharField(max_length=255, verbose_name="категория")
+    category = models.ForeignKey(BlogCategories, on_delete=models.CASCADE, verbose_name="категория")
     body = models.TextField(verbose_name="текст статьи")
     status = models.CharField(max_length=1, choices=BLOGPOST_STATUS, default=DRAFT, verbose_name="статус блогпоста")
     create_date = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="дата создания")
@@ -56,10 +58,25 @@ class Comment(models.Model):
     text = models.TextField(blank=False, null=False)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+    has_children = models.BooleanField(blank=True, null=True)
+    parent = models.ForeignKey('self', blank=True, null=True,
+                               on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'comments'
 
+    def find_children(self):
+        if not self.has_children:
+            self.children = []
+        else:
+            self.children = (
+                Comment.objects
+                       .filter(commentslink__type='comment',
+                               commentslink__assigned_id=self.id)
+            )
+            if self.children:
+                for child in self.children:
+                    child.find_children()
 
 class CommentsLink(models.Model):
     types = (

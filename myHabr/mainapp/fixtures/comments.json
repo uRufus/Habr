@@ -1,0 +1,22 @@
+[
+  {
+    "model": "mainapp.Comment",
+    "pk": 1,
+    "fields": {
+      "user": 3,
+      "text": "Мой первый комментарий",
+      "created_at": "2021-12-25",
+      "updated_at": "2021-12-25"
+    }
+  },
+  {
+    "model": "mainapp.Comment",
+    "pk": 2,
+    "fields": {
+      "user": 1,
+      "text": "Мой первый комментарий админа",
+      "created_at": "2021-12-25",
+      "updated_at": "2021-12-25"
+    }
+  }
+]
