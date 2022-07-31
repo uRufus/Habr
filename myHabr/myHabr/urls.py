@@ -21,7 +21,6 @@ from django.urls import path, include
 from mainapp import views as mainapp
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', mainapp.index, name='index'),
     path('admin/', admin.site.urls),
     path('faq/', include('faq.urls')),
@@ -36,6 +35,7 @@ urlpatterns = [
     path('blog/<int:pk>/verify/', mainapp.send_under_review, name='send_under_review'),
     path('blog/<int:pk>/private/', mainapp.BlogPostPrivateDetail.as_view(), name='blogpost_detail-private'),
     path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
+    path('blog/sub_comment/', mainapp.blog_sub_comment, name='blog_sub_comment'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

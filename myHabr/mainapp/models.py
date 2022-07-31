@@ -1,10 +1,9 @@
 from django.db import models
 from django.conf import settings
 
-
-
 # Create your models here.
 from blogapp.models import BlogCategories
+
 
 
 class BlogPost(models.Model):
@@ -59,10 +58,25 @@ class Comment(models.Model):
     text = models.TextField(blank=False, null=False)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+    has_children = models.BooleanField(blank=True, null=True)
+    parent = models.ForeignKey('self', blank=True, null=True,
+                               on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'comments'
 
+    def find_children(self):
+        if not self.has_children:
+            self.children = []
+        else:
+            self.children = (
+                Comment.objects
+                       .filter(commentslink__type='comment',
+                               commentslink__assigned_id=self.id)
+            )
+            if self.children:
+                for child in self.children:
+                    child.find_children()
 
 class CommentsLink(models.Model):
     types = (
