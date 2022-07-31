@@ -1,0 +1,20 @@
+[
+  {
+    "model": "blogapp.Blogs",
+    "pk": 1,
+    "fields": {
+      "user": 3,
+      "category": 1,
+      "name": "Мой первый блог"
+    }
+  },
+  {
+    "model": "blogapp.Blogs",
+    "pk": 1,
+    "fields": {
+      "user": 3,
+      "category": 2,
+      "name": "Мой второй блог"
+    }
+  }
+]

@@ -1,0 +1,51 @@
+[
+  {
+    "model": "authapp.MyHabrUser",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$260000$IVX7FSr9XPXqgdEhWIRZzY$zrTySm1xjHPlFJnkYL3NS3KWA7eB5wPnsBm+qSUQuU4=",
+      "last_login": null,
+      "is_superuser": true,
+      "username": "root",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2021-11-25T18:52:21.303Z"
+    }
+  },
+  {
+    "model": "authapp.MyHabrUser",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$260000$IVX7FSr9XPXqgdEhWIRZzY$zrTySm1xjHPlFJnkYL3NS3KWA7eB5wPnsBm+qSUQuU4=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "moderator",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2021-11-25T18:52:21.303Z"
+    }
+  },
+  {
+    "model": "authapp.MyHabrUser",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$260000$IVX7FSr9XPXqgdEhWIRZzY$zrTySm1xjHPlFJnkYL3NS3KWA7eB5wPnsBm+qSUQuU4=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "user1",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2021-11-25T18:52:21.303Z"
+    }
+  }
+]
+
