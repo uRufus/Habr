@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'authapp',
     'faq',
     'blogapp',
-    'adminapp'
+    'adminapp',
+    'profiles',
 ]
 
 MIDDLEWARE = [

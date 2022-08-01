@@ -36,6 +36,7 @@ urlpatterns = [
     path('blog/<int:pk>/private/', mainapp.BlogPostPrivateDetail.as_view(), name='blogpost_detail-private'),
     path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
     path('blog/sub_comment/', mainapp.blog_sub_comment, name='blog_sub_comment'),
+    path('profiles/', include('authapp.urls', namespace='authapp')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
