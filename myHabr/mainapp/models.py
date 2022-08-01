@@ -1,9 +1,7 @@
 from django.db import models
 from django.conf import settings
-
-# Create your models here.
 from blogapp.models import BlogCategories
-
+# Create your models here.
 
 
 class BlogPost(models.Model):
@@ -77,6 +75,7 @@ class Comment(models.Model):
             if self.children:
                 for child in self.children:
                     child.find_children()
+
 
 class CommentsLink(models.Model):
     types = (
