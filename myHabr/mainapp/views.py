@@ -1,13 +1,12 @@
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.urls import reverse, reverse_lazy
 from django.template.loader import render_to_string
-from .models import BlogPost, Comment, CommentsLink
-from .forms import BlogPostForm
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+
 from blogapp.models import BlogCategories
-
-
+from .forms import BlogPostForm
+from .models import BlogPost, Comment, CommentsLink
 
 
 def index(request):
@@ -18,6 +17,17 @@ def index(request):
     context['BlogCategories'] = bl
     return render(request, 'mainapp/index.html', context)
     # return render(request, 'index.html', context)
+
+
+class BlogListView(ListView):
+    """[M] На главной странице должны подряд отображаться последние
+    публикации, вне зависимости от тематики, отсортированные по дате
+    (сначала самые свежие)"""
+    model = BlogPost
+    template_name = 'mainapp/index.html'
+
+    def get_queryset(self):
+        return BlogPost.objects.order_by('-create_date')
 
 
 class BlogPostView(ListView):
@@ -37,10 +47,10 @@ class BlogPostDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        comments = Comment.objects\
-                          .filter(commentslink__type='post',
-                                  commentslink__assigned_id=self.object.id)\
-                         .prefetch_related('user')
+        comments = Comment.objects \
+            .filter(commentslink__type='post',
+                    commentslink__assigned_id=self.object.id) \
+            .prefetch_related('user')
         for comment in comments:
             comment.find_children()
 
@@ -75,6 +85,7 @@ class BlogPostUpdate(UpdateView):
     template_name = "blogpost/blogpost_update.html"
     success_url = reverse_lazy("blogpost")
 
+
 class BlogPostDelete(DeleteView):
     model = BlogPost
     template_name = "blogpost/blogpost_delete.html"
@@ -88,10 +99,10 @@ def blog_comment(request):
     comment = Comment.objects.create(user=user, text=text)
     CommentsLink.objects.create(comment=comment, type='post',
                                 assigned_id=blog_id)
-    comments = Comment.objects\
-                      .filter(commentslink__type='post',
-                              commentslink__assigned_id=blog_id) \
-                      .prefetch_related('user')
+    comments = Comment.objects \
+        .filter(commentslink__type='post',
+                commentslink__assigned_id=blog_id) \
+        .prefetch_related('user')
     for comment in comments:
         comment.find_children()
     comments = render_to_string('comments/comments.html',
