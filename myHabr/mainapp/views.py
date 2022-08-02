@@ -9,14 +9,18 @@ from .forms import BlogPostForm
 from .models import BlogPost, Comment, CommentsLink
 
 
-def index(request):
-    context = {
-        'title': 'Habr',
-    }
-    bl = BlogCategories.objects.all().order_by('id')[:50]
-    context['BlogCategories'] = bl
-    return render(request, 'mainapp/index.html', context)
-    # return render(request, 'index.html', context)
+# def category(request):
+#     context = {
+#         'title': 'Habr',
+#     }
+#     bl = BlogCategories.objects.all().order_by('id')[:50]
+#     context['BlogCategories'] = bl
+#     return render(request, 'mainapp/categories.html', context)
+#     # return render(request, 'index.html', context)
+
+def category(request):
+    result = BlogCategories.objects.all()
+    return render(request, 'mainapp/categories.html', {'categories': result})
 
 
 class BlogListView(ListView):
@@ -28,6 +32,22 @@ class BlogListView(ListView):
 
     def get_queryset(self):
         return BlogPost.objects.order_by('-create_date')
+
+
+# class BlogCategoriesList(ListView):
+#     model = BlogCategories
+#     template_name = 'mainapp/categories.html'
+#     # context_object_name = 'categories'
+#
+#     def get_queryset(self):
+#         return BlogCategories.objects.all()
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(BlogCategoriesList, self).get_context_data(**kwargs)
+    #     context['star_hotels'] = Hotel.objects.all().order_by('star').reverse()[:3]
+    #     # Add any other variables to the context here
+    #     ...
+    #     return context
 
 
 class BlogPostView(ListView):

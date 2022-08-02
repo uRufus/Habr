@@ -21,10 +21,11 @@ from django.urls import path, include
 from mainapp import views as mainapp
 
 urlpatterns = [
-    # path('', mainapp.index, name='index'),
-    # path('', mainapp.BlogListView.as_view(), name='index'),
-    path('', mainapp.index, name='index'),
     path('admin/', admin.site.urls),
+    # path('', mainapp.index, name='index'),
+    path('', mainapp.BlogListView.as_view(), name='index'),
+    path('category/', mainapp.category, name='categories'),
+    # path('category/', mainapp.BlogCategoriesList.as_view(), name='categories'),
     path('faq/', include('faq.urls')),
     path('myblog/', include('blogapp.urls')),
     path('auth/', include('authapp.urls', namespace='authapp')),
