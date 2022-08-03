@@ -10,19 +10,19 @@ from blogapp.models import BlogCategories
 
 
 
-def index(request):
-    context = {
-        'title': 'Habr',
-    }
-    # bl = BlogCategories.objects.all().order_by('id')[:50]
-    # context['BlogCategories'] = bl
-    return render(request, 'mainapp/index.html', context)
-    # return render(request, 'index.html', context)
+# def index(request):
+#     context = {
+#         'title': 'Habr',
+#     }
+#     # bl = BlogCategories.objects.all().order_by('id')[:50]
+#     # context['BlogCategories'] = bl
+#     return render(request, 'mainapp/index.html', context)
+#     # return render(request, 'index.html', context)
 
 
-def category(request):
-    result = BlogCategories.objects.all()
-    return render(request, 'mainapp/categories.html', {'categories': result})
+# def category(request):
+#     result = BlogCategories.objects.all()
+#     return render(request, 'mainapp/categories.html', {'categories': result})
 
 
 class BlogListView(ListView):
