@@ -29,11 +29,16 @@ class MyHabrUserAdmin(admin.ModelAdmin):
         model = MyHabrUser
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ["id", "from_user", "to_user_id", "type_message", "text", "created_at", "is_active"]
-    list_display_links = ["from_user", "to_user_id"]
+    list_display = ["id", "from_user", "to_user", "type_message", "text", "created_at", "is_active"]
+    list_display_links = ["from_user", "to_user"]
     list_editable = ["is_active"]
     list_filter = ["is_active", "created_at", "type_message"]
-    search_fields = ["from_user", "to_user_id", "is_active"]
+    search_fields = ["from_user", "to_user", "is_active"]
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'from_user', None) is None:
+            obj.from_user = request.user
+        obj.save()
 
     class Meta:
         model = Message
@@ -41,7 +46,6 @@ class MessageAdmin(admin.ModelAdmin):
 class BlogPostAdmin(admin.ModelAdmin):
     list_display = ["id", "title", "tag", "category", "status", "create_date", "update_date"]
     list_display_links = ["title"]
-    # list_editable = ["is_active"]
     list_filter = ["tag", "category", "status"]
     search_fields = ["title", "tag", "category", "status"]
 

@@ -16,9 +16,8 @@ class Message(models.Model):
         (MODERATOR_TO_USER, 'Ответ модератора'),
         (MODERATOR_TO_MODERATOR, 'Модератору'))
 
-    from_user = models.CharField(max_length=150, verbose_name="автор сообщения")
-    to_user = models.ForeignKey(MyHabrUser, on_delete=models.DO_NOTHING, blank=True,
-                             null=True, verbose_name="адресат сообщения")
+    from_user = models.CharField(max_length=150, null=True, blank=True, verbose_name="автор", default=None)
+    to_user = models.ForeignKey(MyHabrUser, null=True, blank=True, on_delete=models.CASCADE, verbose_name="адресат")
     text = models.TextField(blank=True, null=True, verbose_name="сообщение")
     is_active = models.BooleanField(default=True, verbose_name="Активно")
     type_message = models.CharField(max_length=1, choices=TYPE_MESSAGE, default=USER_TO_USER, verbose_name="Тип сообщения")
