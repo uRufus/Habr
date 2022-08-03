@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from mainapp import views as mainapp
+from profiles import views as profiles
 
 urlpatterns = [
     path('', mainapp.index, name='index'),
@@ -36,7 +37,7 @@ urlpatterns = [
     path('blog/<int:pk>/private/', mainapp.BlogPostPrivateDetail.as_view(), name='blogpost_detail-private'),
     path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
     path('blog/sub_comment/', mainapp.blog_sub_comment, name='blog_sub_comment'),
-    path('profiles/', include('authapp.urls', namespace='authapp')),
+    path('profiles/', include('profiles.urls', namespace='profiles')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

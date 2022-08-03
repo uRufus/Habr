@@ -73,7 +73,11 @@ def create_update_profile(request, id, action):
         profile_form['text'].initial = profile.text
 
         # Определяем название какой кнопки будет отображатся
-        submit = 'update' if action == 'update' else submit = 'create'
+
+        if action == 'update':
+            submit = 'update'
+        else:
+            submit = 'create'
         # if action == 'update':
         #     submit = 'update'
         # else:
