@@ -1,51 +1,73 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
 {% block content %}
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12">
+<!--      <div class="container">-->
+<!--        <div class="row">-->
+<!--          <div class="col-md-12">-->
 
-            <div class="owl-carousel owl-theme home-slider">
-              <div>
-                <a href="blog-single.html" class="a-block d-flex align-items-center height-lg" style="background-image: url('./static/images/img_1.jpg'); ">
-                  <div class="text half-to-full">
-                    <div class="post-meta">
-                      <span class="category">Lifestyle</span>
-                      <span class="mr-2">March 15, 2018 </span> &bullet;
-                      <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
+<!--            <div class="owl-carousel owl-theme home-slider">-->
+<!--              <div>-->
+<!--                <a href="blog-single.html" class="a-block d-flex align-items-center height-lg" style="background-image: url('./static/images/img_1.jpg'); ">-->
+<!--                  <div class="text half-to-full">-->
+<!--                    <div class="post-meta">-->
+<!--                      <span class="category">Lifestyle</span>-->
+<!--                      <span class="mr-2">March 15, 2018 </span> &bullet;-->
+<!--                      <span class="ml-2"><span class="fa fa-comments"></span> 3</span>-->
+<!--                    </div>-->
+<!--                    <h3>There’s a Cool New Way for Men to Wear Socks and Sandals</h3>-->
+<!--                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem nobis, ut dicta eaque ipsa laudantium!</p>-->
+<!--                  </div>-->
+<!--                </a>-->
+<!--              </div>-->
+<!--              <div>-->
+<!--                <a href="blog-single.html" class="a-block d-flex align-items-center height-lg" style="background-image: url('./static/images/img_2.jpg'); ">-->
+<!--                  <div class="text half-to-full">-->
+<!--                    <div class="post-meta">-->
+<!--                      <span class="category">Lifestyle</span>-->
+<!--                      <span class="mr-2">March 15, 2018 </span> &bullet;-->
+<!--                      <span class="ml-2"><span class="fa fa-comments"></span> 3</span>-->
+<!--                    </div>-->
+<!--                    <h3>There’s a Cool New Way for Men to Wear Socks and Sandals</h3>-->
+<!--                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem nobis, ut dicta eaque ipsa laudantium!</p>-->
+<!--                  </div>-->
+<!--                </a>-->
+<!--              </div>-->
+<!--              <div>-->
+<!--                <a href="blog-single.html" class="a-block d-flex align-items-center height-lg" style="background-image: url('./static/images/img_3.jpg'); ">-->
+<!--                  <div class="text half-to-full">-->
+<!--                    <div class="post-meta">-->
+<!--                      <span class="category">Lifestyle</span>-->
+<!--                      <span class="mr-2">March 15, 2018 </span> &bullet;-->
+<!--                      <span class="ml-2"><span class="fa fa-comments"></span> 3</span>-->
+<!--                    </div>-->
+<!--                    <h3>There’s a Cool New Way for Men to Wear Socks and Sandals</h3>-->
+<!--                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem nobis, ut dicta eaque ipsa laudantium!</p>-->
+<!--                  </div>-->
+<!--                </a>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<div class="container">
+    {% for post in object_list %}
+    <div class="row">
+        <div class="col">
+            <div class="row g-3 p-2">
+                <div class="col" style="background-color: white">
+                    <div class="my-2">
+                        <b>{{ post.author }}</b>
+                        <small>{{ post.create_date }}</small>
                     </div>
-                    <h3>There’s a Cool New Way for Men to Wear Socks and Sandals</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem nobis, ut dicta eaque ipsa laudantium!</p>
-                  </div>
-                </a>
-              </div>
-              <div>
-                <a href="blog-single.html" class="a-block d-flex align-items-center height-lg" style="background-image: url('./static/images/img_2.jpg'); ">
-                  <div class="text half-to-full">
-                    <div class="post-meta">
-                      <span class="category">Lifestyle</span>
-                      <span class="mr-2">March 15, 2018 </span> &bullet;
-                      <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
+                   <div class="d-flex mb-3">
+                        {{ post.body }}
                     </div>
-                    <h3>There’s a Cool New Way for Men to Wear Socks and Sandals</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem nobis, ut dicta eaque ipsa laudantium!</p>
-                  </div>
-                </a>
-              </div>
-              <div>
-                <a href="blog-single.html" class="a-block d-flex align-items-center height-lg" style="background-image: url('./static/images/img_3.jpg'); ">
-                  <div class="text half-to-full">
-                    <div class="post-meta">
-                      <span class="category">Lifestyle</span>
-                      <span class="mr-2">March 15, 2018 </span> &bullet;
-                      <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
+                    <div class="d-flex mb-2">
+                      <a href=""> Читать дальше -></a>
                     </div>
-                    <h3>There’s a Cool New Way for Men to Wear Socks and Sandals</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem nobis, ut dicta eaque ipsa laudantium!</p>
-                  </div>
-                </a>
-              </div>
+                </div>
             </div>
-          </div>
         </div>
+    {% endfor %}
+    </div>
+</div>
 {% endblock %}
