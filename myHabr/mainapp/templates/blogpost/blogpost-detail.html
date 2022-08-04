@@ -7,17 +7,29 @@
 {% block css %}
 {{ block.super }}
     <style>
-        .sub_comment {
-            {#position: relative;#}
-            margin-left: 3em;
+        a:hover {
+           text-decoration: none;
         }
-        .sub_comment_button {
-            width: fit-content;
-            font-size: 14px;
-            margin-top: 2px;
-            margin-left: 2em;
-            padding: 3px;
+
+        .btn, .form-control {
+          outline: none;
+          -webkit-box-shadow: none !important;
+          box-shadow: none !important;
+          border-radius: 0;
         }
+
+        .comment-body textarea {
+            margin-bottom: 1em;
+        }
+        .children {
+            padding-top: 1em !important;
+            padding-bottom: 0 !important;
+            margin-bottom: 1em !important;
+        }
+        .comment-list li {
+            margin-bottom: 1em;
+        }
+
     </style>
 {%  endblock %}
 {% block content %}
@@ -33,28 +45,24 @@
         <a href="{% url 'blogpost'  %}"> НАЗАД </a> </br>
         <hr>
         </br>
-        <form id="comment_form" hidden>
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="comment_text">Ваш комментарий:</label>
-                <textarea name="comment_text" class="form-control" id="comment_text" rows="4"></textarea>
-            </div>
-            <button hidden id="comment_send" type="submit" class="btn btn-success">Комментировать</button>
-        </form>
-        <button id="comment_open" type="button" class="btn btn-primary">Комментировать</button>
+        <h3 class="mb-5">Комментарии</h3>
         {% include 'comments/comments.html' %}
-
+        <h3 class="mb-1">Оставить комментарий:</h3>
+        <div class="comment-form-wrap pt-5">
+            <form id="comment_form" class="p-5 bg-light">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="comment_text">Ваш комментарий:</label>
+                    <textarea name="comment_text" class="form-control" id="comment_text" rows="4"></textarea>
+                </div>
+                <button id="comment_send" type="submit" class="btn btn-primary">Комментировать</button>
+            </form>
+        </div>
     </div>
 
     <script>
         let form = $('#comment_form');
-        let open_comment = $('#comment_open');
         let send_comment = $('#comment_send');
-        open_comment.on('click', () => {
-            form.attr("hidden", false);
-            open_comment.attr("hidden", true);
-            send_comment.attr("hidden", false);
-        })
         form.on('submit', function(event){
             event.preventDefault();
             create_post();
@@ -70,19 +78,19 @@
                      csrfmiddlewaretoken: '{{ csrf_token }}',
             },
             success : function(json) {
-                $('#comments').replaceWith(json.comments);
-                form.attr("hidden", true);
-                open_comment.attr("hidden", false);
-                send_comment.attr("hidden", true);
+                $('.comment-list').replaceWith(json.comments);
+                $('[name="comment_text"]').val('');
             },
             error : function(xhr, errmsg, err) {
                 console.log('error');
             }
         })
         }
+
         function sub_comment(e) {
-            let comment_id = $(e).val();
-            let subcomment = $(e).parent();
+            e.preventDefault();
+            let subcomment = $(e.target).parent() ;
+            let comment_id = subcomment.attr('id');
             let subcomment_text = subcomment.find('textarea').first();
             if (subcomment_text.is(":hidden")) {
                 subcomment_text.attr("hidden", false);
@@ -98,12 +106,10 @@
                              csrfmiddlewaretoken: '{{ csrf_token }}',
                     },
                     success : function(json) {
-                        $(e).parent().find('.sub_comment').remove();
-                        $(e).parent().append(json.comment);
-
-                        form.attr("hidden", true);
-                        open_comment.attr("hidden", false);
-                        send_comment.attr("hidden", true);
+                         {#$(e.target).parent().find('.children').remove();#}
+                         {#$(e.target).parent().append(json.comment);#}
+                         $(e.target).parent().next('.children').html(json.comment)
+                         {#$(e.target).parent().find('.children').first().html(json.comment);#}
                     },
                     error : function(xhr, errmsg, err) {
                         console.log('error');
@@ -112,7 +118,6 @@
                )
                 subcomment_text.attr("hidden", true);
             }
-
         }
 
     </script>
