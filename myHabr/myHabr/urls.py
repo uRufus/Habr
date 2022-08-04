@@ -19,7 +19,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 from mainapp import views as mainapp
-from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('', mainapp.index, name='index'),
@@ -31,14 +30,13 @@ urlpatterns = [
     path('blog/', mainapp.BlogPostView.as_view(), name='blogpost'),
     path('blog/<int:pk>', mainapp.BlogPostDetail.as_view(), name='blogpost_detail'),
     path('blog/<int:pk>/edit/', mainapp.BlogPostUpdate.as_view(), name='blogpost_update'),
-    path('blog/create/', login_required(mainapp.BlogPostCreate.as_view()), name='blogpost_create'),
+    path('blog/create/new/', mainapp.BlogPostCreate.as_view(), name='blogpost_create'),
     path('blog/<int:pk>/delete/', mainapp.BlogPostDelete.as_view(), name='blogpost_delete'),
     path('blog/<int:pk>/verify/', mainapp.send_under_review, name='send_under_review'),
     path('blog/<int:pk>/private/', mainapp.BlogPostPrivateDetail.as_view(), name='blogpost_detail-private'),
     path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
     path('blog/sub_comment/', mainapp.blog_sub_comment, name='blog_sub_comment'),
-    path('blog/comment_edit/', mainapp.blog_comment_edit, name='blog_comment_edit'),
-    path('profiles/', include('authapp.urls', namespace='authapp')),
+    path('profiles/', include('profiles.urls', namespace='profiles')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
