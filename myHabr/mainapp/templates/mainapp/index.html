@@ -15,7 +15,6 @@
                                 {{ post.body }}
                             </div>
 
-
                             <div class="d-flex flex-row">
                                 <form method="POST" action="{% url 'like' post.pk %}" class="mb-0">
                                     {% csrf_token %}
@@ -24,7 +23,7 @@
                                         {% if post.likes.all.count == 0 %}
                                             <small><span>0</span></small>
                                         {% else %}
-                                            <small><span>+{{ post.likes.all.count }}</span></small>
+                                            <small><span class="text-success">+{{ post.likes.all.count }}</span></small>
                                         {% endif %}
                                     </button>
                                 </form>
@@ -39,7 +38,7 @@
                                             {% else %}
                                                 <small><span>-{{ post.dislikes.all.count }}</span></small>
                                             {% endif %}
-                                            </div>
+                                        </div>
                                     </button>
                                 </form>
                                 <div>
@@ -48,7 +47,6 @@
                                     {#                                    </button>#}
                                 </div>
                             </div>
-
 
                             <div class="d-flex"><a href=""> Читать дальше -></a></div>
                         </div>
