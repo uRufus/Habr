@@ -19,13 +19,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 from mainapp import views as mainapp
+from mainapp.views import AddCommentLike, AddLike, AddDislike, AddCommentDislike
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('', mainapp.index, name='index'),
     path('', mainapp.BlogListView.as_view(), name='index'),
-    path('category/', mainapp.category, name='categories'),
-    # path('category/', mainapp.BlogCategoriesList.as_view(), name='categories'),
     path('faq/', include('faq.urls')),
     path('myblog/', include('blogapp.urls')),
     path('auth/', include('authapp.urls', namespace='authapp')),
@@ -38,6 +36,10 @@ urlpatterns = [
     path('blog/<int:pk>/private/', mainapp.BlogPostPrivateDetail.as_view(), name='blogpost_detail-private'),
     path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
     path('blog/sub_comment/', mainapp.blog_sub_comment, name='blog_sub_comment'),
+    path('blog/<int:post_pk>/comment/<int:pk>/like', AddCommentLike.as_view(), name='comment-like'),
+    path('blog/<int:post_pk>/comment/<int:pk>/dislike', AddCommentDislike.as_view(), name='comment-dislike'),
+    path('blog/<int:pk>/like', AddLike.as_view(), name='like'),
+    path('blog/<int:pk>/dislike', AddDislike.as_view(), name='dislike'),
     path('profiles/', include('authapp.urls', namespace='authapp')),
 ]
 

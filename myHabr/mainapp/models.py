@@ -1,6 +1,10 @@
 from django.db import models
 from django.conf import settings
+
+from authapp.models import MyHabrUser
 from blogapp.models import BlogCategories
+
+
 # Create your models here.
 
 
@@ -22,6 +26,10 @@ class BlogPost(models.Model):
 
     title = models.CharField(max_length=255, verbose_name="название")
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор")
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='likes', blank=True,
+                                   verbose_name="Лайк поста")
+    dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='dislikes', blank=True,
+                                      verbose_name="Дизлайк поста")
     tag = models.CharField(max_length=30, verbose_name="тег")
     category = models.ForeignKey(BlogCategories, on_delete=models.CASCADE, verbose_name="категория")
     body = models.TextField(verbose_name="текст статьи")
@@ -51,14 +59,20 @@ class BlogPost(models.Model):
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True,
-                             null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name='comment_user',
+                             blank=True, null=True)
     text = models.TextField(blank=False, null=False)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     has_children = models.BooleanField(blank=True, null=True)
     parent = models.ForeignKey('self', blank=True, null=True,
                                on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор")
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, verbose_name="пост")
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_likes', blank=True,
+                                   verbose_name="Лайк комментария")
+    dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_dislikes', blank=True,
+                                      verbose_name="Дизлайк комментария")
 
     class Meta:
         db_table = 'comments'
@@ -69,8 +83,8 @@ class Comment(models.Model):
         else:
             self.children = (
                 Comment.objects
-                       .filter(commentslink__type='comment',
-                               commentslink__assigned_id=self.id)
+                .filter(commentslink__type='comment',
+                        commentslink__assigned_id=self.id)
             )
             if self.children:
                 for child in self.children:
