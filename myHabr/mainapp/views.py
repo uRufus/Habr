@@ -13,10 +13,20 @@ def index(request):
     context = {
         'title': 'Habr',
     }
-    bl = BlogCategories.objects.all().order_by('id')[:50]
-    context['BlogCategories'] = bl
+    # bl = BlogCategories.objects.all().order_by('id')[:50]
+    # context['BlogCategories'] = bl
     return render(request, 'mainapp/index.html', context)
     # return render(request, 'index.html', context)
+
+# class BlogListView(ListView):
+#     """[M] На главной странице должны подряд отображаться последние
+#     публикации, вне зависимости от тематики, отсортированные по дате
+#     (сначала самые свежие)"""
+#     model = BlogPost
+#     template_name = 'mainapp/index.html'
+#
+#     def get_queryset(self):
+#         return BlogPost.objects.order_by('-create_date')
 
 
 class BlogPostView(ListView):

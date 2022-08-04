@@ -32,7 +32,7 @@ class Command(BaseCommand):
             new_category = BlogCategories(**cat)
             new_category.save()
 
-        #Blogs
+        Blogs
         blogs = load_from_json('blogapp/fixtures/blogs.json')
 
         Blogs.objects.all().delete()
@@ -58,9 +58,9 @@ class Command(BaseCommand):
             user = bl.get('author')
             _user = MyHabrUser.objects.get(id=user)
             bl['author'] = _user
-            category = bl.get('category')
-            _category = BlogCategories.objects.get(id=category)
-            bl['category'] = _category
+            category = bl.get('blog')
+            _category = Blogs.objects.get(id=category)
+            bl['blog'] = _category
             new_blogpost = BlogPost(**bl)
             new_blogpost.save()
 
