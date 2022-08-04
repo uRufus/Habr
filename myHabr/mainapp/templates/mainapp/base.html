@@ -103,7 +103,7 @@
                 <a class="nav-link active" href="{% url 'authapp:login' %}">Войти</a>
               </li>
                 {% endif %}
-                {% if user.is_superuser %}
+                {% if user.is_superuser or user.is_staff %}
                 <li class="nav-item">
                 <a class="nav-link active" href="admin/">Админка</a>
               </li>

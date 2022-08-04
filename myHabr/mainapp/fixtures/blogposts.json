@@ -1,4 +1,57 @@
 [
+      {
+    "model": "django.contrib.auth.models.Group",
+    "pk": 1,
+    "fields": {
+      "name": "moderator"
+    }
+  },
+        {
+    "model": "django.contrib.auth.models.Group",
+    "pk": 2,
+    "fields": {
+      "name": "user"
+    }
+  },
+  {
+    "model": "authapp.MyHabrUser",
+    "pk": 2,
+    "fields": {
+      "password": "admin",
+      "last_login": null,
+      "is_superuser": 0,
+      "username": "ivan",
+      "first_name": "ivan",
+      "last_name": "ivan",
+      "email": "ivan@test.ru",
+      "is_staff": 0,
+      "is_active": 1,
+      "date_joined": "2021-11-25T18:52:21.303Z"
+    }
+  },
+  {
+    "model": "authapp.MyHabrUser",
+    "pk": 3,
+    "fields": {
+      "password": "admin",
+      "last_login": null,
+      "is_superuser": 0,
+      "username": "Aaz",
+      "first_name": "Aaz",
+      "last_name": "Aaz",
+      "email": "Aaz@test.ru",
+      "is_staff": 1,
+      "is_active": 1,
+      "date_joined": "2021-11-25T18:52:21.303Z"
+    }
+  },
+  {
+    "model": "blogapp.BlogCategories",
+    "pk": 1,
+    "fields": {
+      "name": "Frontend"
+    }
+  },
   {
     "model": "mainapp.BlogPost",
     "pk": 1,

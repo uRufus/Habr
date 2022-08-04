@@ -39,7 +39,7 @@ class BlogPostDetail(DetailView):
         # same_category_posts = self.model.objects.filter(category_id=self.model.category.id)
 
         comments = Comment.objects\
-                          .filter(commentslink__type='post',
+                          .filter(commentslink__type='article',
                                   commentslink__assigned_id=self.object.id)\
                          .prefetch_related('user')
         for comment in comments:
@@ -105,16 +105,17 @@ def blog_comment(request):
     blog_id = request.POST['blog_id']
     user = request.user if request.user.is_authenticated else None
     comment = Comment.objects.create(user=user, text=text)
-    CommentsLink.objects.create(comment=comment, type='post',
+    CommentsLink.objects.create(comment=comment, type='article',
                                 assigned_id=blog_id)
     comments = Comment.objects\
-                      .filter(commentslink__type='post',
+                      .filter(commentslink__type='article',
                               commentslink__assigned_id=blog_id) \
                       .prefetch_related('user')
     for comment in comments:
         comment.find_children()
     comments = render_to_string('comments/comments.html',
-                                {'comments': comments})
+                                {'comments': comments,
+                                 'user': request.user})
     return JsonResponse({'comments': comments})
 
 
@@ -132,5 +133,17 @@ def blog_sub_comment(request):
     parent_comment.find_children()
 
     comment = render_to_string('comments/subcomment.html',
-                               {'children': parent_comment.children})
+                               {'children': parent_comment.children,
+                                'user': request.user})
     return JsonResponse({'comment': comment})
+
+
+def blog_comment_edit(request):
+    text = request.POST['comment_text']
+    comment_id = request.POST['comment_id']
+    comment = Comment.objects.get(id=comment_id)
+    comment.text = text
+    comment.save()
+    edited_at = comment.updated_at.strftime("%d-%m-%Y, %H:%M:%S")
+    return JsonResponse({'new_text': text,
+                         'edited_at': edited_at})
