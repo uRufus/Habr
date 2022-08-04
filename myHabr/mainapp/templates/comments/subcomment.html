@@ -1,12 +1,21 @@
 {% for comm in children %}
-    <div class="sub_comment my-1">
-    <p><b>Автор: </b>{{ comm.user.username }}</p>
-    <p>{{ comm.text }}</p>
-    <p>время: {{ comm.created_at }}</p>
-    <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
-    <button class="btn btn-warning sub_comment_button" value="{{ comm.id }}" onclick="sub_comment(this)">Ответить</button>
-    {% if comm.has_children %}
-        {% include 'comments/subcomment.html' with children=comm.children %}
-    {% endif %}
+    <li class="comment sub_comment">
+    <div class="comment-body" id="{{ comm.id }}">
+        <h3>{{ comm.user.username }}</h3>
+        <div class="meta">время: {{ comm.created_at }}</div>
+        <p>{{ comm.text }}</p>
+        <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
+        <a href="#"  class="reply" onclick="sub_comment(event)">Ответить</a>
+        {% if user.id == comm.user_id %}
+            <a href="#"  class="reply" onclick="edit_comment(event)">Редактировать</a>
+        {% endif %}
     </div>
+    <ul class="children">
+    {% if comm.has_children %}
+
+        {% include 'comments/subcomment.html' with children=comm.children %}
+
+    {% endif %}
+    </ul>
+    </li>
 {% endfor %}

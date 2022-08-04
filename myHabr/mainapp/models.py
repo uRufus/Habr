@@ -54,8 +54,8 @@ class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True,
                              null=True)
     text = models.TextField(blank=False, null=False)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     has_children = models.BooleanField(blank=True, null=True)
     parent = models.ForeignKey('self', blank=True, null=True,
                                on_delete=models.CASCADE)
