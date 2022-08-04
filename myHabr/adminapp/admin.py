@@ -25,6 +25,43 @@ class MyHabrUserAdmin(admin.ModelAdmin):
     list_filter = ["is_active"]
     search_fields = ["username", "email", "is_active"]
 
+    def get_form(self, request, obj=None, **kwargs):
+        # Ограничения для действий в форме
+        form = super().get_form(request, obj, **kwargs)
+        is_superuser = request.user.is_superuser
+        # Переменная для отключаемых полей
+        disabled_fields = set()  # type Set[str]
+
+        # if not is_superuser:
+        #     form.base_fields['username'].disabled = True
+
+        # Запрет изменения полей
+        if not is_superuser:
+            disabled_fields |= {
+                'username',
+                'is_superuser',
+                'user_permissions',
+            }
+
+            # Запретить пользователям, не являющимся суперпользователями,
+            # редактировать свои собственные разрешения
+        if (
+                not is_superuser
+                and obj is not None
+                and obj == request.user
+        ):
+            disabled_fields |= {
+                'is_staff',
+                'is_superuser',
+                'groups',
+                'user_permissions',
+            }
+
+        for f in disabled_fields:
+            if f in form.base_fields:
+                form.base_fields[f].disabled = True
+        return form
+
     class Meta:
         model = MyHabrUser
 
@@ -34,6 +71,7 @@ class MessageAdmin(admin.ModelAdmin):
     list_editable = ["is_active"]
     list_filter = ["is_active", "created_at", "type_message"]
     search_fields = ["from_user", "to_user", "is_active"]
+    exclude = ["from_user"]
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'from_user', None) is None:

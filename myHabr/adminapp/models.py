@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import Group
 from authapp.models import MyHabrUser
 # Create your models here.
 
@@ -18,6 +19,7 @@ class Message(models.Model):
 
     from_user = models.CharField(max_length=150, null=True, blank=True, verbose_name="автор", default=None)
     to_user = models.ForeignKey(MyHabrUser, null=True, blank=True, on_delete=models.CASCADE, verbose_name="адресат")
+    to_group = models.ForeignKey(Group, null=True, blank=True, on_delete=models.CASCADE, verbose_name="адресат(группа)")
     text = models.TextField(blank=True, null=True, verbose_name="сообщение")
     is_active = models.BooleanField(default=True, verbose_name="Активно")
     type_message = models.CharField(max_length=1, choices=TYPE_MESSAGE, default=USER_TO_USER, verbose_name="Тип сообщения")
