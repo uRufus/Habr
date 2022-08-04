@@ -13,6 +13,7 @@ class BlogCategories(models.Model):
         return self.name
 
 
+
 class Blogs(models.Model):
     user = models.ForeignKey(MyHabrUser, on_delete=models.CASCADE)
     category = models.ForeignKey(BlogCategories, on_delete=models.CASCADE)

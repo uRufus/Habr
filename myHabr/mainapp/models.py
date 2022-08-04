@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from blogapp.models import BlogCategories
+from blogapp.models import Blogs
 # Create your models here.
 
 
@@ -22,8 +22,8 @@ class BlogPost(models.Model):
 
     title = models.CharField(max_length=255, verbose_name="название")
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор")
-    tag = models.CharField(max_length=30, verbose_name="тег")
-    category = models.ForeignKey(BlogCategories, on_delete=models.CASCADE, verbose_name="категория")
+    tag = models.CharField(max_length=30, verbose_name="тег", blank=True)
+    blog = models.ForeignKey(Blogs, default='', on_delete=models.CASCADE, verbose_name="блог")
     body = models.TextField(verbose_name="текст статьи")
     status = models.CharField(max_length=1, choices=BLOGPOST_STATUS, default=DRAFT, verbose_name="статус блогпоста")
     create_date = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="дата создания")
