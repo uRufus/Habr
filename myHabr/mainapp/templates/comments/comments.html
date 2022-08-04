@@ -7,6 +7,9 @@
                 <p>{{ comment.text }}</p>
                 <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
                 <a href="#"  class="reply" onclick="sub_comment(event)">Ответить</a>
+                {% if user.id == comment.user_id %}
+                    <a href="#"  class="reply" onclick="edit_comment(event)">Редактировать</a>
+                {% endif %}
             </div>
             <ul class="children">
                 {% if comment.has_children %}
