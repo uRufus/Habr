@@ -1,4 +1,5 @@
-{% extends 'authapp/base.html' %}
+{% extends 'mainapp/base.html' %}
+{% load static %}
 {% block title %}
     <title>
     {{ object.title }} - MyHabr
@@ -31,6 +32,9 @@
         </br>
         </br>
         <a href="{% url 'blogpost'  %}"> НАЗАД </a> </br>
+        CHECK CHECK
+        {% include 'blogpost/includes/same_category_blogpost.html' %}
+        CHECK CHECK
         <hr>
         </br>
         <form id="comment_form" hidden>
@@ -43,6 +47,7 @@
         </form>
         <button id="comment_open" type="button" class="btn btn-primary">Комментировать</button>
         {% include 'comments/comments.html' %}
+
 
     </div>
 

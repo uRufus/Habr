@@ -3,11 +3,10 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 from django.template.loader import render_to_string
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import BlogPost, Comment, CommentsLink
 from .forms import BlogPostForm
 from blogapp.models import BlogCategories
-
-
 
 
 def index(request):
@@ -37,6 +36,8 @@ class BlogPostDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # same_category_posts = self.model.objects.filter(category_id=self.model.category.id)
+
         comments = Comment.objects\
                           .filter(commentslink__type='post',
                                   commentslink__assigned_id=self.object.id)\
@@ -45,6 +46,7 @@ class BlogPostDetail(DetailView):
             comment.find_children()
 
         context['comments'] = comments
+        # context['same_category_posts'] = same_category_posts
         return context
 
 
@@ -68,17 +70,34 @@ class BlogPostCreate(CreateView):
     template_name = "blogpost/blogpost_form.html"
     success_url = reverse_lazy("blogpost")
 
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
-class BlogPostUpdate(UpdateView):
+
+class BlogPostUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = BlogPost
     form_class = BlogPostForm
     template_name = "blogpost/blogpost_update.html"
     success_url = reverse_lazy("blogpost")
 
-class BlogPostDelete(DeleteView):
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+
+class BlogPostDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = BlogPost
     template_name = "blogpost/blogpost_delete.html"
     success_url = reverse_lazy("blogpost")
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
 
 
 def blog_comment(request):

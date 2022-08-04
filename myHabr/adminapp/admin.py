@@ -39,11 +39,11 @@ class MessageAdmin(admin.ModelAdmin):
         model = Message
 
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "tag", "category", "status", "create_date", "update_date"]
+    list_display = ["id", "title", "tag", "blog", "status", "create_date", "update_date"]
     list_display_links = ["title"]
     # list_editable = ["is_active"]
-    list_filter = ["tag", "category", "status"]
-    search_fields = ["title", "tag", "category", "status"]
+    list_filter = ["tag", "blog", "status"]
+    search_fields = ["title", "tag", "blog", "status"]
 
     class Meta:
         model = BlogPost

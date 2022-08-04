@@ -1,4 +1,5 @@
-{% extends 'authapp/base.html' %}
+{% extends 'mainapp/base.html' %}
+{% load static %}
 {% block content %}
     <div class="container">
         <h1>Ваши посты {{ request.user.username }}</h1>
@@ -6,7 +7,7 @@
             {% for post in object_list %}
                 {% if post.status != "0"  %}
                 <li>
-                    <a href="{% url 'blogpost_detail-private' post.pk %}"> {{ post.title }} </a> - {{ post.author }}
+                    <a href="{% url 'blogpost_detail-private' post.pk %}"> {{ post.title }} </a> - {{ post.author }} ( {{ post.blog.category.name }} )
                     <a href="{% url 'blogpost_update' post.pk %}"> Изм. </a>
                     <a href="{% url 'blogpost_delete' post.pk %}"> Удл. </a><br/>
                     {{ post.body }}<br/>
