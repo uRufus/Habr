@@ -19,6 +19,7 @@
     <div class="row blog-entries">
         <div class="col-md-12 col-lg-8 main-content">
             <form action="#" method="post">
+                {% csrf_token %}
                 <div class="row">
                     <div class="col-md-4 form-group">
                         <label for="name">Имя</label>
@@ -40,18 +41,16 @@
                                   rows="8">{{profile.text}}</textarea>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6 form-group">
-                        <input type="submit" value="Обновить информацию" class="btn btn-primary">
-                    </div>
-                </div>
             </form>
         </div>
     </div>
     <div class="col-md-6 form-group">
+        <a href="{% url 'profiles:update' user.id %}" class="btn-group-toggle">Редактировать профиль</a>
+    </div>
+    <div class="col-md-6 form-group">
         <a href="{% url 'blogpost_create' %}" class="btn-group-toggle">Написать статью</a>
     </div>
-        <div class="col-md-6 form-group">
+    <div class="col-md-6 form-group">
         <a href="{% url 'blogpost' %}" class="btn-group-toggle">Все мои статьи</a>
     </div>
 </div>
