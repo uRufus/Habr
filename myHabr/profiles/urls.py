@@ -6,5 +6,5 @@ app_name = 'profiles'
 urlpatterns = [
     path('<int:id>/', views.profile, name='profile'),
     path('create_profile/<int:id>/', views.create_profile, name='create'),
-    path('create_update_profile/<int:id>/', views.update_profile, name='update')
+    path('create_update_profile/<int:id>/', views.update_profile, name='update'),
 ]
