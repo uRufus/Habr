@@ -1,10 +1,13 @@
 # Create your views here.
+import time
+
 from authapp.forms import MyHabrUserRegisterForm, MyHabrUserLoginForm
 from django.contrib import auth
 from django.shortcuts import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-
+from profiles.models import Profile
+from .models import MyHabrUser
 
 # Регистрация пользователя
 def register(request):
@@ -15,6 +18,10 @@ def register(request):
 
         if register_form.is_valid():
             register_form.save()
+            time.sleep(0.1)
+            get_user = MyHabrUser.objects.get(username=request.POST.get('username'),
+                                              first_name=request.POST.get('first_name'), email=request.POST.get('email'))
+            new_profile = Profile.objects.create(user_id=get_user, first_name=request.POST.get('first_name'))
             return HttpResponseRedirect(reverse('authapp:login'))
     else:
         register_form = MyHabrUserRegisterForm()

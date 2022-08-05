@@ -20,12 +20,7 @@
         <p>О себе {{profile.text}}</p>
     </div>
     <div>
-        {% if fill %}
-        <a href="{% url 'profile.CUProfile' profile.id 'update' %}"> Изменить данные</a>
-        {% else %}
-        <a href="{% url 'profile.CUProfile' profile.id 'create' %}"> Ввести данные</a>
-        {% endif %}
-
+        <a href="{% url 'profiles:update' user.id %}"> Изменить данные</a>
     </div>
 
 </body>

@@ -1,14 +1,21 @@
-<div id="comments">
+<ul class="comment-list">
     {% for comment in comments %}
-        <div class="sub_comment my-1">
-        <p><b>Автор: </b>{{ comment.user.username }}</p>
-        <p>{{ comment.text }}</p>
-        <p>время: {{ comment.created_at }}</p>
-        <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
-        <button class="btn btn-warning sub_comment_button" value="{{ comment.id }}" onclick="sub_comment(this)">Ответить</button>
-        {% if comment.has_children %}
-            {% include 'comments/subcomment.html' with children=comment.children %}
-        {% endif %}
-        </div>
+        <li class="comment">
+            <div class="comment-body" id="{{ comment.id }}">
+                <h3>{{ comment.user.username }}</h3>
+                <div class="meta">время: {{ comment.created_at }}</div>
+                <p>{{ comment.text }}</p>
+                <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
+                <a href="#"  class="reply" onclick="sub_comment(event)">Ответить</a>
+                {% if user.id == comment.user_id %}
+                    <a href="#"  class="reply" onclick="edit_comment(event)">Редактировать</a>
+                {% endif %}
+            </div>
+            <ul class="children">
+                {% if comment.has_children %}
+                    {% include 'comments/subcomment.html' with children=comment.children %}
+                {% endif %}
+            </ul>
+        </li>
     {%  endfor %}
-</div>
+</ul>

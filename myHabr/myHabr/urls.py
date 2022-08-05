@@ -42,6 +42,7 @@ urlpatterns = [
     path('blog/<int:pk>/like', BlogAddLike.as_view(), name='like'),
     path('blog/<int:pk>/dislike', BlogAddDislike.as_view(), name='dislike'),
     path('profiles/', include('authapp.urls', namespace='authapp')),
+    path('profiles/', include('profiles.urls', namespace='profiles')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
