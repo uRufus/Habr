@@ -2,10 +2,10 @@ from django import forms
 from .models import Profile
 
 class ProfileForm(forms.Form):
-    first_name = forms.CharField(max_length=50, label='Имя: ')
-    last_name = forms.CharField(max_length=50, label='Фамилия: ')
-    age = forms.IntegerField(max_value=150, label='Возраст: ')
-    text = forms.CharField(widget=forms.Textarea, label='О себе: ')
+    first_name = forms.CharField(max_length=50, label='Имя: ', required=False)
+    last_name = forms.CharField(max_length=50, label='Фамилия: ', required=False)
+    age = forms.IntegerField(max_value=150, label='Возраст: ', required=False)
+    text = forms.CharField(widget=forms.Textarea, label='О себе: ', required=False)
 
     def form_initial(self, id):
         # Пытаюсь в цикле поставить значение элемента формы initial из БД НЕ ПОЛУЧАЕТСЯ
