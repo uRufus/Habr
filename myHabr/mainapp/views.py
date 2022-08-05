@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.views import View
@@ -18,9 +18,11 @@ class BlogListView(ListView):
     (сначала самые свежие)"""
     model = BlogPost
     template_name = 'mainapp/index.html'
+    paginate_by = 2
 
     def get_queryset(self):
-        return BlogPost.objects.order_by('-create_date')
+        obj = BlogPost.objects.order_by('-create_date')
+        return obj
 
 
 class BlogPostView(ListView):
@@ -121,7 +123,7 @@ def blog_sub_comment(request):
     return JsonResponse({'comment': comment})
 
 
-class AddLike(LoginRequiredMixin, View):
+class BlogAddLike(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         post = BlogPost.objects.get(pk=pk)
 
@@ -152,7 +154,7 @@ class AddLike(LoginRequiredMixin, View):
         return HttpResponseRedirect(next)
 
 
-class AddDislike(LoginRequiredMixin, View):
+class BlogAddDislike(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         post = BlogPost.objects.get(pk=pk)
 
@@ -183,7 +185,7 @@ class AddDislike(LoginRequiredMixin, View):
         return HttpResponseRedirect(next)
 
 
-class AddCommentLike(LoginRequiredMixin, View):
+class BlogAddCommentLike(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         comment = Comment.objects.get(pk=pk)
 
@@ -214,7 +216,7 @@ class AddCommentLike(LoginRequiredMixin, View):
         return HttpResponseRedirect(next)
 
 
-class AddCommentDislike(LoginRequiredMixin, View):
+class BlogAddCommentDislike(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         comment = Comment.objects.get(pk=pk)
 
