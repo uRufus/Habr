@@ -21,8 +21,8 @@ from django.urls import path, include
 from mainapp import views as mainapp
 
 urlpatterns = [
-    path('', mainapp.index, name='index'),
-    # path('', mainapp.BlogListView.as_view(), name='index'),
+    # path('', mainapp.index, name='index'),
+    path('', mainapp.BlogListView.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('faq/', include('faq.urls')),
     path('myblog/', include('blogapp.urls')),
