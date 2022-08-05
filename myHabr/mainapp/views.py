@@ -277,9 +277,6 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
 
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
-                               {'children': parent_comment.children,
-                                'user': request.user})
-    return JsonResponse({'comment': comment})
 
 
 def blog_comment_edit(request):
