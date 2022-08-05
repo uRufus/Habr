@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('..')
 
 from django.http import HttpResponseRedirect
@@ -8,14 +9,12 @@ from .models import Profile
 from .forms import ProfileForm
 from authapp.models import MyHabrUser
 
+
 # Create your views here.
 
 def profile(request, id):
     # Получаем объект пользователя
     user = MyHabrUser.objects.get(id=id)
-    if not user.update_profile:
-        return HttpResponseRedirect(reverse('profiles:create', kwargs={'id': id}))
-
     # Получаем из БД данные профиля
     profile = Profile.objects.get(user_id=user)
     # Условие если хоть какие то данные заполнены то мы передаем заполненные данные
@@ -31,6 +30,7 @@ def profile(request, id):
         'profile': profile, 'name': name,
     }
     return render(request=request, template_name='profile.html', context=context)
+
 
 def create_profile(request, id):
     if request.method == 'POST':
@@ -48,7 +48,8 @@ def create_profile(request, id):
         new_profile.save()
 
     else:
-        return render(request=request, template_name='create_update_profile.html',)
+        return render(request=request, template_name='create_update_profile.html', )
+
 
 def update_profile(request, id):
     # Получаем объект пользователя
@@ -87,5 +88,3 @@ def update_profile(request, id):
             'profile_form': profile_form,
         }
         return render(request=request, template_name='create_update_profile.html', context=context)
-
-

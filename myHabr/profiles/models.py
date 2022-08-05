@@ -1,5 +1,7 @@
 from django.db import models
 from authapp import models as mod
+
+
 # Create your models here.
 
 class Profile(models.Model):
