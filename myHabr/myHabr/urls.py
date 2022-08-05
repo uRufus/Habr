@@ -41,7 +41,6 @@ urlpatterns = [
     path('blog/<int:post_pk>/comment/<int:pk>/dislike', BlogAddCommentDislike.as_view(), name='comment-dislike'),
     path('blog/<int:pk>/like', BlogAddLike.as_view(), name='like'),
     path('blog/<int:pk>/dislike', BlogAddDislike.as_view(), name='dislike'),
-    path('profiles/', include('authapp.urls', namespace='authapp')),
     path('profiles/', include('profiles.urls', namespace='profiles')),
 ]
 
