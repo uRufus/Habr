@@ -30,13 +30,14 @@
                     </div>
                     <div class="col-md-4 form-group">
                         <label for="email">Возраст</label>
-                        <input type="email" id="email" class="form-control " value="{{profile.age}}">
+                        <input id="email" class="form-control " value="{{profile.age}}">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 form-group">
                         <label for="message">О себе</label>
-                        <textarea name="message" id="message" class="form-control " cols="30" rows="8">{{profile.text}}</textarea>
+                        <textarea name="message" id="message" class="form-control " cols="30"
+                                  rows="8">{{profile.text}}</textarea>
                     </div>
                 </div>
                 <div class="row">
@@ -46,6 +47,12 @@
                 </div>
             </form>
         </div>
+    </div>
+    <div class="col-md-6 form-group">
+        <a href="{% url 'blogpost_create' %}" class="btn-group-toggle">Написать статью</a>
+    </div>
+        <div class="col-md-6 form-group">
+        <a href="{% url 'blogpost' %}" class="btn-group-toggle">Все мои статьи</a>
     </div>
 </div>
 {% endblock %}
