@@ -2,90 +2,60 @@
 {% load static %}
 {% block content %}
     <div class="container">
-    {% for post in object_list %}
-        <div class="row">
-            <div class="col">
-                <div class="row g-3 p-2">
-                    <div class="col" style="background-color: white">
-                        <div class="my-1">
-                            <b>{{ post.author }}</b>
-                            <small>{{ post.create_date }}</small>
-                        </div>
-                        <div class="d-flex mb-3">
-                            {{ post.body }}
-                        </div>
+        {% for post in object_list %}
+            <div class="row">
+                <div class="col">
+                    <div class="row g-3 p-2">
+                        <div class="col" style="background-color: white">
+                            <div class="my-1">
+                                <b>{{ post.author }}</b>
+                                <small>{{ post.create_date }}</small>
+                            </div>
+                            <div class="d-flex mb-3">
+                                {{ post.body }}
+                            </div>
 
-                        <div class="d-flex flex-row">
-                            <form method="POST" action="{% url 'like' post.pk %}" class="mb-0">
-                                {% csrf_token %}
-                                <input type="hidden" name="next" value="{{ request.path }}">
-                                <button class="border-0 bg-white text-dark" type="submit">
-                                    {% if post.likes.all.count == 0 %}
-                                        <small><span>0</span></small>
-                                    {% else %}
-                                        <small><span
-                                                class="text-success">+{{ post.likes.all.count }}</span></small>
-                                    {% endif %}
-                                </button>
-                            </form>
-                            <form method="POST" action="{% url 'dislike' post.pk %}" class="mb-0">
-                                <input type="hidden" name="next" value="{{ request.path }}">
-                                <button class="border-0 bg-white" type="submit">
+                            <div class="d-flex flex-row">
+                                <form method="POST" action="{% url 'like' post.pk %}" class="mb-0">
                                     {% csrf_token %}
                                     <input type="hidden" name="next" value="{{ request.path }}">
-                                    <div class="text-danger">
-                                        {% if post.dislikes.all.count == 0 %}
+                                    <button class="border-0 bg-white text-dark" type="submit">
+                                        {% if post.likes.all.count == 0 %}
                                             <small><span>0</span></small>
                                         {% else %}
-                                            <small><span>-{{ post.dislikes.all.count }}</span></small>
+                                            <small><span
+                                                    class="text-success">+{{ post.likes.all.count }}</span></small>
                                         {% endif %}
-                                    </div>
-                                </button>
-                            </form>
-                            <div>
-                                {#                                    <button class="remove-default-btn"><i class="far fa-comment-dots"#}
-                                {#                                                                          onclick="commentReplyToggle('{{ comment.pk }}')"></i>#}
-                                {#                                    </button>#}
+                                    </button>
+                                </form>
+                                <form method="POST" action="{% url 'dislike' post.pk %}" class="mb-0">
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button class="border-0 bg-white" type="submit">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.path }}">
+                                        <div class="text-danger">
+                                            {% if post.dislikes.all.count == 0 %}
+                                                <small><span>0</span></small>
+                                            {% else %}
+                                                <small><span>-{{ post.dislikes.all.count }}</span></small>
+                                            {% endif %}
+                                        </div>
+                                    </button>
+                                </form>
+                                <div>
+                                    {#                                    <button class="remove-default-btn"><i class="far fa-comment-dots"#}
+                                    {#                                                                          onclick="commentReplyToggle('{{ comment.pk }}')"></i>#}
+                                    {#                                    </button>#}
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="d-flex"><a href=""> Читать дальше -></a></div>
+                            <div class="d-flex"><a href=""> Читать дальше -></a></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
 
-    <nav aria-label="Pagination">
-        <ul class="pagination">
-            {% if page_obj.has_previous %}
-                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link" href="#" tabindex="-1"
-                                                     aria-disabled="true">&laquo;</span></li>
-            {% endif %}
-            {% for i in page_obj.paginator.page_range %}
-                {% if i > page_obj.number|add:-3 and i < page_obj.number|add:3 %}
-                    {% if page_obj.number == i %}
-                        <li class="page-item active" aria-current="page"><a class="page-link" href="#">{{ i }} <span
-                                class="sr-only">(current)</span></a></li>
-                    {% else %}
-                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-            {% if page_obj.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">&raquo;</a></li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link" href="#" tabindex="-1"
-                                                     aria-disabled="true">&raquo;</span></li>
-            {% endif %}
-        </ul>
-    </nav>
-
-
-
-
-
+        {% include 'mainapp/includes/pagination.html' %}
+    </div>
 {% endblock %}
