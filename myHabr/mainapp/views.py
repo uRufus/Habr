@@ -1,31 +1,16 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
-
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import BlogPost, Comment, CommentsLink
-from .forms import BlogPostForm
-from blogapp.models import BlogCategories
-
 
 from mainapp.models import BlogPost, Comment
 from .forms import BlogPostForm
 from .models import CommentsLink
 
-# def index(request):
-#     context = {
-#         'title': 'Habr',
-#     }
-#     # bl = BlogCategories.objects.all().order_by('id')[:50]
-#     # context['BlogCategories'] = bl
-#     return render(request, 'mainapp/index.html', context)
-#     # return render(request, 'index.html', context)
 
 class BlogListView(ListView):
     """[M] На главной странице должны подряд отображаться последние
@@ -60,10 +45,10 @@ class BlogPostDetail(DetailView):
 
         # same_category_posts = self.model.objects.filter(category_id=self.model.category.id)
 
-        comments = Comment.objects\
-                          .filter(commentslink__type='article',
-                                  commentslink__assigned_id=self.object.id)\
-                         .prefetch_related('user')
+        comments = Comment.objects \
+            .filter(commentslink__type='article',
+                    commentslink__assigned_id=self.object.id) \
+            .prefetch_related('user')
 
         for comment in comments:
             comment.find_children()
@@ -124,10 +109,10 @@ def blog_comment(request):
     comment = Comment.objects.create(user=user, text=text)
     CommentsLink.objects.create(comment=comment, type='article',
                                 assigned_id=blog_id)
-    comments = Comment.objects\
-                      .filter(commentslink__type='article',
-                              commentslink__assigned_id=blog_id) \
-                      .prefetch_related('user')
+    comments = Comment.objects \
+        .filter(commentslink__type='article',
+                commentslink__assigned_id=blog_id) \
+        .prefetch_related('user')
 
     for comment in comments:
         comment.find_children()
