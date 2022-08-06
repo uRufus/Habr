@@ -35,6 +35,7 @@ class BlogPost(models.Model):
     tag = models.CharField(max_length=30, verbose_name="тег", blank=True)
     blog = models.ForeignKey(Blogs, default='', on_delete=models.CASCADE, verbose_name="блог")
     body = models.TextField(verbose_name="текст статьи")
+    # blog_id = bigint
     status = models.CharField(max_length=1, choices=BLOGPOST_STATUS, default=DRAFT, verbose_name="статус блогпоста")
     create_date = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="дата создания")
     update_date = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="дата обновления")
