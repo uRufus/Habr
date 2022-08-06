@@ -1,33 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'mainapp/base.html' %}
+{% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if name %}
-    <title>Информация о профиле {{ name }}</title>
-    {% else %}
-    <title>Информация о профиле</title>
-    {% endif %}
-</head>
+{% block title %}
+{% if name %}
+<title>Информация о профиле {{ name }}</title>
+{% else %}
+<title>Информация о профиле</title>
+{% endif %}
+{% endblock %}
 
-<body>
-    <div>
-        <p>Имя {{profile.first_name}}</p>
-        <p>Фамилия {{profile.last_name}}</p>
-        <p>Возраст {{profile.age}}</p>
-        <p>О себе {{profile.text}}</p>
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1>Информация о профиле {{ name }}</h1>
+        </div>
     </div>
-    <div>
-        {% if fill %}
-        <a href="{% url 'profile.CUProfile' profile.id 'update' %}"> Изменить данные</a>
-        {% else %}
-        <a href="{% url 'profile.CUProfile' profile.id 'create' %}"> Ввести данные</a>
-        {% endif %}
-
+    <div class="row blog-entries">
+        <div class="col-md-12 col-lg-8 main-content">
+            <form action="#" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <label for="name">Имя</label>
+                        <input type="text" id="name" class="form-control " value="{{profile.first_name}}">
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label for="phone">Фамилия</label>
+                        <input type="text" id="phone" class="form-control " value="{{profile.last_name}}">
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label for="email">Возраст</label>
+                        <input id="email" class="form-control " value="{{profile.age}}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <label for="message">О себе</label>
+                        <textarea name="message" id="message" class="form-control " cols="30"
+                                  rows="8">{{profile.text}}</textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-
-</body>
-
-</html>
+    <div class="col-md-6 form-group">
+        <a href="{% url 'profiles:update' user.id %}" class="btn-group-toggle">Редактировать профиль</a>
+    </div>
+    <div class="col-md-6 form-group">
+        <a href="{% url 'blogpost_create' %}" class="btn-group-toggle">Написать статью</a>
+    </div>
+    <div class="col-md-6 form-group">
+        <a href="{% url 'blogpost' %}" class="btn-group-toggle">Все мои статьи</a>
+    </div>
+</div>
+{% endblock %}
