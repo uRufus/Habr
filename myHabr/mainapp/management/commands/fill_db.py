@@ -32,7 +32,7 @@ class Command(BaseCommand):
             new_category = BlogCategories(**cat)
             new_category.save()
 
-        Blogs
+        # Blogs
         blogs = load_from_json('blogapp/fixtures/blogs.json')
 
         Blogs.objects.all().delete()
