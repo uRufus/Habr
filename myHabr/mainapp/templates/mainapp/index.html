@@ -3,7 +3,7 @@
 {% block content %}
     <div class="container">
         {% for post in object_list %}
-            <div class="row">
+            <div class="row mb-5">
                 <div class="col">
                     <div class="row g-3 p-2">
                         <div class="col" style="background-color: white">
@@ -21,10 +21,10 @@
                                     <input type="hidden" name="next" value="{{ request.path }}">
                                     <button class="border-0 bg-white text-dark" type="submit">
                                         {% if post.likes.all.count == 0 %}
-                                            <small><span>0</span></small>
+                                            <i class="far fa-thumbs-up"><span> 0</span></i>
                                         {% else %}
-                                            <small><span
-                                                    class="text-success">+{{ post.likes.all.count }}</span></small>
+                                            <i class="far fa-thumbs-up"><span
+                                                    class="text-success"> +{{ post.likes.all.count }}</span></i>
                                         {% endif %}
                                     </button>
                                 </form>
@@ -35,21 +35,22 @@
                                         <input type="hidden" name="next" value="{{ request.path }}">
                                         <div class="text-danger">
                                             {% if post.dislikes.all.count == 0 %}
-                                                <small><span>0</span></small>
+                                                <i class="far fa-thumbs-down"><span> 0</span></i>
                                             {% else %}
-                                                <small><span>-{{ post.dislikes.all.count }}</span></small>
+                                                <i class="far fa-thumbs-down">
+                                                    <span> -{{ post.dislikes.all.count }}</span>{% comment %}{% endcomment %}
+                                                </i>
                                             {% endif %}
                                         </div>
                                     </button>
                                 </form>
                                 <div>
-                                    {#                                    <button class="remove-default-btn"><i class="far fa-comment-dots"#}
-                                    {#                                                                          onclick="commentReplyToggle('{{ comment.pk }}')"></i>#}
-                                    {#                                    </button>#}
+                                    <button class="remove-default-btn border-0 bg-white"><i class="far fa-comment-dots"
+                                                                                            onclick="commentReplyToggle('{{ comment.pk }}')"></i>
+                                    </button>
                                 </div>
                             </div>
-
-                            <div class="d-flex"><a href=""> Читать дальше -></a></div>
+                            <button type="button" class="btn btn-outline-secondary mt-3">Читать дальше</button>
                         </div>
                     </div>
                 </div>
