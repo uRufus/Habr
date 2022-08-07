@@ -21,7 +21,8 @@ class BlogListView(ListView):
     paginate_by = 2
 
     def get_queryset(self):
-        return BlogPost.objects.order_by('-create_date').filter(status__in=['PUBLISHED'])
+        # return BlogPost.objects.order_by('-create_date').filter(status__in='PUBLISHED')
+        return BlogPost.objects.order_by('-create_date')
 
 
 class BlogPostView(ListView):
