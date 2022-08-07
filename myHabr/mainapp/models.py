@@ -31,7 +31,6 @@ class BlogPost(models.Model):
                                    verbose_name="Лайк поста")
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='dislikes', blank=True,
                                       verbose_name="Дизлайк поста")
-    # category = models.ForeignKey(BlogCategories, on_delete=models.CASCADE, verbose_name="категория")
     tag = models.CharField(max_length=30, verbose_name="тег", blank=True)
     blog = models.ForeignKey(Blogs, default='', on_delete=models.CASCADE, verbose_name="блог")
     body = models.TextField(verbose_name="текст статьи")
