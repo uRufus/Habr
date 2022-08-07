@@ -104,6 +104,12 @@ class BlogPostUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = "blogpost/blogpost_update.html"
     success_url = reverse_lazy("blogpost")
 
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
 
 class BlogPostDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = BlogPost
