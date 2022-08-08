@@ -7,43 +7,43 @@
                 <p>{{ comment.text }}</p>
 
 
-                <div class="d-flex flex-row">
-                    <form method="POST" action="{% url 'comment-like' comment.pk comment.pk %}" class="mb-0">
-                        {#                    <form method="POST" action="" class="mb-0">#}
-                        {% csrf_token %}
-                        <input type="hidden" name="next" value="{{ request.path }}">
-                        <button class="border-0 bg-white text-dark" type="submit">
-                            {% if comment.likes.all.count == 0 %}
-                                <i class="far fa-thumbs-up"><span> 0</span></i>
-                            {% else %}
-                                <i class="far fa-thumbs-up"><span
-                                        class="text-success"> +{{ comment.likes.all.count }}</span></i>
-                            {% endif %}
-                        </button>
-                    </form>
+{#                <div class="d-flex flex-row">#}
+{#                    <form method="POST" action="{% url 'comment-like' post.pk comment.pk %}" class="mb-0">#}
+{#                                            <form method="POST" action="" class="mb-0">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden" name="next" value="{{ request.path }}">#}
+{#                        <button class="border-0 bg-white text-dark" type="submit">#}
+{#                            {% if comment.likes.all.count == 0 %}#}
+{#                                <i class="far fa-thumbs-up"><span> 0</span></i>#}
+{#                            {% else %}#}
+{#                                <i class="far fa-thumbs-up"><span#}
+{#                                        class="text-success"> +{{ comment.likes.all.count }}</span></i>#}
+{#                            {% endif %}#}
+{#                        </button>#}
+{#                    </form>#}
 {#                    <form method="POST" action="{% url 'comment-dislike' comment.pk  comment.pk %}" class="mb-0">#}
-                    <form method="POST" action="" class="mb-0">
-                        <input type="hidden" name="next" value="{{ request.path }}">
-                        <button class="border-0 bg-white" type="submit">
-                            {% csrf_token %}
-                            <input type="hidden" name="next" value="{{ request.path }}">
-                            <div class="text-danger">
-                                {% if comment.dislikes.all.count == 0 %}
-                                    <i class="far fa-thumbs-down"><span> 0</span></i>
-                                {% else %}
-                                    <i class="far fa-thumbs-down">
-                                        <span> -{{ comment.dislikes.all.count }}</span>
-                                    </i>
-                                {% endif %}
-                            </div>
-                        </button>
-                    </form>
-                    <div>
-                        <button class="remove-default-btn border-0 bg-white"><i class="far fa-comment-dots"
-                                                                                onclick="commentReplyToggle('{{ comment.pk }}')"></i>
-                        </button>
-                    </div>
-                </div>
+{#                    <form method="POST" action="" class="mb-0">#}
+{#                        <input type="hidden" name="next" value="{{ request.path }}">#}
+{#                        <button class="border-0 bg-white" type="submit">#}
+{#                            {% csrf_token %}#}
+{#                            <input type="hidden" name="next" value="{{ request.path }}">#}
+{#                            <div class="text-danger">#}
+{#                                {% if comment.dislikes.all.count == 0 %}#}
+{#                                    <i class="far fa-thumbs-down"><span> 0</span></i>#}
+{#                                {% else %}#}
+{#                                    <i class="far fa-thumbs-down">#}
+{#                                        <span> -{{ comment.dislikes.all.count }}</span>#}
+{#                                    </i>#}
+{#                                {% endif %}#}
+{#                            </div>#}
+{#                        </button>#}
+{#                    </form>#}
+{#                    <div>#}
+{#                        <button class="remove-default-btn border-0 bg-white"><i class="far fa-comment-dots"#}
+{#                                                                                onclick="commentReplyToggle('{{ comment.pk }}')"></i>#}
+{#                        </button>#}
+{#                    </div>#}
+{#                </div>#}
 
 
                 <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
