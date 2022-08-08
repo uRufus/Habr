@@ -53,14 +53,9 @@ class BlogPostDetail(DetailView):
         for comment in comments:
             comment.find_children()
 
-        # context['comments'] = comments
-        post = BlogPost.objects.filter(pk=self.object.pk)
+        context['comments'] = comments
+        context['post'] = BlogPost.objects.filter(pk=self.object.pk)
         # context['same_category_posts'] = same_category_posts
-
-        context = {
-            'post': post,
-            'comments': comments,
-        }
         return context
 
 
