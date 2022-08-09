@@ -143,7 +143,8 @@ def blog_sub_comment(request):
     parent_comment.find_children()
 
     comment = render_to_string('comments/subcomment.html',
-                               {'children': parent_comment.children})
+                               {'children': parent_comment.children,
+                                'user': request.user})
     return JsonResponse({'comment': comment})
 
 
