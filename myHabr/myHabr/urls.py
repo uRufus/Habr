@@ -37,6 +37,7 @@ urlpatterns = [
     path('blog/<int:pk>/private/', mainapp.BlogPostPrivateDetail.as_view(), name='blogpost_detail-private'),
     path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
     path('blog/sub_comment/', mainapp.blog_sub_comment, name='blog_sub_comment'),
+    path('blog/comment_edit/', mainapp.blog_comment_edit, name='blog_comment_edit'),
     path('blog/<int:post_pk>/comment/<int:pk>/like/', BlogAddCommentLike.as_view(), name='comment-like'),
     path('blog/<int:post_pk>/comment/<int:pk>/dislike/', BlogAddCommentDislike.as_view(), name='comment-dislike'),
     path('blog/<int:pk>/like/', BlogAddLike.as_view(), name='like'),
