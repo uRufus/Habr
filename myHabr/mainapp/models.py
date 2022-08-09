@@ -69,8 +69,8 @@ class Comment(models.Model):
     has_children = models.BooleanField(blank=True, null=True)
     parent = models.ForeignKey('self', blank=True, null=True,
                                on_delete=models.CASCADE)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор")
-    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, verbose_name="пост")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор", null=True)
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, verbose_name="пост", null=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_likes', blank=True,
                                    verbose_name="Лайк комментария")
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_dislikes', blank=True,
