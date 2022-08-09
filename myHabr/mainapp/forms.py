@@ -1,9 +1,11 @@
 from django import forms
-from .models import BlogPost
+
+from .models import BlogPost, Comment
 
 
 class BlogPostForm(forms.ModelForm):
     """Данная форма работает только с подключенным бутстрапом"""
+
     class Meta:
         model = BlogPost
         fields = ('title', 'blog', 'body')
@@ -16,3 +18,19 @@ class BlogPostForm(forms.ModelForm):
 
         }
 
+
+class CommentForm(forms.ModelForm):
+    # comment = forms.CharField(
+    #     label='',
+    #     widget=forms.Textarea(attrs={
+    #         'rows': '3',
+    #         'placeholder': 'Say Something...'
+    #     }))
+
+    class Meta:
+        model = Comment
+        fields = ['comment']
+
+        widgets = {
+
+        }
