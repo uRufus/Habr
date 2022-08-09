@@ -1,0 +1,15 @@
+{% extends 'authapp/base.html' %}
+{% block title %} Блог создание - MyHabr {% endblock %}
+{% block content %}<br/>
+    <div class="container">
+        <h1>Создание блога</h1>
+        <div class="form-group">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit">
+            </form>
+        </div>
+                <a href="{% url 'blogapp:myblogs' %}"> Назад </a>
+    </div>
+{% endblock %}

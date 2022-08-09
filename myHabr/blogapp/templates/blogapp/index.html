@@ -1,26 +1,32 @@
-{% extends 'base.html' %}
-{% block head %}
-<title>Мои блоги</title>
-{% endblock %}
+{% extends 'mainapp/base.html' %}
+{% load static %}
+{% block content %}
+  {% block head %}
+  <title>Мои блоги </title>
+  {% endblock %}
 
-{% block body %}
-  <h1>Мои блоги</h1>
-  {% if not posts %}
-  <b>У вас нет статей</b>
-  {% else %}
-    {% for post in posts %}
-      <li>
-       {{ post.author }} <br/>
-       {{ post.body }} <br/>
-      </li>
-    {% endfor %}
-  {% endif %}
+  {% block body %}
+    <h1>Мои Блоги ({{ request.user.username }}) </h1>
+    {% if not object_list %}
+      <b>У вас нет статей</b>
+    {% else %}
+            <div class="container">
+                <ul>
+                    {% for post in object_list %}
+                        {% if post.status != "0"  %}
+                        <li>
+                            <a href="{% url 'blogpost_detail-private' post.pk %}"> {{ post.name }} </a> ( {{ post.category.name }} )<br/>
+                            <a href="{% url 'blogpost_update' post.pk %}"> Изм. </a>
+                            <a href="{% url 'blogapp:myblog_delete' post.pk %}"> Удл. </a><br/>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <br/>
+                <a href="{% url 'blogapp:myblog_create' %}"> Cоздать </a><br/>
+                <a href="{% url 'index' %}"> Назад </a>
+            </div>
+    {% endif %}
 
-  {% if posts.has_previous %}
-  <a href="?page={{ posts.previous_page_number }}">Назад</a>
-  {% endif %}
-  <span>{{ posts.number }} / {{ posts.num_pages }}</span>
-  {% if posts.has_next %}
-  <a href="?page={{ posts.next_page_number }}" >Вперед</a>
-  {% endif %}
+  {% endblock %}
 {% endblock %}
