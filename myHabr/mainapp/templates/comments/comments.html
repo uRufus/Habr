@@ -5,6 +5,36 @@
                 <h3>{{ comment.user.username }}</h3>
                 <div class="meta">время: {{ comment.created_at }}</div>
                 <p>{{ comment.text }}</p>
+
+                <div class="d-flex flex-row">
+                    <form method="POST" action="{% url 'comment-like' object.pk comment.pk %}" class="mb-0">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button class="border-0 bg-white text-dark" type="submit">
+                            {% if comment.post.likes.all.count == 0 %}
+                                <small><span>0</span></small>
+                            {% else %}
+                                <small><span
+                                        class="text-success">+{{ comment.likes.all.count }}</span></small>
+                            {% endif %}
+                        </button>
+                    </form>
+                    <form method="POST" action="{% url 'comment-dislike' object.pk comment.pk %}" class="mb-0">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button class="border-0 bg-white" type="submit">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <div class="text-danger">
+                                {% if comment.dislikes.all.count == 0 %}
+                                    <small><span>0</span></small>
+                                {% else %}
+                                    <small><span>-{{ comment.dislikes.all.count }}</span></small>
+                                {% endif %}
+                            </div>
+                        </button>
+                    </form>
+                </div>
+
                 <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
                 <a href="#" class="reply" onclick="sub_comment(event)">Ответить</a>
                 {% if user.id == comment.user_id %}
