@@ -8,25 +8,26 @@
   {% block body %}
     <h1>Мои Блоги ({{ request.user.username }}) </h1>
     {% if not object_list %}
-      <b>У вас нет статей</b>
+      <b>У вас нет Блогов</b>
     {% else %}
             <div class="container">
                 <ul>
                     {% for post in object_list %}
                         {% if post.status != "0"  %}
                         <li>
-                            <a href="{% url 'blogpost_detail-private' post.pk %}"> {{ post.name }} </a> ( {{ post.category.name }} )<br/>
-                            <a href="{% url 'blogpost_update' post.pk %}"> Изм. </a>
+                            <a href="{% url 'blogapp:myblog_update' post.pk %}"> {{ post.name }} </a> ( {{ post.category.name }} )<br/>
+                            <a href="{% url 'blogapp:myblog_update' post.pk %}"> Изм. </a>
                             <a href="{% url 'blogapp:myblog_delete' post.pk %}"> Удл. </a><br/>
                             </li>
                         {% endif %}
                     {% endfor %}
-                </ul>
+                </ul><br/>
+    {% endif %}
                 <br/>
                 <a href="{% url 'blogapp:myblog_create' %}"> Cоздать </a><br/>
                 <a href="{% url 'index' %}"> Назад </a>
             </div>
-    {% endif %}
+
 
   {% endblock %}
 {% endblock %}

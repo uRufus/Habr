@@ -1,5 +1,5 @@
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, DeleteView
+from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models import Blogs
@@ -23,12 +23,25 @@ class MyBlogCreate(CreateView):
     success_url = reverse_lazy('blogapp:myblogs')
 
     def form_valid(self, form):
-        form.instance.user_id = 5
+        form.instance.user_id = 6
         return super().form_valid(form)
 
 class MyBlogDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Blogs
     template_name = "blogapp/myblog_delete.html"
+    success_url = reverse_lazy("blogapp:myblogs")
+
+    def test_func(self):
+        blog = self.get_object()
+        if self.request.user.id == blog.user_id:
+            return True
+        return False
+
+
+class MyBlogUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Blogs
+    form_class = MyBlogForm
+    template_name = "blogapp/myblog_update.html"
     success_url = reverse_lazy("blogapp:myblogs")
 
     def test_func(self):

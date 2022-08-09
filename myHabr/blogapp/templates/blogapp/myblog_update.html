@@ -1,5 +1,5 @@
 {% extends 'authapp/base.html' %}
-{% block title %} Статья редактирование - MyHabr {% endblock %}
+{% block title %} Блог редактирование - MyHabr {% endblock %}
 {% block content %}
     <div class="container">
         <h1>Создание статьи</h1>
@@ -7,9 +7,9 @@
             <form method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button class="btn btn-secondary"> СОХРАНИТЬ</button>
+                <button class="btn btn-secondary"> Сохранить</button>
             </form>
         </div>
-        <a href="{% url 'blogpost' %}"> Назад </a>
+        <a href="{% url 'blogapp:myblogs' %}"> Назад </a>
     </div>
 {% endblock %}

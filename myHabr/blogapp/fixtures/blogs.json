@@ -5,16 +5,18 @@
     "fields": {
       "user": 3,
       "category": 1,
-      "name": "Мой первый блог"
+      "name": "Мой первый блог",
+      "status": 1
     }
   },
   {
     "model": "blogapp.Blogs",
-    "pk": 1,
+    "pk": 2,
     "fields": {
       "user": 3,
       "category": 2,
-      "name": "Мой второй блог"
+      "name": "Мой второй блог",
+      "status": 1
     }
   }
 ]
