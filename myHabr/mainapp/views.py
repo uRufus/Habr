@@ -21,8 +21,7 @@ class BlogListView(ListView):
     paginate_by = 2
 
     def get_queryset(self):
-        # return BlogPost.objects.order_by('-create_date').filter(status__in='PUBLISHED')
-        return BlogPost.objects.order_by('-create_date')
+        return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
 
 
 class BlogPostView(ListView):
@@ -54,7 +53,6 @@ class BlogPostDetail(DetailView):
             comment.find_children()
 
         context['comments'] = comments
-        context['post'] = BlogPost.objects.filter(pk=self.object.pk)
         # context['same_category_posts'] = same_category_posts
         return context
 
