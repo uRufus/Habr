@@ -1,21 +1,51 @@
 {% for comm in children %}
     <li class="comment sub_comment">
-    <div class="comment-body" id="{{ comm.id }}">
-        <h3>{{ comm.user.username }}</h3>
-        <div class="meta">время: {{ comm.created_at }}</div>
-        <p>{{ comm.text }}</p>
-        <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
-        <a href="#"  class="reply" onclick="sub_comment(event)">Ответить</a>
-        {% if user.id == comm.user_id %}
-            <a href="#"  class="reply" onclick="edit_comment(event)">Редактировать</a>
-        {% endif %}
-    </div>
-    <ul class="children">
-    {% if comm.has_children %}
+        <div class="comment-body" id="{{ comm.id }}">
+            <h3>{{ comm.user.username }}</h3>
+            <div class="meta">время: {{ comm.created_at }}</div>
+            <p>{{ comm.text }}</p>
 
-        {% include 'comments/subcomment.html' with children=comm.children %}
+            <div class="d-flex flex-row">
+                <form method="POST" action="{% url 'comment-like' object.pk comm.pk %}" class="mb-0">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button class="border-0 bg-white text-dark" type="submit">
+                        {% if comm.post.likes.all.count == 0 %}
+                            <small><span>0</span></small>
+                        {% else %}
+                            <small><span
+                                    class="text-success">+{{ comm.likes.all.count }}</span></small>
+                        {% endif %}
+                    </button>
+                </form>
+                <form method="POST" action="{% url 'comment-dislike' object.pk comm.pk %}" class="mb-0">
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    <button class="border-0 bg-white" type="submit">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <div class="text-danger">
+                            {% if comm.dislikes.all.count == 0 %}
+                                <small><span>0</span></small>
+                            {% else %}
+                                <small><span>-{{ comm.dislikes.all.count }}</span></small>
+                            {% endif %}
+                        </div>
+                    </button>
+                </form>
+            </div>
 
-    {% endif %}
-    </ul>
+            <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
+            <a href="#" class="reply" onclick="sub_comment(event)">Ответить</a>
+            {% if user.id == comm.user_id %}
+                <a href="#" class="reply" onclick="edit_comment(event)">Редактировать</a>
+            {% endif %}
+        </div>
+        <ul class="children">
+            {% if comm.has_children %}
+
+                {% include 'comments/subcomment.html' with children=comm.children %}
+
+            {% endif %}
+        </ul>
     </li>
 {% endfor %}
