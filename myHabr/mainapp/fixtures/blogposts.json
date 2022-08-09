@@ -1,19 +1,22 @@
 [
-  {
-    "model": "mainapp.BlogPost",
+{
+    "model": "mainapp.blogpost",
     "pk": 1,
     "fields": {
-      "title": "Мой первый пост",
-      "author": 3,
-      "blog": 1,
-      "body": "Мой первый пост созданный для теста. В этом посте я пока ничего не придумал",
-      "status": "PUBLISHED",
-      "create_date":"2021-11-25T18:52:21.303Z",
-      "update_date": "2021-11-25T18:52:21.303Z"
+        "title": "Мой первый пост",
+        "author": 3,
+        "blog": 1,
+        "body": "Мой первый пост созданный для теста. В этом посте я пока ничего не придумал",
+        "status": "PUBLISHED",
+        "create_date": "2022-08-09T16:37:42.182Z",
+        "update_date": "2022-08-09T16:37:42.182Z",
+        "likes": [],
+        "dislikes": [],
+        "tags": []
     }
-  },
+},
   {
-    "model": "mainapp.BlogPost",
+    "model": "mainapp.blogpost",
     "pk": 2,
     "fields": {
       "title": "Мой первый пост админа",
@@ -21,8 +24,11 @@
       "blog": 1,
       "body": "Мой первый пост созданный для теста. В этом посте я пока ничего не придумал",
       "status": "PUBLISHED",
-      "create_date":"2021-11-25T18:52:21.303Z",
-      "update_date": "2021-11-25T18:52:21.303Z"
+      "create_date": "2022-08-09T16:37:42.196Z",
+      "update_date": "2022-08-09T16:37:42.196Z",
+      "likes": [],
+      "dislikes": [],
+      "tags": [1, 2]
     }
   }
 ]
