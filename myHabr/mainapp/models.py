@@ -8,6 +8,11 @@ from blogapp.models import Blogs
 
 # Create your models here.
 
+class Tag(models.Model):
+    name = models.CharField(max_length=30, unique=True, blank=False, null=False)
+
+    def __str__(self):
+        return self.name
 
 class BlogPost(models.Model):
     DELETED = "0"
@@ -31,7 +36,7 @@ class BlogPost(models.Model):
                                    verbose_name="Лайк поста")
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='dislikes', blank=True,
                                       verbose_name="Дизлайк поста")
-    tag = models.CharField(max_length=30, verbose_name="тег", blank=True)
+    tags = models.ManyToManyField(Tag, verbose_name="Тэги")
     blog = models.ForeignKey(Blogs, default='', on_delete=models.CASCADE, verbose_name="блог")
     body = models.TextField(verbose_name="текст статьи")
     # blog_id = bigint
