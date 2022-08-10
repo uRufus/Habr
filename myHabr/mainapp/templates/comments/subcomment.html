@@ -1,5 +1,5 @@
 {% for comm in children %}
-    <li class="comment sub_comment">
+    <li class="row comment sub_comment">
         <div class="comment-body" id="{{ comm.id }}">
             <h3>{{ comm.user.username }}</h3>
             <div class="meta">время: {{ comm.created_at }}</div>
@@ -10,10 +10,10 @@
                     <input type="hidden" name="next" value="{{ request.path }}">
                     <button class="border-0 bg-white text-dark" type="submit">
                         {% if comm.post.likes.all.count == 0 %}
-                            <small><span>0</span></small>
+                            <i class="far fa-thumbs-up"><span>0</span></i>
                         {% else %}
-                            <small><span
-                                    class="text-success">+{{ comm.likes.all.count }}</span></small>
+                            <i class="far fa-thumbs-up"><span
+                                class="text-success">+{{ comm.likes.all.count }}</span></i>
                         {% endif %}
                     </button>
                 </form>
@@ -23,19 +23,21 @@
                         <input type="hidden" name="next" value="{{ request.path }}">
                         <div class="text-danger">
                             {% if comm.dislikes.all.count == 0 %}
-                                <small><span>0</span></small>
+                                <i class="far fa-thumbs-down"><span>0</span></i>
                             {% else %}
-                                <small><span>-{{ comm.dislikes.all.count }}</span></small>
+                                <i class="far fa-thumbs-down"><span>-{{ comm.dislikes.all.count }}</span></i>
                             {% endif %}
                         </div>
                     </button>
                 </form>
             </div>
 
-            <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
-            <a href="#" class="reply" onclick="sub_comment(event)">Ответить</a>
-            {% if user.id == comm.user_id %}
-                <a href="#" class="reply" onclick="edit_comment(event)">Редактировать</a>
+            {% if user.is_authenticated %}
+                <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
+                <a href="#" class="reply" onclick="sub_comment(event)">Ответить</a>
+                {% if user.id == comm.user_id %}
+                    <a href="#" class="reply" onclick="edit_comment(event)">Редактировать</a>
+                {% endif %}
             {% endif %}
         </div>
         <ul class="children">
