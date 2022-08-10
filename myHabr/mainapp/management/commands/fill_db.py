@@ -1,7 +1,7 @@
 import json
 from django.core.management.base import BaseCommand
 from authapp.models import MyHabrUser
-from mainapp.models import BlogPost, Comment, CommentsLink
+from mainapp.models import BlogPost, Comment, CommentsLink, Tag
 from blogapp.models import Blogs, BlogCategories
 
 
@@ -48,12 +48,20 @@ class Command(BaseCommand):
             new_blog = Blogs(**bl)
             new_blog.save()
 
+        # Tags
+        tags = load_from_json('mainapp/fixtures/tags.json')
+
+        Tag.objects.all().delete()
+        for tag in tags:
+            Tag.objects.create(pk=tag['pk'], **tag['fields'])
+
         # Blog post
         blogposts = load_from_json('mainapp/fixtures/blogposts.json')
 
         BlogPost.objects.all().delete()
         for blogpost in blogposts:
             bl = blogpost.get('fields')
+            tags =  bl.pop('tags')
             bl['id'] = blogpost.get('pk')
             user = bl.get('author')
             _user = MyHabrUser.objects.get(id=user)
@@ -63,6 +71,8 @@ class Command(BaseCommand):
             bl['blog'] = _category
             new_blogpost = BlogPost(**bl)
             new_blogpost.save()
+            for tag_pk in tags:
+                new_blogpost.tags.add(Tag.objects.get(pk=tag_pk))
 
         # Comments
         comments = load_from_json('mainapp/fixtures/comments.json')
