@@ -82,9 +82,9 @@ class MessageAdmin(admin.ModelAdmin):
         model = Message
 
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "tag", "blog", "status", "create_date", "update_date"]
+    list_display = ["id", "title", "blog", "status", "create_date", "update_date"]
     list_display_links = ["title"]
-    list_filter = ["tag", "blog", "status"]
+    list_filter = ["blog", "status"]
     search_fields = ["title", "tag", "blog", "status"]
 
     class Meta:
