@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from authapp.models import MyHabrUser
 from mainapp.models import BlogPost, Comment, CommentsLink, Tag
 from blogapp.models import Blogs, BlogCategories
+from profiles.models import Profile
 
 
 def load_from_json(file_name):
@@ -21,6 +22,18 @@ class Command(BaseCommand):
             usr['id'] = user.get('pk')
             new_user = MyHabrUser(**usr)
             new_user.save()
+
+        # Profiles
+        profiles = load_from_json('profiles/fixtures/profiles.json')
+
+        Profile.objects.all().delete()
+        for profile in profiles:
+            prf = profile.get('fields')
+            user = prf.get('user_id')
+            _user = MyHabrUser.objects.get(id=user)
+            prf['user_id'] = _user
+            new_profile = Profile(**prf)
+            new_profile.save()
 
         # Blog Categories
         categories = load_from_json('blogapp/fixtures/categories.json')

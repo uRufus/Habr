@@ -1,0 +1,32 @@
+[
+  {
+    "model": "authapp.Profile",
+    "fields": {
+      "user_id": 1,
+      "first_name": "root",
+      "last_name": "admin",
+      "age": 40,
+      "text": "root about me"
+    }
+  },
+  {
+    "model": "authapp.Profile",
+    "fields": {
+      "user_id": 2,
+      "first_name": "moderator",
+      "last_name": "power",
+      "age": 30,
+      "text": "moderator text about me"
+    }
+  },
+  {
+    "model": "authapp.Profile",
+    "fields": {
+      "user_id": 3,
+      "first_name": "Albi",
+      "last_name": "Kohan",
+      "age": 26,
+      "text": "Local data about me"
+    }
+  }
+]
