@@ -6,8 +6,7 @@
             <p>{{ comm.text }}</p>
 
             <div class="d-flex flex-row">
-                <form method="POST" action="{% url 'comment-like' object.pk comm.pk %}" class="mb-0">
-                    {% csrf_token %}
+                <form method="POST" action="{% url 'comment-like' comm.pk %}" class="mb-0">
                     <input type="hidden" name="next" value="{{ request.path }}">
                     <button class="border-0 bg-white text-dark" type="submit">
                         {% if comm.post.likes.all.count == 0 %}
@@ -18,10 +17,9 @@
                         {% endif %}
                     </button>
                 </form>
-                <form method="POST" action="{% url 'comment-dislike' object.pk comm.pk %}" class="mb-0">
+                <form method="POST" action="{% url 'comment-dislike' comm.pk %}" class="mb-0">
                     <input type="hidden" name="next" value="{{ request.path }}">
                     <button class="border-0 bg-white" type="submit">
-                        {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.path }}">
                         <div class="text-danger">
                             {% if comm.dislikes.all.count == 0 %}
