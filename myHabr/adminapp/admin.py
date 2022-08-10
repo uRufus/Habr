@@ -92,11 +92,11 @@ class BlogPostAdmin(admin.ModelAdmin):
 
 
 class BlogsAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "category_id", "user_id"]
+    list_display = ["id", "name", "category", "user"]
     list_display_links = ["name"]
     # list_editable = ["is_active"]
-    list_filter = ["category_id", "user_id"]
-    search_fields = ["category_id", "user_id"]
+    list_filter = ["category", "user"]
+    search_fields = ["category", "user"]
 
     class Meta:
         model = Blogs
