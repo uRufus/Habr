@@ -90,24 +90,27 @@
                 <a class="nav-link active" href="{% url 'profiles:profile' user.id%}">Профиль</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="{% url 'profiles:Profile' user.id %}">Профиль</a>
+                <a class="nav-link active" href="{% url 'profiles:profile' user.id %}">Профиль</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link active" href="{% url 'blogpost' %}">Мои статьи</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="{% url 'blogapp:myblogs' %}">Мои Блоги</a>
+              </li>
                 <li class="nav-item">
                 <a class="nav-link active" href="{% url 'authapp:login' %}">[{{ user.username }}]</a>
               </li>
-                <li class="nav-item">
+              <li class="nav-item">
                 <a class="nav-link active" href="{% url 'authapp:logout' %}">Выйти</a>
               </li>
                 {% else %}
-                <li class="nav-item">
+              <li class="nav-item">
                 <a class="nav-link active" href="{% url 'authapp:login' %}">Войти</a>
               </li>
                 {% endif %}
                 {% if user.is_superuser or user.is_staff %}
-                <li class="nav-item">
+              <li class="nav-item">
                 <a class="nav-link active" href="admin/">Админка</a>
               </li>
                 {% endif %}
