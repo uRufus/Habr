@@ -1,12 +1,13 @@
 import re
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
-from django.views import View
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -30,11 +31,11 @@ class BlogListView(ListView):
 class BlogPostView(ListView):
     model = BlogPost
     template_name = "blogpost.html"
-    ordering = ['-create_date']
+    # ordering = ['-create_date']
 
     def get_queryset(self):
         user = self.request.user
-        return BlogPost.objects.filter(author=user)
+        return BlogPost.objects.filter(author=user).order_by('-create_date')
 
 
 class BlogPostDetail(DetailView):
@@ -171,6 +172,7 @@ class BlogAddDislike(LoginRequiredMixin, View):
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
 
+
 @method_decorator(csrf_exempt, name='post')
 @method_decorator(csrf_exempt, name='dispatch')
 class BlogAddCommentLike(LoginRequiredMixin, View):
@@ -278,6 +280,7 @@ def blog_sub_comment(request):
                                {'children': parent_comment.children,
                                 'user': request.user})
     return JsonResponse({'comment': comment})
+
 
 def blog_comment_edit(request):
     text = request.POST['comment_text']
