@@ -4,6 +4,8 @@ from authapp.models import MyHabrUser
 from mainapp.models import BlogPost, Comment, CommentsLink, Tag
 from blogapp.models import Blogs, BlogCategories
 from profiles.models import Profile
+from adminapp.models import Message
+from django.contrib.auth.models import Group
 
 
 def load_from_json(file_name):
@@ -112,3 +114,28 @@ class Command(BaseCommand):
             com['comment'] = _comment
             new_commentlink = CommentsLink(**com)
             new_commentlink.save()
+
+
+
+        # Groups
+        Group.objects.all().delete()
+        names = ['administrator', 'moderator', 'User']
+        group = dict()
+        for i, name in enumerate(names):
+            group['id'] = i
+            group['name'] = name
+            new_group = Group(**group)
+            new_group.save()
+
+        # Messages
+        messages = load_from_json('adminapp/fixtures/messages.json')
+        Message.objects.all().delete()
+        for message in messages:
+            mess = message.get('fields')
+            mess['id'] = message.get('pk')
+            user = mess['to_user']
+            mess['to_user'] = MyHabrUser.objects.get(id=user)
+            to_group = mess['to_group']
+            mess['to_group'] = Group.objects.get(id=to_group)
+            new_message = Message(**mess)
+            new_message.save()
