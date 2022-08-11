@@ -24,3 +24,5 @@ class Post(models.Model):
 
     class Meta:
         ordering = ["-id", "-timestamp"]
+        verbose_name = "Обучающая статья"
+        verbose_name_plural = 'Обучающие статьи'

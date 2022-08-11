@@ -28,3 +28,5 @@ class Message(models.Model):
 
     class Meta:
         db_table = 'messages'
+        verbose_name = "Сообщение"
+        verbose_name_plural = 'Сообщения'

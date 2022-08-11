@@ -83,6 +83,8 @@ class Comment(models.Model):
 
     class Meta:
         db_table = 'comments'
+        verbose_name = "Комментарий"
+        verbose_name_plural = 'Комментарии'
 
     def find_children(self):
         if not self.has_children:
