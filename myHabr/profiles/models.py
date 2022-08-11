@@ -12,3 +12,4 @@ class Profile(models.Model):
     age = models.PositiveSmallIntegerField(default=18)
     text = models.TextField(null=False, blank=True, default='')
     update_profile = models.BooleanField(default=False, editable=False)
+    image = models.ImageField(upload_to='products_images', blank=True)

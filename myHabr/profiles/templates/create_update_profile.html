@@ -1,6 +1,5 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
-
 {% block title %}
 {% if name %}
 <title>Внесите данные о {{ name }}</title>
@@ -15,9 +14,18 @@
         <div class="col-md-12">
             <div class="text-center">
                 <h1>Информация о профиле</h1>
-                <img src="/static/images/person_1.jpg" alt="Image Placeholder"
+                <img src="http://127.0.0.1:8000/media/{{ profile_form_url }}" alt="Image Placeholder"
                      class="rounded-circle img-thumbnail col-md-4">
                 <br><br>
+                <div class="col-lg-5">
+                    <div class="custom-file">
+                        {{ profile_form.image }}
+                        <label class="custom-file-label" for="{{ profile_form.id_image.label }}">
+                            Выберите изображение
+                        </label>
+                    </div>
+                </div>
+                <br>
                 <h2> {{ profile_form.first_name.value}} {{ profile_form.last_name.value }}</h2>
             </div>
         </div>
