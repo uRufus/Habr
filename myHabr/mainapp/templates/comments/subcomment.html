@@ -1,19 +1,19 @@
 {% for comm in children %}
-    <li class="row comment sub_comment">
+    <li class="row comment sub_comment mt-5 mb-0">
         <div class="comment-body" id="{{ comm.id }}">
             <h3>{{ comm.user.username }}</h3>
             <div class="meta">время: {{ comm.created_at }}</div>
             <p>{{ comm.text }}</p>
 
-            <div class="d-flex flex-row">
+            <div class="d-flex flex-row mb-3">
                 <form method="POST" action="{% url 'comment-like' comm.pk %}" class="mb-0">
                     <input type="hidden" name="next" value="{{ request.path }}">
                     <button class="border-0 bg-white text-dark" type="submit">
                         {% if comm.post.likes.all.count == 0 %}
-                            <i class="far fa-thumbs-up"><span>0</span></i>
+                            <i class="far fa-thumbs-up"><span> 0</span></i>
                         {% else %}
                             <i class="far fa-thumbs-up"><span
-                                class="text-success">+{{ comm.likes.all.count }}</span></i>
+                                class="text-success"> +{{ comm.likes.all.count }}</span></i>
                         {% endif %}
                     </button>
                 </form>
@@ -23,9 +23,9 @@
                         <input type="hidden" name="next" value="{{ request.path }}">
                         <div class="text-danger">
                             {% if comm.dislikes.all.count == 0 %}
-                                <i class="far fa-thumbs-down"><span>0</span></i>
+                                <i class="far fa-thumbs-down"><span> 0</span></i>
                             {% else %}
-                                <i class="far fa-thumbs-down"><span>-{{ comm.dislikes.all.count }}</span></i>
+                                <i class="far fa-thumbs-down"><span> -{{ comm.dislikes.all.count }}</span></i>
                             {% endif %}
                         </div>
                     </button>
