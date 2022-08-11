@@ -72,7 +72,7 @@ def update_profile(request, id):
         profile.save()
 
         # Возвращаемся на страницу пользователя
-        return HttpResponseRedirect(reverse('profiles:', kwargs={'id': id}))
+        return HttpResponseRedirect(reverse('profiles:update', args=[id]))
 
     else:
         # Если имеем Гет запрос загружаем форму

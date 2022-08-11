@@ -35,38 +35,55 @@
 {%  endblock %}
 {% block content %}
     <div class="container">
-        <h1>{{ object.title }} ({{ object.blog}} ({{ object.blog.category }}))</h1>
-        <h2>Автор: {{ object.author }}</h2></br>
-        <hr>
-        </br>
-        {{ object.body }}
-        <hr>
-        </br>
-        {% if related %}
-            <div class="container relared">
-                ЧИТАЙТЕ ПОХОЖЕЕ </br>
-                    {% for obj in related %}
+          <div class="row blog-entries">
+              <div class="col-md-12 col-lg-8 main-content">
+                <h1>{{ object.title }} ({{ object.blog}} ({{ object.blog.category }}))</h1>
+                <h2>Автор: {{ object.author }}</h2></br>
+                <hr>
+                </br>
+                {{ object.body }}
+                <hr>
+                </br>
+                {% if related %}
+                    <div class="container relared">
+                      ЧИТАЙТЕ ПОХОЖЕЕ </br>
+                      {% for obj in related %}
                          <a href="{% url 'blogpost_detail' obj.pk %}">'{{ obj.title }}'</a><<  читать далее </br> {{ obj.create_date }}  </br></br>
-                    {% endfor %}
-            </div>
-        {% endif %}
-        </br>
-        <a href="{% url 'blogpost'  %}"> НАЗАД </a> </br>
-        <hr>
-        </br>
-        <h3 class="mb-5">Комментарии</h3>
-        {% include 'comments/comments.html' %}
+                      {% endfor %}
+                    </div>
+                {% endif %}
+                </br>
+                <a href="{% url 'blogpost'  %}"> НАЗАД </a> </br>
+                <hr>
+                </br>
 
-        <h3 class="mb-1">Оставить комментарий:</h3>
-        <div class="comment-form-wrap pt-5">
-            <form id="comment_form" class="p-5 bg-light">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="comment_text">Ваш комментарий:</label>
-                    <textarea name="comment_text" class="form-control" id="comment_text" rows="4"></textarea>
+
+                <h3 class="mb-5">Комментарии</h3>
+                {% include 'comments/comments.html' %}
+                <h3 class="mb-1">Оставить комментарий:</h3>
+                <div class="comment-form-wrap pt-5">
+                    <form id="comment_form" class="p-5 bg-light">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="comment_text">Ваш комментарий:</label>
+                            <textarea name="comment_text" class="form-control" id="comment_text" rows="4"></textarea>
+                        </div>
+                        <button id="comment_send" type="submit" class="btn btn-primary">Комментировать</button>
+                    </form>
                 </div>
-                <button id="comment_send" type="submit" class="btn btn-primary">Комментировать</button>
-            </form>
+
+            </div>
+
+            <div class="col-md-12 col-lg-4 sidebar">
+                <div class="sidebar-box">
+                    <h3 class="heading">Тэги</h3>
+                    <ul class="tags">
+                        {% for tag in object.tags.all %}
+                            <li><a href="#">{{ tag.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 

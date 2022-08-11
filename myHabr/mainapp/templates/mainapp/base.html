@@ -22,6 +22,8 @@
         <!-- Theme Style -->
         <link rel="stylesheet" href="/static/css/style.css">
     {% endblock %}
+    {% block style %}
+    {% endblock %}
     <!-- Yandex.Metrika counter -->
   <script type="text/javascript" >
      (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -36,6 +38,11 @@
      });
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/89641823" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+                integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+                crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- /Yandex.Metrika counter -->
   <!-- /Yandex.Metrika counter -->
 
 </head>
@@ -68,7 +75,7 @@
         <div class="row pt-5">
           <div class="col-12 text-center">
             <a class="absolute-toggle d-block d-md-none" data-toggle="collapse" href="#navbarMenu" role="button" aria-expanded="false" aria-controls="navbarMenu"><span class="burger-lines"></span></a>
-            <h1 class="site-logo"><a href="">Habr</a></h1>
+            <h1 class="site-logo"><a href="/">Habr</a></h1>
           </div>
         </div>
       </div>
@@ -88,7 +95,7 @@
               </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                <a class="nav-link active" href="{% url 'profiles:profile' user.id%}">Профиль</a>
+                <a class="nav-link active" href="{% url 'profiles:update' user.id%}">Профиль</a>
               </li>
 {#              <li class="nav-item">#}
 {#                <a class="nav-link active" href="{% url 'profiles:Profile' user.id %}">Профиль</a>#}

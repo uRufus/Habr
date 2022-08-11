@@ -1,3 +1,4 @@
+import re
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
@@ -5,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.views import View
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from mainapp.models import BlogPost, Comment
@@ -21,8 +24,7 @@ class BlogListView(ListView):
     paginate_by = 2
 
     def get_queryset(self):
-        # return BlogPost.objects.order_by('-create_date').filter(status__in='PUBLISHED')
-        return BlogPost.objects.order_by('-create_date')
+        return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
 
 
 class BlogPostView(ListView):
@@ -56,6 +58,7 @@ class BlogPostDetail(DetailView):
         context['related'] = context_related
         context['comments'] = comments
         context['post'] = BlogPost.objects.filter(pk=self.object.pk)
+
         return context
 
 
@@ -107,45 +110,6 @@ class BlogPostDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user == post.author:
             return True
         return False
-
-
-def blog_comment(request):
-    text = request.POST['comment_text']
-    blog_id = request.POST['blog_id']
-    user = request.user if request.user.is_authenticated else None
-    comment = Comment.objects.create(user=user, text=text)
-    CommentsLink.objects.create(comment=comment, type='article',
-                                assigned_id=blog_id)
-    comments = Comment.objects \
-        .filter(commentslink__type='article',
-                commentslink__assigned_id=blog_id) \
-        .prefetch_related('user')
-
-    for comment in comments:
-        print(1)
-        comment.find_children()
-    comments = render_to_string('comments/comments.html',
-                                {'comments': comments,
-                                 'user': request.user})
-    return JsonResponse({'comments': comments})
-
-
-def blog_sub_comment(request):
-    text = request.POST['comment_text']
-    comment_id = request.POST['comment_id']
-    user = request.user if request.user.is_authenticated else None
-    comment = Comment.objects.create(user=user, text=text)
-    CommentsLink.objects.create(comment=comment, type='comment',
-                                assigned_id=comment_id)
-
-    parent_comment = Comment.objects.get(id=comment_id)
-    parent_comment.has_children = True
-    parent_comment.save()
-    parent_comment.find_children()
-
-    comment = render_to_string('comments/subcomment.html',
-                               {'children': parent_comment.children})
-    return JsonResponse({'comment': comment})
 
 
 class BlogAddLike(LoginRequiredMixin, View):
@@ -209,7 +173,8 @@ class BlogAddDislike(LoginRequiredMixin, View):
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
 
-
+@method_decorator(csrf_exempt, name='post')
+@method_decorator(csrf_exempt, name='dispatch')
 class BlogAddCommentLike(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         comment = Comment.objects.get(pk=pk)
@@ -237,10 +202,14 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
         if is_like:
             comment.likes.remove(request.user)
 
-        next = request.POST.get('next', '/')
+        next = request.POST.get('next')
+        if next is not None and not re.search(r'blog/\d+$', next):
+            next = request.META.get('HTTP_REFERER')
         return HttpResponseRedirect(next)
 
 
+@method_decorator(csrf_exempt, name='post')
+@method_decorator(csrf_exempt, name='dispatch')
 class BlogAddCommentDislike(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         comment = Comment.objects.get(pk=pk)
@@ -268,9 +237,49 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
         if is_dislike:
             comment.dislikes.remove(request.user)
 
-        next = request.POST.get('next', '/')
+        next = request.POST.get('next')
+        if next is not None and not re.search(r'blog/\d+$', next):
+            next = request.META.get('HTTP_REFERER')
         return HttpResponseRedirect(next)
 
+
+def blog_comment(request):
+    text = request.POST.get('comment_text')
+    blog_id = request.POST['blog_id']
+    user = request.user if request.user.is_authenticated else None
+    comment = Comment.objects.create(user=user, text=text)
+    CommentsLink.objects.create(comment=comment, type='article',
+                                assigned_id=blog_id)
+    comments = Comment.objects \
+        .filter(commentslink__type='article',
+                commentslink__assigned_id=blog_id) \
+        .prefetch_related('user')
+
+    for comment in comments:
+        comment.find_children()
+    comments = render_to_string('comments/comments.html',
+                                {'comments': comments,
+                                 'user': request.user})
+    return JsonResponse({'comments': comments})
+
+
+def blog_sub_comment(request):
+    text = request.POST['comment_text']
+    comment_id = request.POST['comment_id']
+    user = request.user if request.user.is_authenticated else None
+    comment = Comment.objects.create(user=user, text=text)
+    CommentsLink.objects.create(comment=comment, type='comment',
+                                assigned_id=comment_id)
+
+    parent_comment = Comment.objects.get(id=comment_id)
+    parent_comment.has_children = True
+    parent_comment.save()
+    parent_comment.find_children()
+
+    comment = render_to_string('comments/subcomment.html',
+                               {'children': parent_comment.children,
+                                'user': request.user})
+    return JsonResponse({'comment': comment})
 
 def blog_comment_edit(request):
     text = request.POST['comment_text']
