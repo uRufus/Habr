@@ -27,7 +27,7 @@ class BlogPost(models.Model):
         (DELETED, 'статья удалена'),
         (DRAFT, 'черновик'),
         (UNDER_REVIEW, 'статья на проверке'),
-        (PUBLISHED, 'обубликован'),
+        (PUBLISHED, 'опубликован'),
         (BLOCKED, 'статья заблокирована'),
 
     )
