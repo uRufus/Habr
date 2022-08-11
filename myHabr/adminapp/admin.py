@@ -5,8 +5,8 @@ from adminapp.models import Message
 from authapp.models import MyHabrUser
 from blogapp.models import Blogs, BlogCategories
 from faq.models import Post
-from mainapp.models import BlogPost
-
+from mainapp.models import BlogPost, Comment, CommentsLink
+from profiles.models import Profile
 
 
 class PostModelAdmin(admin.ModelAdmin):
@@ -92,11 +92,11 @@ class BlogPostAdmin(admin.ModelAdmin):
 
 
 class BlogsAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "category_id", "user_id"]
+    list_display = ["id", "name", "category", "user"]
     list_display_links = ["name"]
     # list_editable = ["is_active"]
-    list_filter = ["category_id", "user_id"]
-    search_fields = ["category_id", "user_id"]
+    list_filter = ["category", "user"]
+    search_fields = ["category", "user"]
 
     class Meta:
         model = Blogs
@@ -109,9 +109,19 @@ class BlogCategoriesAdmin(admin.ModelAdmin):
     class Meta:
         model = BlogCategories
 
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ["first_name", "last_name", "age", "update_profile", "text"]
+    list_display_links = ["first_name", "last_name"]
+
+    class Meta:
+        model = Profile
+
 admin.site.register(MyHabrUser, MyHabrUserAdmin)
 admin.site.register(Message, MessageAdmin)
 admin.site.register(Blogs, BlogsAdmin)
 admin.site.register(BlogCategories, BlogCategoriesAdmin)
 admin.site.register(Post, PostModelAdmin)
 admin.site.register(BlogPost, BlogPostAdmin)
+admin.site.register(Comment)
+admin.site.register(CommentsLink)
+admin.site.register(Profile, ProfileAdmin)
