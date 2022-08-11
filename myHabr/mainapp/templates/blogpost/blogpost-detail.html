@@ -35,13 +35,21 @@
 {%  endblock %}
 {% block content %}
     <div class="container">
-        <h1>{{ object.title }}</h1>
+        <h1>{{ object.title }} ({{ object.blog}} ({{ object.blog.category }}))</h1>
         <h2>Автор: {{ object.author }}</h2></br>
         <hr>
         </br>
         {{ object.body }}
         <hr>
         </br>
+        {% if related %}
+            <div class="container relared">
+                ЧИТАЙТЕ ПОХОЖЕЕ </br>
+                    {% for obj in related %}
+                         <a href="{% url 'blogpost_detail' obj.pk %}">'{{ obj.title }}'</a><<  читать далее </br> {{ obj.create_date }}  </br></br>
+                    {% endfor %}
+            </div>
+        {% endif %}
         </br>
         <a href="{% url 'blogpost'  %}"> НАЗАД </a> </br>
         <hr>
@@ -82,6 +90,7 @@
             success : function(json) {
                 $('.comment-list').replaceWith(json.comments);
                 $('[name="comment_text"]').val('');
+
             },
             error : function(xhr, errmsg, err) {
                 console.log('error');

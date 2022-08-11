@@ -5,7 +5,6 @@
         <h1>Ваши посты {{ request.user.username }}</h1>
         <ul>
             {% for post in object_list %}
-                {% if post.status != "0"  %}
                 <li>
                     <a href="{% url 'blogpost_detail-private' post.pk %}"> {{ post.title }} </a> - {{ post.author }} ( {{ post.blog.category.name }} )
                     <a href="{% url 'blogpost_update' post.pk %}"> Изм. </a>
@@ -15,7 +14,6 @@
                     Дата создания: {{ post.create_date|date:'Y-m-d H:i' }}<br/>
                     <a href="{% url 'blogpost_detail' post.pk %}"> **Показать публичную страницу статьи**. </a>
                     <br/><br/></li>
-                {% endif %}
             {% endfor %}
         </ul>
         <br/>

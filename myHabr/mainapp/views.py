@@ -32,7 +32,7 @@ class BlogPostView(ListView):
 
     def get_queryset(self):
         user = self.request.user
-        return BlogPost.objects.filter(author=user)
+        return BlogPost.objects.filter(author=user).exclude(status="0")
 
 
 class BlogPostDetail(DetailView):
@@ -42,8 +42,8 @@ class BlogPostDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # same_category_posts = self.model.objects.filter(category_id=self.model.category.id)
+        context_related = BlogPost.objects.filter(blog=self.object.blog, status='3').exclude(pk=self.object.pk)[:3]
+        print(context_related)
 
         comments = Comment.objects \
             .filter(commentslink__type='article',
@@ -53,9 +53,9 @@ class BlogPostDetail(DetailView):
         for comment in comments:
             comment.find_children()
 
+        context['related'] = context_related
         context['comments'] = comments
         context['post'] = BlogPost.objects.filter(pk=self.object.pk)
-        # context['same_category_posts'] = same_category_posts
         return context
 
 
@@ -66,7 +66,7 @@ class BlogPostPrivateDetail(DetailView):
 
 
 def send_under_review(request, pk):
-    """функция для перевода блога статуса блога из 'черновик' в 'статья на проверке' """
+    """функция для перевода статуса блога из 'черновик' в 'статья на проверке' """
     obj = get_object_or_404(BlogPost, pk=pk)
     obj.status = BlogPost.UNDER_REVIEW
     obj.save()
@@ -122,6 +122,7 @@ def blog_comment(request):
         .prefetch_related('user')
 
     for comment in comments:
+        print(1)
         comment.find_children()
     comments = render_to_string('comments/comments.html',
                                 {'comments': comments,
@@ -280,3 +281,6 @@ def blog_comment_edit(request):
     edited_at = comment.updated_at.strftime("%d-%m-%Y, %H:%M:%S")
     return JsonResponse({'new_text': text,
                          'edited_at': edited_at})
+
+def similar_blogposts(request):
+    pass
