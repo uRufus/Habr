@@ -10,7 +10,7 @@
   },
   {
     "model": "blogapp.Blogs",
-    "pk": 1,
+    "pk": 2,
     "fields": {
       "user": 3,
       "category": 2,
