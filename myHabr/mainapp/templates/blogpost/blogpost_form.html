@@ -1,5 +1,12 @@
-{% extends 'authapp/base.html' %}
+{% extends 'mainapp/base.html' %}
 {% block title %} Статья создание - MyHabr {% endblock %}
+{% block style %}
+    <style>
+        select {
+            min-width: 100%;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <div class="container">
         <h1>Создание статьи</h1>

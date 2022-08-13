@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
 
-    {% block title %}
-        <title>{{ title }}</title>
-    {% endblock %}
+
+        <title>{% block title %}{{ title }}{% endblock %}</title>
+
     {% block css %}
          <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300, 400,700" rel="stylesheet">
 
@@ -15,11 +15,14 @@
         <link rel="stylesheet" href="/static/css/owl.carousel.min.css">
 
         <link rel="stylesheet" href="/static/fonts/ionicons/css/ionicons.min.css">
-        <link rel="stylesheet" href="/static/fonts/fontawesome/css/font-awesome.min.css">
+{#        <link rel="stylesheet" href="/static/fonts/fontawesome/css/font-awesome.min.css">#}
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
         <link rel="stylesheet" href="/static/fonts/flaticon/font/flaticon.css">
 
         <!-- Theme Style -->
         <link rel="stylesheet" href="/static/css/style.css">
+    {% endblock %}
+    {% block style %}
     {% endblock %}
     <!-- Yandex.Metrika counter -->
   <script type="text/javascript" >
@@ -35,6 +38,11 @@
      });
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/89641823" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+                integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+                crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- /Yandex.Metrika counter -->
   <!-- /Yandex.Metrika counter -->
 
 </head>
@@ -67,7 +75,7 @@
         <div class="row pt-5">
           <div class="col-12 text-center">
             <a class="absolute-toggle d-block d-md-none" data-toggle="collapse" href="#navbarMenu" role="button" aria-expanded="false" aria-controls="navbarMenu"><span class="burger-lines"></span></a>
-            <h1 class="site-logo"><a href="">Habr</a></h1>
+            <h1 class="site-logo"><a href="/">Habr</a></h1>
           </div>
         </div>
       </div>
@@ -87,13 +95,16 @@
               </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                <a class="nav-link active" href="{% url 'profiles:profile' user.id%}">Профиль</a>
+                <a class="nav-link active" href="{% url 'profiles:update' user.id%}">Профиль</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="{% url 'profiles:profile' user.id %}">Профиль</a>
-              </li>
+{#              <li class="nav-item">#}
+{#                <a class="nav-link active" href="{% url 'profiles:Profile' user.id %}">Профиль</a>#}
+{#              </li>#}
               <li class="nav-item">
                 <a class="nav-link active" href="{% url 'blogpost' %}">Мои статьи</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="{% url 'blogapp:myblogs' %}">Мои Блоги</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link active" href="{% url 'blogapp:myblogs' %}">Мои Блоги</a>
@@ -110,12 +121,12 @@
               </li>
                 {% endif %}
                 {% if user.is_superuser or user.is_staff %}
-              <li class="nav-item">
-                <a class="nav-link active" href="admin/">Админка</a>
+                <li class="nav-item">
+                <a class="nav-link active" href="/admin/">Админка</a>
               </li>
                 {% endif %}
               <li class="nav-item">
-                <a class="nav-link active" href="{% url 'blogpost' %}">FAQ</a>
+                <a class="nav-link active" href="{% url 'faq' %}">FAQ</a>
               </li>
             </ul>
 

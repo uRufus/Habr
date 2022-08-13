@@ -9,6 +9,13 @@ from blogapp.models import Blogs
 # Create your models here.
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=30, unique=True, blank=False, null=False)
+
+    def __str__(self):
+        return self.name
+
+
 class BlogPost(models.Model):
     DELETED = "0"
     DRAFT = '1'
@@ -20,7 +27,7 @@ class BlogPost(models.Model):
         (DELETED, 'статья удалена'),
         (DRAFT, 'черновик'),
         (UNDER_REVIEW, 'статья на проверке'),
-        (PUBLISHED, 'обубликован'),
+        (PUBLISHED, 'опубликован'),
         (BLOCKED, 'статья заблокирована'),
 
     )
@@ -31,9 +38,13 @@ class BlogPost(models.Model):
                                    verbose_name="Лайк поста")
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='dislikes', blank=True,
                                       verbose_name="Дизлайк поста")
-    tag = models.CharField(max_length=30, verbose_name="тег", blank=True)
+    tags = models.ManyToManyField(Tag, blank=True)
+    # поле нужно, чтобы представлять тэги в форме как строку:
+    tag_list = models.CharField(max_length=240, verbose_name="Тэги",
+                                blank=True, null=True)
     blog = models.ForeignKey(Blogs, default='', on_delete=models.CASCADE, verbose_name="блог")
     body = models.TextField(verbose_name="текст статьи")
+    # blog_id = bigint
     status = models.CharField(max_length=1, choices=BLOGPOST_STATUS, default=DRAFT, verbose_name="статус блогпоста")
     create_date = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="дата создания")
     update_date = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="дата обновления")
@@ -68,8 +79,6 @@ class Comment(models.Model):
     has_children = models.BooleanField(blank=True, null=True)
     parent = models.ForeignKey('self', blank=True, null=True,
                                on_delete=models.CASCADE)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор")
-    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, verbose_name="пост")
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_likes', blank=True,
                                    verbose_name="Лайк комментария")
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_dislikes', blank=True,
@@ -77,6 +86,8 @@ class Comment(models.Model):
 
     class Meta:
         db_table = 'comments'
+        verbose_name = "Комментарий"
+        verbose_name_plural = 'Комментарии'
 
     def find_children(self):
         if not self.has_children:

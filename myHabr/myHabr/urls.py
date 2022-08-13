@@ -23,7 +23,6 @@ from mainapp import views as mainapp
 from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike
 
 urlpatterns = [
-    # path('', mainapp.index, name='index'),
     path('admin/', admin.site.urls),
     path('', mainapp.BlogListView.as_view(), name='index'),
     path('faq/', include('faq.urls')),
@@ -38,10 +37,11 @@ urlpatterns = [
     path('blog/<int:pk>/private/', mainapp.BlogPostPrivateDetail.as_view(), name='blogpost_detail-private'),
     path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
     path('blog/sub_comment/', mainapp.blog_sub_comment, name='blog_sub_comment'),
-    path('blog/<int:post_pk>/comment/<int:pk>/like', BlogAddCommentLike.as_view(), name='comment-like'),
-    path('blog/<int:post_pk>/comment/<int:pk>/dislike', BlogAddCommentDislike.as_view(), name='comment-dislike'),
-    path('blog/<int:pk>/like', BlogAddLike.as_view(), name='like'),
-    path('blog/<int:pk>/dislike', BlogAddDislike.as_view(), name='dislike'),
+    path('blog/comment_edit/', mainapp.blog_comment_edit, name='blog_comment_edit'),
+    path('blog/comment/<int:pk>/like/', BlogAddCommentLike.as_view(), name='comment-like'),
+    path('blog/comment/<int:pk>/dislike/', BlogAddCommentDislike.as_view(), name='comment-dislike'),
+    path('blog/<int:pk>/like/', BlogAddLike.as_view(), name='like'),
+    path('blog/<int:pk>/dislike/', BlogAddDislike.as_view(), name='dislike'),
     path('profiles/', include('profiles.urls', namespace='profiles')),
 ]
 

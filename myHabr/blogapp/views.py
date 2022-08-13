@@ -23,7 +23,7 @@ class MyBlogCreate(CreateView):
     success_url = reverse_lazy('blogapp:myblogs')
 
     def form_valid(self, form):
-        form.instance.user_id = 6
+        form.instance.user_id = self.request.user.id
         return super().form_valid(form)
 
 class MyBlogDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

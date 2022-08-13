@@ -1,8 +1,11 @@
 import json
 from django.core.management.base import BaseCommand
 from authapp.models import MyHabrUser
-from mainapp.models import BlogPost, Comment, CommentsLink
+from mainapp.models import BlogPost, Comment, CommentsLink, Tag
 from blogapp.models import Blogs, BlogCategories
+from profiles.models import Profile
+from adminapp.models import Message
+from django.contrib.auth.models import Group
 
 
 def load_from_json(file_name):
@@ -22,6 +25,18 @@ class Command(BaseCommand):
             new_user = MyHabrUser(**usr)
             new_user.save()
 
+        # Profiles
+        profiles = load_from_json('profiles/fixtures/profiles.json')
+
+        Profile.objects.all().delete()
+        for profile in profiles:
+            prf = profile.get('fields')
+            user = prf.get('user_id')
+            _user = MyHabrUser.objects.get(id=user)
+            prf['user_id'] = _user
+            new_profile = Profile(**prf)
+            new_profile.save()
+
         # Blog Categories
         categories = load_from_json('blogapp/fixtures/categories.json')
 
@@ -32,7 +47,7 @@ class Command(BaseCommand):
             new_category = BlogCategories(**cat)
             new_category.save()
 
-        Blogs
+        # Blogs
         blogs = load_from_json('blogapp/fixtures/blogs.json')
 
         Blogs.objects.all().delete()
@@ -48,12 +63,20 @@ class Command(BaseCommand):
             new_blog = Blogs(**bl)
             new_blog.save()
 
+        # Tags
+        tags = load_from_json('mainapp/fixtures/tags.json')
+
+        Tag.objects.all().delete()
+        for tag in tags:
+            Tag.objects.create(pk=tag['pk'], **tag['fields'])
+
         # Blog post
         blogposts = load_from_json('mainapp/fixtures/blogposts.json')
 
         BlogPost.objects.all().delete()
         for blogpost in blogposts:
             bl = blogpost.get('fields')
+            tags =  bl.pop('tags')
             bl['id'] = blogpost.get('pk')
             user = bl.get('author')
             _user = MyHabrUser.objects.get(id=user)
@@ -63,6 +86,8 @@ class Command(BaseCommand):
             bl['blog'] = _category
             new_blogpost = BlogPost(**bl)
             new_blogpost.save()
+            for tag_pk in tags:
+                new_blogpost.tags.add(Tag.objects.get(pk=tag_pk))
 
         # Comments
         comments = load_from_json('mainapp/fixtures/comments.json')
@@ -89,3 +114,28 @@ class Command(BaseCommand):
             com['comment'] = _comment
             new_commentlink = CommentsLink(**com)
             new_commentlink.save()
+
+
+
+        # Groups
+        Group.objects.all().delete()
+        names = ['administrator', 'moderator', 'User']
+        group = dict()
+        for i, name in enumerate(names):
+            group['id'] = i
+            group['name'] = name
+            new_group = Group(**group)
+            new_group.save()
+
+        # Messages
+        messages = load_from_json('adminapp/fixtures/messages.json')
+        Message.objects.all().delete()
+        for message in messages:
+            mess = message.get('fields')
+            mess['id'] = message.get('pk')
+            user = mess['to_user']
+            mess['to_user'] = MyHabrUser.objects.get(id=user)
+            to_group = mess['to_group']
+            mess['to_group'] = Group.objects.get(id=to_group)
+            new_message = Message(**mess)
+            new_message.save()
