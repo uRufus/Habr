@@ -113,6 +113,11 @@ class BlogPostDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 class BlogAddLike(LoginRequiredMixin, View):
+    """
+    [M] Как зарегистрированный пользователь
+    я хочу ставить один лайк или дизлайк к любой статье,
+    чтобы составить свое мнение о статье
+    """
     def post(self, request, pk, *args, **kwargs):
         post = BlogPost.objects.get(pk=pk)
 
@@ -144,6 +149,11 @@ class BlogAddLike(LoginRequiredMixin, View):
 
 
 class BlogAddDislike(LoginRequiredMixin, View):
+    """
+    [M] Как зарегистрированный пользователь
+    я хочу ставить один лайк или дизлайк к любой статье,
+    чтобы составить свое мнение о статье
+    """
     def post(self, request, pk, *args, **kwargs):
         post = BlogPost.objects.get(pk=pk)
 
@@ -176,6 +186,11 @@ class BlogAddDislike(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='post')
 @method_decorator(csrf_exempt, name='dispatch')
 class BlogAddCommentLike(LoginRequiredMixin, View):
+    """
+    [M] Как зарегистрированный пользователь я хочу ставить
+    один лайк или дизлайк к любому зарегистрированному пользователю,
+    чтобы составить свое мнение о том, что написал пользователь
+    """
     def post(self, request, pk, *args, **kwargs):
         comment = Comment.objects.get(pk=pk)
 
@@ -211,6 +226,11 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='post')
 @method_decorator(csrf_exempt, name='dispatch')
 class BlogAddCommentDislike(LoginRequiredMixin, View):
+    """
+    [M] Как зарегистрированный пользователь я хочу ставить
+    один лайк или дизлайк к любому зарегистрированному пользователю,
+    чтобы составить свое мнение о том, что написал пользователь
+    """
     def post(self, request, pk, *args, **kwargs):
         comment = Comment.objects.get(pk=pk)
 
