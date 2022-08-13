@@ -25,4 +25,5 @@ class TestBlogapp(TestCase):
             'name': 'test_blog'
         })
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        res = self.client.post()
+        res = self.client.delete('/myblogs/')
+        self.assertTrue(res)
