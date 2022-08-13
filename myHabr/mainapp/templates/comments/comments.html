@@ -1,6 +1,6 @@
 <ul class="comment-list">
     {% for comment in comments %}
-        <li class="comment">
+        <li class="row comment">
             <div class="comment-body" id="{{ comment.id }}">
                 <h3>{{ comment.user.username }}</h3>
                 <div class="meta">время: {{ comment.created_at }}</div>
