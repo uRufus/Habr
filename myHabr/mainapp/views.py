@@ -1,12 +1,14 @@
 import re
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
-from django.views import View
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
@@ -118,6 +120,7 @@ class BlogAddLike(LoginRequiredMixin, View):
     я хочу ставить один лайк или дизлайк к любой статье,
     чтобы составить свое мнение о статье
     """
+
     def post(self, request, pk, *args, **kwargs):
         post = BlogPost.objects.get(pk=pk)
 
@@ -144,6 +147,12 @@ class BlogAddLike(LoginRequiredMixin, View):
         if is_like:
             post.likes.remove(request.user)
 
+        if request.user.username:
+            send_mail('Прошло уведомление',
+                      'Добрый день!\n\nПрошло уведомление (сообщение) о лайке от пользователя user',
+                      # [request.user.username], [request.user.email], fail_silently=False)
+                      'kovbozh@gmail.com', ['kovbozh@gmail.com'], fail_silently=False)
+
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
 
@@ -154,6 +163,7 @@ class BlogAddDislike(LoginRequiredMixin, View):
     я хочу ставить один лайк или дизлайк к любой статье,
     чтобы составить свое мнение о статье
     """
+
     def post(self, request, pk, *args, **kwargs):
         post = BlogPost.objects.get(pk=pk)
 
@@ -183,6 +193,7 @@ class BlogAddDislike(LoginRequiredMixin, View):
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
 
+
 @method_decorator(csrf_exempt, name='post')
 @method_decorator(csrf_exempt, name='dispatch')
 class BlogAddCommentLike(LoginRequiredMixin, View):
@@ -191,6 +202,7 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
     один лайк или дизлайк к любому зарегистрированному пользователю,
     чтобы составить свое мнение о том, что написал пользователь
     """
+
     def post(self, request, pk, *args, **kwargs):
         comment = Comment.objects.get(pk=pk)
 
@@ -231,6 +243,7 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
     один лайк или дизлайк к любому зарегистрированному пользователю,
     чтобы составить свое мнение о том, что написал пользователь
     """
+
     def post(self, request, pk, *args, **kwargs):
         comment = Comment.objects.get(pk=pk)
 
@@ -301,6 +314,7 @@ def blog_sub_comment(request):
                                 'user': request.user})
     return JsonResponse({'comment': comment})
 
+
 def blog_comment_edit(request):
     text = request.POST['comment_text']
     comment_id = request.POST['comment_id']
@@ -310,6 +324,7 @@ def blog_comment_edit(request):
     edited_at = comment.updated_at.strftime("%d-%m-%Y, %H:%M:%S")
     return JsonResponse({'new_text': text,
                          'edited_at': edited_at})
+
 
 def similar_blogposts(request):
     pass
