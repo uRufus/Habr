@@ -2,13 +2,12 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import *
 from mixer.backend.django import mixer
-from .models import *
+# from .models import *
 from profiles.models import *
 from blogapp.models import *
-form
 
 
-class TestBlogapp(TestCase):
+class TestMainapp(TestCase):
     def setUp(self) -> None:
         self.client = APIClient()
         self.user_name = 'John'
@@ -18,14 +17,16 @@ class TestBlogapp(TestCase):
         self.author = mixer.blend(Profile)
         self.category = BlogCategories.objects.create(name='test_category')
         self.blog = Blogs.objects.create(user=self.user, category=self.category, name='test_blog')
-        self.csrf_token = CsrfViewMiddleware._get_token()
-
 
     def test_create_post(self):
+        self.client.login(username=self.user_name, password=self.user_pswd)
+        self.client.get("/auth/login/")
+        csrf_token = self.client.cookies['csrftoken'].value
         res = self.client.post('/blog/create/new/', data={
-            'csrfmiddlewaretoken': self.csrf_token,
+            'csrfmiddlewaretoken': csrf_token,
             'title': 'test_title',
             'blog': 1,
-            'body': 'test_body'
+            'body': 'test_body',
+            'tag_list': 'tag_test'
             })
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.status_code, status.HTTP_302_FOUND)
