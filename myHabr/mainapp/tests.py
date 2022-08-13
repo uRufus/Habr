@@ -30,3 +30,5 @@ class TestMainapp(TestCase):
             'tag_list': 'tag_test'
             })
         self.assertEqual(res.status_code, status.HTTP_302_FOUND)
+        res = self.client.delete('/blog/')
+        self.assertTrue(res)
