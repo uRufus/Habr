@@ -134,3 +134,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'authapp.MyHabrUser'
 LOGIN_URL = '/auth/login'
 
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'dr0nx@yandex.ru'
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = True
