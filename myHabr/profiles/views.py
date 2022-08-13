@@ -17,6 +17,11 @@ def profile(request, id):
     user = MyHabrUser.objects.get(id=id)
     # Получаем из БД данные профиля
     profile = Profile.objects.get(user_id=user)
+
+    # if not profile.image:
+    #     profile.image = 'default.png'
+    #     profile.save()
+
     # Условие если хоть какие то данные заполнены то мы передаем заполненные данные
     # Если имеется имя или фамилия
     if profile.first_name or profile.last_name:
@@ -74,7 +79,7 @@ def update_profile(request, id):
         profile.save()
 
         # Возвращаемся на страницу пользователя
-        return HttpResponseRedirect(reverse('profiles:update', args=[id]))
+        return HttpResponseRedirect(reverse('profiles:profile', args=[id]))
 
     else:
         # Если имеем Гет запрос загружаем форму

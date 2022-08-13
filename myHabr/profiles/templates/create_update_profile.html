@@ -14,33 +14,41 @@
         <div class="col-md-12">
             <div class="text-center">
                 <h1>Информация о профиле</h1>
-                <img src="http://127.0.0.1:8000/media/{{ profile_form_url }}" alt="Image Placeholder"
-                     class="rounded-circle img-thumbnail col-md-4">
-                <br><br>
-                <div class="col-lg-5">
-                    <div class="custom-file">
-                        {{ profile_form.image }}
-                        <label class="custom-file-label" for="{{ profile_form.id_image.label }}">
-                            Выберите изображение
-                        </label>
-                    </div>
-                </div>
+<!--                <img src="http://127.0.0.1:8000/media/{{ profile_form_url }}" alt="Image Placeholder"-->
+<!--                     class="rounded-circle img-thumbnail col-md-4">-->
+<!--                <br><br>-->
+<!--                <div class="col-lg-5">-->
+<!--                    <div class="custom-file">-->
+<!--                        {{ profile_form.image }}-->
+<!--                        <label class="custom-file-label" for="{{ profile_form.id_image.label }}">-->
+<!--                            Выберите изображение-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                </div>-->
                 <br>
                 <h2> {{ profile_form.first_name.value}} {{ profile_form.last_name.value }}</h2>
             </div>
         </div>
     </div>
     <div class="row blog-entries">
-        <div class="col-md-12 col-lg-12 main-content">
+        <div class="col-md-17 col-lg-17 main-content">
             <form action="{% url 'profiles:update' user.id %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row">
+
+                   <div class="col-lg-5">
+                       <img src="{{ profile_form.image.url }}" alt="Image Placeholder" class="rounded-circle img-thumbnail col-md-4">
+                    <div class="custom-file">
+                        <input type="file" name="image"><label class="custom-file-label">Выберите изображение</label>
+                    </div>
+                </div>
+
                     <div class="col-md-4 form-group">
                         <tr>
                             <th><label for="{{profile_form.id_first_name.label}}">Имя</label></th>
                             <td><input type="text"
                                        class="form-control "
-                                       name="{{profile_form.first_name.name}}"
+                                       name="first_name"
                                        value="{{profile_form.first_name.value}}"
                                        maxlength="50"
                                        id="{{profile_form.id_first_name.label}}"></td>
@@ -51,7 +59,7 @@
                             <th><label for="{{profile_form.last_name.label}}">Фамилия</label></th>
                             <td><input type="text"
                                        class="form-control "
-                                       name="{{profile_form.last_name.name}}"
+                                       name="last_name"
                                        value="{{profile_form.last_name.value}}"
                                        maxlength="50"
                                        id="{{profile_form.last_name.label}}"></td>
@@ -62,7 +70,7 @@
                             <th><label for="{{profile_form.age.label}}">Возраст</label></th>
                             <td><input type="number"
                                        class="form-control "
-                                       name="{{profile_form.age.name}}"
+                                       name="age"
                                        value="{{profile_form.age.value}}"
                                        maxlength="50"
                                        id="{{profile_form.age.label}}"></td>
@@ -73,7 +81,7 @@
                     <div class="col-md-12 form-group">
                         <tr>
                             <th><label for="{{profile_form.id_text.label}}">О себе</label></th>
-                            <td><textarea name="{{profile_form.text.name}}"
+                            <td><textarea name="text"
                                           class="form-control "
                                           cols="40"
                                           rows="10"

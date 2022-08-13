@@ -12,4 +12,7 @@ class Profile(models.Model):
     age = models.PositiveSmallIntegerField(default=18)
     text = models.TextField(null=False, blank=True, default='')
     update_profile = models.BooleanField(default=False, editable=False)
-    image = models.ImageField(upload_to='products_images', blank=True)
+    image = models.ImageField(upload_to='profile_images', blank=True, default='default.png', height_field=100, width_field=100)
+
+    def __str__(self):
+        return self.user_id, self.first_name, self.last_name, self.age, self.text

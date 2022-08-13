@@ -21,18 +21,25 @@
             <form action="#" method="post">
                 {% csrf_token %}
                 <div class="row">
-                    <div class="col-md-4 form-group">
+                    <div class="col-md-3 form-group">
                         <label for="name">Имя</label>
                         <input type="text" id="name" class="form-control " value="{{profile.first_name}}">
                     </div>
-                    <div class="col-md-4 form-group">
+                    <div class="col-md-3 form-group">
                         <label for="phone">Фамилия</label>
                         <input type="text" id="phone" class="form-control " value="{{profile.last_name}}">
                     </div>
-                    <div class="col-md-4 form-group">
+                    <div class="col-md-3 form-group">
                         <label for="email">Возраст</label>
                         <input id="email" class="form-control " value="{{profile.age}}">
                     </div>
+                    {% if profile.image.url %}
+                    <div class="col-md-3 form-group">
+                        <label for="email">Фото</label>
+                        <img src="{{ profile.image.url }}">
+                    </div>
+                    {% endif %}
+
                 </div>
                 <div class="row">
                     <div class="col-md-12 form-group">
