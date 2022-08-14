@@ -2,6 +2,7 @@
 myHabr/run.bat
 /myHabr/mainapp/__pycache__
 /myHabr/myHabr__pycache__
+000*.py
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
