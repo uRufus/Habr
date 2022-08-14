@@ -149,9 +149,10 @@ class BlogAddLike(LoginRequiredMixin, View):
 
         if request.user.username:
             send_mail('Прошло уведомление',
-                      'Добрый день!\n\nПрошло уведомление (сообщение) о лайке от пользователя user',
+                      f'Добрый день!\n\nПришло уведомление (сообщение) о лайке от пользователя '
+                      f'{request.user.username}',
                       # [request.user.username], [request.user.email], fail_silently=False)
-                      'kovbozh@gmail.com', ['kovbozh@gmail.com'], fail_silently=False)
+                      'dr0nx@yandex.ru', [request.user.email], fail_silently=False)
 
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
