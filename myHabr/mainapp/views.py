@@ -1,7 +1,6 @@
 import re
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -146,13 +145,6 @@ class BlogAddLike(LoginRequiredMixin, View):
 
         if is_like:
             post.likes.remove(request.user)
-
-        if request.user.username:
-            send_mail('Прошло уведомление',
-                      f'Добрый день!\n\nПришло уведомление (сообщение) о лайке от пользователя '
-                      f'{request.user.username}',
-                      # [request.user.username], [request.user.email], fail_silently=False)
-                      'dr0nx@yandex.ru', [request.user.email], fail_silently=False)
 
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
