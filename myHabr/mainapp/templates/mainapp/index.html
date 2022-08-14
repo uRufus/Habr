@@ -1,4 +1,5 @@
 {% extends 'mainapp/base.html' %}
+{% load i18n %}
 {% load static %}
 {% block content %}
     <div class="container">
@@ -46,12 +47,18 @@
                                 </form>
 
                             </div>
-                            <button class="btn btn-outline-white mt-3"><a href="{% url 'blogpost_detail' post.pk %}" class="">Читать дальше</a></button>
+                            <button class="btn btn-outline-white mt-3"><a href="{% url 'blogpost_detail' post.pk %}"
+                                                                          class="">Читать дальше</a></button>
                         </div>
                     </div>
                 </div>
             </div>
         {% endfor %}
+        <div class="d-flex justify-content-center mb-5">
+            <a href="/login/vk-oauth2"><img src="/static/images/VK_Compact_Logo.svg.png" width="30" class="avatar-3"
+                                            data-toggle="tooltip"
+                                            title="{% trans 'Вход через VK' %}" alt="Вход через VK"></a>
+        </div>
         {% include 'mainapp/includes/pagination.html' %}
     </div>
 {% endblock %}
