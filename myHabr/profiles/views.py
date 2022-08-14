@@ -69,6 +69,8 @@ def update_profile(request, id):
         profile.last_name = last_name
         profile.age = age
         profile.text = text
+        if request.FILES:
+            profile.image = request.FILES['image']
         profile.save()
 
         # Возвращаемся на страницу пользователя
@@ -82,8 +84,10 @@ def update_profile(request, id):
         profile_form['last_name'].initial = profile.last_name
         profile_form['age'].initial = profile.age
         profile_form['text'].initial = profile.text
-
+        profile_form['image'].initial = profile.image
         context = {
             'profile_form': profile_form,
+            'profile_form_url': profile.image
         }
+        print(profile_form)
         return render(request=request, template_name='create_update_profile.html', context=context)
