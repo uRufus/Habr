@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'blogapp',
     'adminapp',
     'profiles',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'mainapp.context_processors.categories',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -127,15 +130,27 @@ STATICFILES_DIRS = (BASE_DIR / 'static',)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'authapp.MyHabrUser'
 LOGIN_URL = '/auth/login'
+LOGIN_REDIRECT_URL = '/'
 
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'dr0nx@yandex.ru'
+EMAIL_HOST_USER = 'dr0nx@yandex.ru  '
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = True
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.vk.VKOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = '51401064'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = '89SMzLUskdzszIbJFUle'
+SOCIAL_AUTH_VK_OAUTH2_API_VERSION = '5.131'
+SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+
+CSRF_TRUSTED_ORIGINS = ['https://kibarium.ru']
