@@ -89,7 +89,7 @@
                 <a class="nav-link dropdown-toggle" href="blog.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Категории</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown04">
                    {% for BlogCategory in BlogCategories %}
-                        <a class="dropdown-item" href="">{{ BlogCategory.name }}</a>
+                        <a class="dropdown-item" href="{% url 'category' BlogCategory.id %}">{{ BlogCategory.name }}</a>
                     {% endfor %}
                 </div>
               </li>
