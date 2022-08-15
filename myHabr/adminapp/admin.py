@@ -18,12 +18,16 @@ class PostModelAdmin(admin.ModelAdmin):
     class Meta:
         model = Post
 
+class MyHabrUserInline(admin.TabularInline):
+    model = BlogPost
+
 class MyHabrUserAdmin(admin.ModelAdmin):
     list_display = ["id", "username", "first_name", "last_name", "email", "is_active"]
     list_display_links = ["username"]
     list_editable = ["is_active"]
     list_filter = ["is_active"]
     search_fields = ["username", "email", "is_active"]
+    inlines = [MyHabrUserInline]
 
     def get_form(self, request, obj=None, **kwargs):
         # Ограничения для действий в форме
@@ -116,12 +120,19 @@ class ProfileAdmin(admin.ModelAdmin):
     class Meta:
         model = Profile
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ["id", "text", "created_at", "updated_at", "has_children"]
+    list_display_links = ["id", "text"]
+
+    class Meta:
+        model = Comment
+
 admin.site.register(MyHabrUser, MyHabrUserAdmin)
 admin.site.register(Message, MessageAdmin)
 admin.site.register(Blogs, BlogsAdmin)
 admin.site.register(BlogCategories, BlogCategoriesAdmin)
 admin.site.register(Post, PostModelAdmin)
 admin.site.register(BlogPost, BlogPostAdmin)
-admin.site.register(Comment)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(CommentsLink)
 admin.site.register(Profile, ProfileAdmin)
