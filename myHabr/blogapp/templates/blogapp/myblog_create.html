@@ -1,6 +1,8 @@
 {% extends 'authapp/base.html' %}
 {% block title %} Блог создание - MyHabr {% endblock %}
-{% block content %}<br/>
+{% block content %}
+    <div class="container">
+    <br/>
     <div class="container">
         <h1>Создание блога</h1>
         <div class="form-group">
@@ -11,5 +13,6 @@
             </form>
         </div>
                 <a href="{% url 'blogapp:myblogs' %}"> Назад </a>
+    </div>
     </div>
 {% endblock %}
