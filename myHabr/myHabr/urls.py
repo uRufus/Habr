@@ -23,6 +23,7 @@ from mainapp import views as mainapp
 from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike
 
 urlpatterns = [
+    path(r'admin_tools/', include('admin_tools.urls')),
     path('admin/', admin.site.urls),
     path('', mainapp.BlogListView.as_view(), name='index'),
     path('faq/', include('faq.urls')),
