@@ -269,6 +269,17 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
         return HttpResponseRedirect(next)
 
 
+class NotifyListView(ListView):
+    """[M] Как зарегистрированный пользователь
+    я хочу получать уведомления о лайках своей статьи"""
+    model = BlogPost
+    template_name = 'mainapp/notify.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        return BlogPost.objects.filter(author=user).exclude(status='0')
+
+
 def blog_comment(request):
     text = request.POST.get('comment_text')
     blog_id = request.POST['blog_id']
