@@ -1,0 +1,26 @@
+{% extends 'mainapp/base.html' %}
+{% load i18n %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <div class="d-flex justify-content-start">
+            <h3>Список пользователей, кто поставил мне:</h3>
+        </div>
+        {% for post in blogpost_list %}
+            <a href="{% url 'blogpost_detail-private' post.pk %}"> {{ post.author }} </a>
+            <div class="d-flex">
+                <div class="form-floating mr-3">
+                    <textarea class="form-control" placeholder="" id="floatingTextarea2"
+                              style="height: 100px;width: 300px" disabled></textarea>
+                    <label for="floatingTextarea2">Лайк</label>
+                </div>
+                <div class="form-floating">
+                    <textarea class="form-control" placeholder="" id="floatingTextarea2"
+                              style="height: 100px;width: 300px" disabled></textarea>
+                    <label for="floatingTextarea2">Дизлайк</label>
+                </div>
+            </div>
+        {% endfor %}
+        {% include 'mainapp/includes/pagination.html' %}
+    </div>
+{% endblock %}
