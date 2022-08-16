@@ -163,3 +163,6 @@ SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
 CSRF_TRUSTED_ORIGINS = ['https://kibarium.ru']
+
+ADMIN_TOOLS_INDEX_DASHBOARD = 'adminapp.dashboard.CustomIndexDashboard'
+ADMIN_TOOLS_APP_INDEX_DASHBOARD= 'adminapp.dashboard.CustomAppIndexDashboard'
