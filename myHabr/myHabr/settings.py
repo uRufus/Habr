@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'adminapp',
     'profiles',
     'social_django',
+    "ckeditor",
+    "ckeditor_uploader",
 ]
 
 MIDDLEWARE = [
@@ -129,18 +131,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (BASE_DIR / 'static',)
-
-# STATIC_ROOT = BASE_DIR / 'static'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'authapp.MyHabrUser'
 LOGIN_URL = '/auth/login'
 LOGIN_REDIRECT_URL = '/'
@@ -163,3 +165,66 @@ SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
 CSRF_TRUSTED_ORIGINS = ['https://kibarium.ru']
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': [
+            {'name': 'clipboard', 'items': ['Undo', 'Redo']},
+            {'name': 'styles', 'items': ['Format', 'Font', 'FontSize']},
+            {'name': 'basicstyles',
+             'items': ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat', 'CopyFormatting']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'align', 'items': ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+            {'name': 'paragraph',
+             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote']},
+            {'name': 'insert', 'items': ['Image', 'Table']},
+            {'name': 'tools', 'items': ['Maximize']},
+            {'name': 'editing', 'items': ['Scayt']}
+        ],
+        'customConfig': '',
+        'disallowedContent': 'img{width,height,float}',
+        'extraAllowedContent': 'img[width,height,align]',
+        'extraPlugins': ','.join([
+            'tableresize',
+            'uploadimage',
+            # 'easyimage',
+            # 'uploadfile'
+        ]),
+        'height': 800,
+        'bodyClass': 'document-editor',
+        'format_tags': 'p;h1;h2;h3;pre',
+        'removeDialogTabs': 'image:advanced;link:advanced',
+        'stylesSet': [
+            {'name': 'Marker', 'element': 'span', 'attributes': {'class': 'marker'}},
+            {'name': 'Cited Work', 'element': 'cite'},
+            {'name': 'Inline Quotation', 'element': 'q'},
+            {
+                'name': 'Special Container',
+                'element': 'div',
+                'styles': {
+                    'padding': '5px 10px',
+                    'background': '#eee',
+                    'border': '1px solid #ccc'
+                }
+            },
+            {
+                'name': 'Compact table',
+                'element': 'table',
+                'attributes': {
+                    'cellpadding': '5',
+                    'cellspacing': '0',
+                    'border': '1',
+                    'bordercolor': '#ccc'
+                },
+                'styles': {
+                    'border-collapse': 'collapse'
+                }
+            },
+            {'name': 'Borderless Table', 'element': 'table',
+             'styles': {'border-style': 'hidden', 'background-color': '#E6E6FA'}},
+            {'name': 'Square Bulleted List', 'element': 'ul', 'styles': {'list-style-type': 'square'}}
+        ],
+    },
+}

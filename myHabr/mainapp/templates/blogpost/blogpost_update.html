@@ -6,10 +6,11 @@
         <div class="form-group">
             <form method="POST">
                 {% csrf_token %}
+                {{ form.media }}
                 {{ form.as_p }}
                 <button class="btn btn-secondary"> СОХРАНИТЬ</button>
             </form>
         </div>
-        <a href="{% url 'blogpost' %}"> Назад </a>
+        <a href="#" type="button" onclick="history.back();"> НАЗАД </a>
     </div>
 {% endblock %}
