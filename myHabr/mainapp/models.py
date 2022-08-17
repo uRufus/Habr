@@ -2,10 +2,10 @@ from django.db import models
 from django.conf import settings
 from ckeditor_uploader.fields import RichTextUploadingField
 
-
 from authapp.models import MyHabrUser
 from blogapp.models import BlogCategories
 from blogapp.models import Blogs
+
 
 # Create your models here.
 
@@ -50,6 +50,7 @@ class BlogPost(models.Model):
     status = models.CharField(max_length=1, choices=BLOGPOST_STATUS, default=DRAFT, verbose_name="статус блогпоста")
     create_date = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="дата создания")
     update_date = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="дата обновления")
+    image = models.ImageField(upload_to='blogpost_images', default='dafault_image_blogpost.png')
 
     def __str__(self):
         return f'{self.title}  |  {self.author}'
@@ -97,8 +98,8 @@ class Comment(models.Model):
         else:
             self.children = (
                 Comment.objects
-                .filter(commentslink__type='comment',
-                        commentslink__assigned_id=self.id)
+                    .filter(commentslink__type='comment',
+                            commentslink__assigned_id=self.id)
             )
             if self.children:
                 for child in self.children:

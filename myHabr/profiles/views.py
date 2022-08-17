@@ -89,5 +89,4 @@ def update_profile(request, id):
             'profile_form': profile_form,
             'profile_form_url': profile.image
         }
-        print(profile_form)
         return render(request=request, template_name='create_update_profile.html', context=context)

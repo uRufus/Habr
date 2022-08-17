@@ -43,6 +43,13 @@
                 <h2>Автор: {{ object.author }}</h2></br>
                 <img src="{{ object.image_header.url }}">
                 <hr>
+                    <div class="col-md-12 mb-4 element-animate fadeInUp element-animated">
+	                    <img src="{{ object.image.url }}"
+		                     alt="Image placeholder"
+                             class="img-fluid"
+                             width="820">
+                    </div>
+                <hr>
                 </br>
                 {{ object.body|safe }}
                 <hr>

@@ -20,7 +20,6 @@ class BlogPostForm(forms.ModelForm):
             instance.save()
         return instance
 
-
     class Meta:
         model = BlogPost
 
