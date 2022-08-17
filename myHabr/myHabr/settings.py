@@ -166,8 +166,10 @@ SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
 CSRF_TRUSTED_ORIGINS = ['https://kibarium.ru']
 
-CKEDITOR_UPLOAD_PATH = "uploads/"
+ADMIN_TOOLS_INDEX_DASHBOARD = 'adminapp.dashboard.CustomIndexDashboard'
+ADMIN_TOOLS_APP_INDEX_DASHBOARD= 'adminapp.dashboard.CustomAppIndexDashboard'
 
+CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': [
@@ -228,3 +230,6 @@ CKEDITOR_CONFIGS = {
         ],
     },
 }
+
+
+

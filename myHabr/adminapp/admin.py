@@ -18,12 +18,29 @@ class PostModelAdmin(admin.ModelAdmin):
     class Meta:
         model = Post
 
+class BlogPostInlineAdmin(admin.TabularInline):
+    model = BlogPost
+
+    fields = ['title', 'tag_list', 'status', 'blog', 'update_date']
+    readonly_fields = ['update_date', 'tag_list']
+    # list_filter = ["blog", "status"]
+    # extra = 0
+
+class CommentInlineAdmin(admin.TabularInline):
+    model = Comment
+
+
 class MyHabrUserAdmin(admin.ModelAdmin):
+    fields = (("username", "first_name", "last_name"), "email", ("last_login", "date_joined", "is_active"),
+              ('is_superuser', 'is_staff'))
     list_display = ["id", "username", "first_name", "last_name", "email", "is_active"]
     list_display_links = ["username"]
+    readonly_fields = ["username", "first_name", "last_name", "email", "last_login", "date_joined"]
+    exclude = ['password']
     list_editable = ["is_active"]
     list_filter = ["is_active"]
     search_fields = ["username", "email", "is_active"]
+    inlines = [BlogPostInlineAdmin, CommentInlineAdmin]
 
     def get_form(self, request, obj=None, **kwargs):
         # Ограничения для действий в форме
@@ -46,9 +63,9 @@ class MyHabrUserAdmin(admin.ModelAdmin):
             # Запретить пользователям, не являющимся суперпользователями,
             # редактировать свои собственные разрешения
         if (
-                not is_superuser
-                and obj is not None
-                and obj == request.user
+            not is_superuser
+            and obj is not None
+            and obj == request.user
         ):
             disabled_fields |= {
                 'is_staff',
@@ -82,10 +99,13 @@ class MessageAdmin(admin.ModelAdmin):
         model = Message
 
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "blog", "status", "create_date", "update_date"]
+    list_display = ["id", "title", "blog", "status", "tag_list", "create_date", "update_date"]
     list_display_links = ["title"]
-    list_filter = ["blog", "status"]
-    search_fields = ["title", "tag", "blog", "status"]
+    list_editable = ["status"]
+    list_filter = ["blog", "status", "tag_list"]
+    search_fields = ["title", "tag_list", "blog", "status"]
+    readonly_fields = ["tag_list", "create_date", "update_date"]
+
 
     class Meta:
         model = BlogPost
