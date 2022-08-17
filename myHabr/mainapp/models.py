@@ -50,7 +50,6 @@ class BlogPost(models.Model):
     status = models.CharField(max_length=1, choices=BLOGPOST_STATUS, default=DRAFT, verbose_name="статус блогпоста")
     create_date = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="дата создания")
     update_date = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="дата обновления")
-    image = models.ImageField(upload_to='blogpost_images', default='dafault_image_blogpost.png')
 
     def __str__(self):
         return f'{self.title}  |  {self.author}'
