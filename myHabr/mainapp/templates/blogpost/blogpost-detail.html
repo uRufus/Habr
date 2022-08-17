@@ -41,6 +41,7 @@
             <div class="col-md-12 col-lg-8 main-content">
                 <h1>{{ object.title }} ({{ object.blog }} ({{ object.blog.category }}))</h1>
                 <h2>Автор: {{ object.author }}</h2></br>
+                <img src="{{ object.image_header.url }}">
                 <hr>
                     <div class="col-md-12 mb-4 element-animate fadeInUp element-animated">
 	                    <img src="{{ object.image.url }}"
@@ -50,7 +51,7 @@
                     </div>
                 <hr>
                 </br>
-                {{ object.body }}
+                {{ object.body|safe }}
                 <hr>
                 </br>
                 {% if related %}
