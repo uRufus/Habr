@@ -24,11 +24,12 @@ class BlogPostForm(forms.ModelForm):
     class Meta:
         model = BlogPost
 
-        fields = ('title', 'blog', 'body', 'tag_list')
+        fields = ('title', 'blog', 'image_header', 'body', 'tag_list')
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'blog': forms.Select(attrs={'class': 'form-control'}),
+            'image_header': forms.FileInput(attrs={'class': 'form-control'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
             'tag_list': forms.TextInput(attrs={'class': 'form-control'})
         }
