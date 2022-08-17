@@ -20,15 +20,15 @@ class BlogPostForm(forms.ModelForm):
             instance.save()
         return instance
 
-
     class Meta:
         model = BlogPost
 
-        fields = ('title', 'blog', 'body', 'tag_list')
+        fields = ('title', 'blog', 'body', 'tag_list', 'image')
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'blog': forms.Select(attrs={'class': 'form-control'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
-            'tag_list': forms.TextInput(attrs={'class': 'form-control'})
+            'tag_list': forms.TextInput(attrs={'class': 'form-control'}),
+            'image': forms.FileInput(attrs={'class': 'form-control'})
         }

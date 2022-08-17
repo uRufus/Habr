@@ -47,7 +47,6 @@ class BlogPostDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context_related = BlogPost.objects.filter(blog=self.object.blog, status='3').exclude(pk=self.object.pk)[:3]
-        print(context_related)
 
         comments = Comment.objects \
             .filter(commentslink__type='article',
