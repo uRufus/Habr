@@ -15,11 +15,13 @@
         <div class="col-md-12">
             <div class="text-center">
                 <h1>Информация о профиле</h1>
-                <img src="{{ profile_form_url.url }}"
-                     alt="Image Placeholder"
-                     width="640"
-                     height="480"
-                     class="rounded-circle">
+                <div class="col-md-12 mb-4 element-animate fadeInUp element-animated">
+                    <img src="{{ profile_form_url.url }}"
+                         alt="Image Placeholder"
+                         width="640"
+                         height="480"
+                         class="img-fluid rounded-circle">
+                </div>
                 <br><br>
                 <h2> {{ profile_form.first_name.value}} {{ profile_form.last_name.value }}</h2>
             </div>

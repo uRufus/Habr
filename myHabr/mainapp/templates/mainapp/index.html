@@ -12,6 +12,12 @@
                                 <b>{{ post.author }}</b>
                                 <small>{{ post.create_date }}</small>
                             </div>
+                            <div class="col-md-12 mb-4 element-animate fadeInUp element-animated">
+	                            <img src="{{ post.image.url }}"
+		                            alt="Image placeholder"
+                                    class="img-fluid"
+                                    width="820">
+                            </div>
                             <div class="d-flex mb-3">
                                 {{ post.body|truncatewords:50 }}
                             </div>
