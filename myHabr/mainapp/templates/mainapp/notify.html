@@ -4,23 +4,60 @@
 {% block content %}
     <div class="container">
         <div class="d-flex justify-content-start">
-            <h3>Список пользователей, кто поставил мне:</h3>
+            <div class="mb-4">Уведомления от пользователей, которые поставили мне лайк или дизлайк</div>
         </div>
-        {% for post in blogpost_list %}
-            <a href="{% url 'blogpost_detail-private' post.pk %}"> {{ post.author }} </a>
-            <div class="d-flex">
-                <div class="form-floating mr-3">
-                    <textarea class="form-control" placeholder="" id="floatingTextarea2"
-                              style="height: 100px;width: 300px" disabled></textarea>
-                    <label for="floatingTextarea2">Лайк</label>
-                </div>
-                <div class="form-floating">
-                    <textarea class="form-control" placeholder="" id="floatingTextarea2"
-                              style="height: 100px;width: 300px" disabled></textarea>
-                    <label for="floatingTextarea2">Дизлайк</label>
-                </div>
+        {% for post in object_list %}
+            <div class="p-2 mb-2 bg-light text-dark">
+                Статья: <a href="{% url 'blogpost_detail-private' post.pk %}">{{ post.title }} </a>
+            </div>
+            <div class="row">
+                {% if post.likes.all.count == 0 %}
+                    <div class="col text mb-3">
+                        Пока нет лайков
+                    </div>
+                {% else %}
+                    <div class="col">
+                        <div class="text mb-3">Лайк поста
+                            <div class="mr-3 mb-3">
+                                <select class="form-select" multiple aria-label="multiple select example">
+                                    <ul class="list-group">
+                                        {% for like in post.likes.all %}
+                                            <option>
+                                                <li class="list-unstyled">{{ like }}</li>
+                                            </option>
+                                        {% endfor %}
+                                    </ul>
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if post.dislikes.all.count == 0 %}
+                    <div class="col text mb-3">
+                        Пока нет дизлайков
+                    </div>
+                {% else %}
+                    <div class="col">
+                        <div class="text mb-3">Дизайк поста
+                            <div class="mr-3 mb-3">
+                                <select class="form-select" multiple aria-label="multiple select example">
+                                    <ul class="list-group">
+                                        {% for like in post.dislikes.all %}
+                                            <option>
+                                                <li class="list-unstyled">{{ like }}</li>
+                                            </option>
+                                        {% endfor %}
+                                    </ul>
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
+        <div class="mt-5"></div>
         {% include 'mainapp/includes/pagination.html' %}
     </div>
 {% endblock %}
