@@ -32,7 +32,7 @@ class CommentInlineAdmin(admin.TabularInline):
 
 class MyHabrUserAdmin(admin.ModelAdmin):
     fields = (("username", "first_name", "last_name"), "email", ("last_login", "date_joined", "is_active"),
-              ('is_superuser', 'is_staff'))
+              ('is_superuser', 'is_staff'),'custom_group')
     list_display = ["id", "username", "first_name", "last_name", "email", "is_active"]
     list_display_links = ["username"]
     readonly_fields = ["username", "first_name", "last_name", "email", "last_login", "date_joined"]
@@ -41,6 +41,13 @@ class MyHabrUserAdmin(admin.ModelAdmin):
     list_filter = ["is_active"]
     search_fields = ["username", "email", "is_active"]
     inlines = [BlogPostInlineAdmin, CommentInlineAdmin]
+
+    def custom_group(self, obj):
+        # Добавить проверку на суперпользователя
+        """
+        get group, separate by comma, and display empty string if user has no group
+        """
+        return ','.join([g.name for g in obj.groups.all()]) if obj.groups.count() else ''
 
     def get_form(self, request, obj=None, **kwargs):
         # Ограничения для действий в форме
@@ -55,7 +62,6 @@ class MyHabrUserAdmin(admin.ModelAdmin):
         # Запрет изменения полей
         if not is_superuser:
             disabled_fields |= {
-                'username',
                 'is_superuser',
                 'user_permissions',
             }
