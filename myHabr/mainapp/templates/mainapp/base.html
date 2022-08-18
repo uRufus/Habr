@@ -15,8 +15,8 @@
         <link rel="stylesheet" href="/static/css/owl.carousel.min.css">
 
         <link rel="stylesheet" href="/static/fonts/ionicons/css/ionicons.min.css">
-{#        <link rel="stylesheet" href="/static/fonts/fontawesome/css/font-awesome.min.css">#}
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+        <link rel="stylesheet" href="/static/fonts/fontawesome/css/font-awesome.min.css">
+{#        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"> #}
         <link rel="stylesheet" href="/static/fonts/flaticon/font/flaticon.css">
 
         <!-- Theme Style -->
@@ -89,7 +89,7 @@
                 <a class="nav-link dropdown-toggle" href="blog.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Категории</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown04">
                    {% for BlogCategory in BlogCategories %}
-                        <a class="dropdown-item" href="">{{ BlogCategory.name }}</a>
+                        <a class="dropdown-item" href="{% url 'category' BlogCategory.id %}">{{ BlogCategory.name }}</a>
                     {% endfor %}
                 </div>
               </li>

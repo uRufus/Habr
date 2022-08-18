@@ -18,11 +18,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from blogapp.views import category
 from mainapp import views as mainapp
 
 from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike
 
 urlpatterns = [
+    path(r'admin_tools/', include('admin_tools.urls')),
     path('admin/', admin.site.urls),
     path('', mainapp.BlogListView.as_view(), name='index'),
     path('faq/', include('faq.urls')),
@@ -45,6 +47,9 @@ urlpatterns = [
     path('profiles/', include('profiles.urls', namespace='profiles')),
     path('notify/', mainapp.NotifyListView.as_view(), name='notify'),
     path('', include('social_django.urls')),
+    path('category/<int:pk>/', category, name='category'),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('call_moderator/', mainapp.call_moderator, name='cal_moderator'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

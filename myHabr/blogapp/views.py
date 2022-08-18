@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -49,3 +50,11 @@ class MyBlogUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user.id == blog.user_id:
             return True
         return False
+
+
+def category(request, pk):
+    blogs = BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED, blog=pk)
+    context = {
+        'blogs': blogs
+    }
+    return render(request=request, template_name='categories/category.html', context=context)

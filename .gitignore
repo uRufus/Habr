@@ -169,3 +169,4 @@ myHabr/fill.bat
 *.pyc
 myHabr/old_db.sqlite3
 *.pyc
+*/migrations/*

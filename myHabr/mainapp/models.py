@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.db import models
+from ckeditor_uploader.fields import RichTextUploadingField
+
 
 from authapp.models import MyHabrUser
 from blogapp.models import BlogCategories
@@ -42,8 +44,9 @@ class BlogPost(models.Model):
     # поле нужно, чтобы представлять тэги в форме как строку:
     tag_list = models.CharField(max_length=240, verbose_name="Тэги",
                                 blank=True, null=True)
+    image_header = models.ImageField(upload_to='blogposts/', default='default_blogpost.png')
     blog = models.ForeignKey(Blogs, default='', on_delete=models.CASCADE, verbose_name="блог")
-    body = models.TextField(verbose_name="текст статьи")
+    body = RichTextUploadingField(verbose_name="текст статьи")
     status = models.CharField(max_length=1, choices=BLOGPOST_STATUS, default=DRAFT, verbose_name="статус блогпоста")
     create_date = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="дата создания")
     update_date = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="дата обновления")
@@ -94,8 +97,8 @@ class Comment(models.Model):
         else:
             self.children = (
                 Comment.objects
-                .filter(commentslink__type='comment',
-                        commentslink__assigned_id=self.id)
+                    .filter(commentslink__type='comment',
+                            commentslink__assigned_id=self.id)
             )
             if self.children:
                 for child in self.children:

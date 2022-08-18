@@ -7,14 +7,15 @@
         <h2>Автор: {{ object.author }}</h2></br>
         <hr>
         </br>
-        {{ object.body }}
+        <img src="{{ object.image_header.url }}">
+        {{ object.body|safe }}<br/>
         <hr>
         </br>
-        <button><a href="{% url 'blogpost_update' object.pk %}"> Изм. </a></button></br>
+      <a href="{% url 'blogpost_update' object.pk %}" type="button"> Изм. </a></br>
         {% if object.status == "1" %}
             <button><a href="{% url 'send_under_review' object.pk %}"> Согласовать публикацию </a></button></br>
         {% endif %}
-        <button ><a href="{% url 'blogpost' %}"> Назад </a></button>
+        <a href="#" type="button" onclick="history.back();"> НАЗАД </a>
         </br>
         </br>
 

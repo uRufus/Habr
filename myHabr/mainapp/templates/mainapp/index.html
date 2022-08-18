@@ -1,5 +1,4 @@
 {% extends 'mainapp/base.html' %}
-{% load i18n %}
 {% load static %}
 {% block content %}
     <div class="container">
@@ -11,6 +10,12 @@
                             <div class="my-1">
                                 <b>{{ post.author }}</b>
                                 <small>{{ post.create_date }}</small>
+                            </div>
+                            <div class="col-md-12 mb-4 element-animate fadeInUp element-animated">
+	                            <img src="{{ post.image_header.url }}"
+		                            alt="Image placeholder"
+                                    class="img-fluid"
+                                    width="820">
                             </div>
                             <div class="d-flex mb-3">
                                 {{ post.body|truncatewords:50 }}
@@ -54,11 +59,6 @@
                 </div>
             </div>
         {% endfor %}
-        <div class="d-flex justify-content-center mb-5">
-            <a href="/login/vk-oauth2"><img src="/static/images/VK_Compact_Logo.svg.png" width="30" class="avatar-3"
-                                            data-toggle="tooltip"
-                                            title="{% trans 'Вход через VK' %}" alt="Вход через VK"></a>
-        </div>
         {% include 'mainapp/includes/pagination.html' %}
     </div>
 {% endblock %}

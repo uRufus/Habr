@@ -15,8 +15,13 @@
         <div class="col-md-12">
             <div class="text-center">
                 <h1>Информация о профиле</h1>
-                <img src="/static/images/person_1.jpg" alt="Image Placeholder"
-                     class="rounded-circle img-thumbnail col-md-4">
+                <div class="col-md-12 mb-4 element-animate fadeInUp element-animated">
+                    <img src="{{ profile_form_url.url }}"
+                         alt="Image Placeholder"
+                         width="640"
+                         height="480"
+                         class="img-fluid rounded-circle">
+                </div>
                 <br><br>
                 <h2> {{ profile_form.first_name.value}} {{ profile_form.last_name.value }}</h2>
             </div>
@@ -26,6 +31,23 @@
         <div class="col-md-12 col-lg-12 main-content">
             <form action="{% url 'profiles:update' user.id %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
+                <div class="col-md-7 mx-auto">
+                    <tr>
+                        <div class="text-center">
+                            <th>
+                                <label>Загрузить новое фото (4:3)</label>
+                            </th>
+                        </div>
+                        <td>
+                            <input type="file"
+                                   class="form-control"
+                                   name="{{profile_form.image.name}}"
+                                   accept="image/*"
+                                   id="{{profile_form.id_image.label}}">
+                        </td>
+                    </tr>
+                </div>
+                <br>
                 <div class="row">
                     <div class="col-md-4 form-group">
                         <tr>
@@ -69,7 +91,7 @@
                                           class="form-control "
                                           cols="40"
                                           rows="10"
-                                          id="{{profile_form.id_text.label}}}}">{{profile_form.text.value}}</textarea>
+                                          id="{{profile_form.id_text.label}}">{{profile_form.text.value}}</textarea>
                             </td>
                         </tr>
                         <br>
