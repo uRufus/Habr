@@ -22,7 +22,7 @@ class BlogListView(ListView):
     (сначала самые свежие)"""
     model = BlogPost
     template_name = 'mainapp/index.html'
-    paginate_by = 2
+    paginate_by = 3
 
     def get_queryset(self):
         return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
@@ -274,10 +274,10 @@ class NotifyListView(ListView):
     я хочу получать уведомления о лайках своей статьи"""
     model = BlogPost
     template_name = 'mainapp/notify.html'
+    paginate_by = 3
 
     def get_queryset(self):
-        user = self.request.user
-        return BlogPost.objects.filter(author=user).exclude(status='0')
+        return BlogPost.objects.filter(author=self.request.user).exclude(status='0')
 
 
 def blog_comment(request):
