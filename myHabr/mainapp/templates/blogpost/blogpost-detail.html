@@ -1,9 +1,7 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
 {% block title %}
-    <title>
         {{ object.title }} - MyHabr
-    </title>
 {% endblock %}
 {% block css %}
     {{ block.super }}
@@ -33,10 +31,67 @@
             margin-bottom: 1em;
         }
 
+        .call_button {
+            border: none;
+            background-color: white;
+            transition: transform .25s;
+            display: inline-block;
+        }
+
+        .call_button:hover {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .call_button:focus {
+            outline: none;
+        }
+
+        .call_button .tooltiptext {
+            visibility: hidden;
+            width: 80px;
+            background-color: grey;
+            opacity: 0.5;
+            text-align: center;
+            padding: 1px 0;
+            border-radius: 3px;
+            position: absolute;
+            z-index: 1;
+            margin-left: 20px;
+        }
+
+        .call_button:hover .tooltiptext {
+            visibility: visible;
+        }
+
+        #message {
+            background-color: lightgreen;
+            padding: 1em;
+            position:fixed;
+            opacity: 0.8;
+            top:0;
+            max-width:100%;
+            z-index:100;
+            display: none;
+        }
+        #message_button {
+            display: inline-block;
+            transition: transform .25s;
+        }
+
+        #message_button:hover {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        #message_button:focus {
+            outline: none;
+        }
+
     </style>
 {% endblock %}
 {% block content %}
     <div class="container">
+        <div id="message">Сообщение модератору отправлено <span id="message_button" style="color: red" onclick="hide_message(event)">X</span></div>
         <div class="row blog-entries">
             <div class="col-md-12 col-lg-8 main-content">
                 <h1>{{ object.title }} ({{ object.blog }} ({{ object.blog.category }}))</h1>
@@ -198,5 +253,30 @@
             }
         }
 
+        function call_moderator(comment_id) {
+            $('#message').show()
+                $.ajax({
+                        url: "/call_moderator/",
+                        type: "POST",
+                        data: {
+                            comment_id: comment_id,
+                            url: window.location.toString(),
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                        },
+                        success: function (json) {
+                            console.log(json.success)
+                            $('#message').show()
+                        },
+                        error: function (xhr, errmsg, err) {
+                            console.log('error');
+                        }
+                    }
+                )
+            }
+
+
+        function hide_message(event) {
+            $('#message').hide()
+        }
     </script>
 {% endblock %}
