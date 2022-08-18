@@ -147,10 +147,10 @@ AUTH_USER_MODEL = 'authapp.MyHabrUser'
 LOGIN_URL = '/auth/login'
 LOGIN_REDIRECT_URL = '/'
 
-EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'dr0nx@yandex.ru  '
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 EMAIL_USE_TLS = True
 
 AUTHENTICATION_BACKENDS = (
@@ -230,6 +230,4 @@ CKEDITOR_CONFIGS = {
         ],
     },
 }
-
-
 

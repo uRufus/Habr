@@ -1,6 +1,7 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
+
 
 from authapp.models import MyHabrUser
 from blogapp.models import BlogCategories
@@ -46,7 +47,6 @@ class BlogPost(models.Model):
     image_header = models.ImageField(upload_to='blogposts/', default='default_blogpost.png')
     blog = models.ForeignKey(Blogs, default='', on_delete=models.CASCADE, verbose_name="блог")
     body = RichTextUploadingField(verbose_name="текст статьи")
-    # blog_id = bigint
     status = models.CharField(max_length=1, choices=BLOGPOST_STATUS, default=DRAFT, verbose_name="статус блогпоста")
     create_date = models.DateTimeField(null=False, blank=False, auto_now_add=True, verbose_name="дата создания")
     update_date = models.DateTimeField(null=False, blank=False, auto_now=True, verbose_name="дата обновления")

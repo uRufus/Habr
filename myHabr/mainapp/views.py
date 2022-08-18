@@ -1,7 +1,6 @@
 import re
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -25,7 +24,7 @@ class BlogListView(ListView):
     (сначала самые свежие)"""
     model = BlogPost
     template_name = 'mainapp/index.html'
-    paginate_by = 2
+    paginate_by = 3
 
     def get_queryset(self):
         return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
@@ -148,13 +147,6 @@ class BlogAddLike(LoginRequiredMixin, View):
         if is_like:
             post.likes.remove(request.user)
 
-        if request.user.username:
-            send_mail('Прошло уведомление',
-                      f'Добрый день!\n\nПришло уведомление (сообщение) о лайке от пользователя '
-                      f'{request.user.username}',
-                      # [request.user.username], [request.user.email], fail_silently=False)
-                      'dr0nx@yandex.ru', [request.user.email], fail_silently=False)
-
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
 
@@ -276,6 +268,17 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
         if next is not None and not re.search(r'blog/\d+$', next):
             next = request.META.get('HTTP_REFERER')
         return HttpResponseRedirect(next)
+
+
+class NotifyListView(ListView):
+    """[M] Как зарегистрированный пользователь
+    я хочу получать уведомления о лайках своей статьи"""
+    model = BlogPost
+    template_name = 'mainapp/notify.html'
+    paginate_by = 3
+
+    def get_queryset(self):
+        return BlogPost.objects.filter(author=self.request.user).exclude(status='0')
 
 
 def blog_comment(request):

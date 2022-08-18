@@ -6,6 +6,7 @@
   {% endblock %}
 
   {% block body %}
+      <div class="container">
     <h1>Мои Блоги ({{ request.user.username }}) </h1>
     {% if not object_list %}
       <b>У вас нет Блогов</b>
@@ -30,4 +31,5 @@
 
 
   {% endblock %}
+    </div>
 {% endblock %}

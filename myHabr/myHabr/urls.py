@@ -45,6 +45,7 @@ urlpatterns = [
     path('blog/<int:pk>/like/', BlogAddLike.as_view(), name='like'),
     path('blog/<int:pk>/dislike/', BlogAddDislike.as_view(), name='dislike'),
     path('profiles/', include('profiles.urls', namespace='profiles')),
+    path('notify/', mainapp.NotifyListView.as_view(), name='notify'),
     path('', include('social_django.urls')),
     path('category/<int:pk>/', category, name='category'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
