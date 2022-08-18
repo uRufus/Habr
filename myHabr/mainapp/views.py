@@ -13,6 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from mainapp.models import BlogPost, Comment
+from adminapp.models import Message
+from django.contrib.auth.models import Group
 from .forms import BlogPostForm
 from .models import CommentsLink
 
@@ -324,6 +326,19 @@ def blog_comment_edit(request):
     edited_at = comment.updated_at.strftime("%d-%m-%Y, %H:%M:%S")
     return JsonResponse({'new_text': text,
                          'edited_at': edited_at})
+
+
+def call_moderator(request):
+    comment_id = request.POST['comment_id']
+    url = request.POST['url']
+    message_text = f'Жалоба на комментарий под номером {comment_id}\n{url}'
+    Message.objects.create(
+        from_user=request.user,
+        to_group=Group.objects.get(name='moderator'),
+        text=message_text,
+        type_message='1'
+    )
+    return JsonResponse({"success": True})
 
 
 def similar_blogposts(request):
