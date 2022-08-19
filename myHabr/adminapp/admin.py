@@ -33,6 +33,14 @@ class BlogPostInlineAdmin(admin.TabularInline):
 
 class CommentInlineAdmin(admin.TabularInline):
     model = Comment
+    fields = ['user', 'parent', 'text', 'updated_at', 'like', 'dislike']
+    readonly_fields = ['updated_at', 'like', 'dislike']
+
+    def like(self, obj):
+        return obj.likes.count()
+
+    def dislike(self, obj):
+        return obj.dislikes.count()
 
 
 class MyHabrUserAdmin(admin.ModelAdmin):
