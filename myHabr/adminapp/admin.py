@@ -21,33 +21,34 @@ class PostModelAdmin(admin.ModelAdmin):
 class BlogPostInlineAdmin(admin.TabularInline):
     model = BlogPost
 
-    fields = ['title', 'tag_list', 'status', 'blog', 'update_date']
-    readonly_fields = ['update_date', 'tag_list']
-    # list_filter = ["blog", "status"]
-    # extra = 0
+    fields = ['title', 'tag_list', 'status', 'blog', 'update_date', 'like', 'dislike']
+    readonly_fields = ['update_date', 'tag_list', 'like', 'dislike']
+
+    def like(self, obj):
+        return obj.likes.count()
+
+    def dislike(self, obj):
+        return obj.dislikes.count()
+
 
 class CommentInlineAdmin(admin.TabularInline):
     model = Comment
 
 
 class MyHabrUserAdmin(admin.ModelAdmin):
+
     fields = (("username", "first_name", "last_name"), "email", ("last_login", "date_joined", "is_active"),
-              ('is_superuser', 'is_staff'),'custom_group')
+              ('is_superuser', 'is_staff'), 'groups')
     list_display = ["id", "username", "first_name", "last_name", "email", "is_active"]
     list_display_links = ["username"]
-    readonly_fields = ["username", "first_name", "last_name", "email", "last_login", "date_joined"]
     exclude = ['password']
     list_editable = ["is_active"]
     list_filter = ["is_active"]
     search_fields = ["username", "email", "is_active"]
     inlines = [BlogPostInlineAdmin, CommentInlineAdmin]
 
-    def custom_group(self, obj):
-        # Добавить проверку на суперпользователя
-        """
-        get group, separate by comma, and display empty string if user has no group
-        """
-        return ','.join([g.name for g in obj.groups.all()]) if obj.groups.count() else ''
+    # def admin(self, obj):
+    #     return obj.is_superuser
 
     def get_form(self, request, obj=None, **kwargs):
         # Ограничения для действий в форме
@@ -56,14 +57,15 @@ class MyHabrUserAdmin(admin.ModelAdmin):
         # Переменная для отключаемых полей
         disabled_fields = set()  # type Set[str]
 
-        # if not is_superuser:
-        #     form.base_fields['username'].disabled = True
-
         # Запрет изменения полей
         if not is_superuser:
             disabled_fields |= {
                 'is_superuser',
+                'is_staff',
+                'groups',
                 'user_permissions',
+                "last_login",
+                "date_joined",
             }
 
             # Запретить пользователям, не являющимся суперпользователями,
@@ -71,13 +73,20 @@ class MyHabrUserAdmin(admin.ModelAdmin):
         if (
             not is_superuser
             and obj is not None
-            and obj == request.user
+            and obj != request.user
         ):
             disabled_fields |= {
-                'is_staff',
-                'is_superuser',
-                'groups',
-                'user_permissions',
+                "username",
+                "first_name",
+                "last_name",
+                "email",
+            }
+
+        if (not is_superuser
+            and obj is not None
+            and obj == request.user):
+            disabled_fields |= {
+                "is_active",
             }
 
         for f in disabled_fields:
@@ -120,7 +129,6 @@ class BlogPostAdmin(admin.ModelAdmin):
 class BlogsAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "category", "user"]
     list_display_links = ["name"]
-    # list_editable = ["is_active"]
     list_filter = ["category", "user"]
     search_fields = ["category", "user"]
 
@@ -130,7 +138,6 @@ class BlogsAdmin(admin.ModelAdmin):
 class BlogCategoriesAdmin(admin.ModelAdmin):
     list_display = ["id", "name"]
     list_display_links = ["name"]
-    # list_editable = ["is_active"]
 
     class Meta:
         model = BlogCategories
@@ -142,12 +149,19 @@ class ProfileAdmin(admin.ModelAdmin):
     class Meta:
         model = Profile
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ["user", "parent", "text", "created_at"]
+    list_display_links = ["user", "text"]
+
+    class Meta:
+        model = Comment
+
 admin.site.register(MyHabrUser, MyHabrUserAdmin)
 admin.site.register(Message, MessageAdmin)
 admin.site.register(Blogs, BlogsAdmin)
 admin.site.register(BlogCategories, BlogCategoriesAdmin)
 admin.site.register(Post, PostModelAdmin)
 admin.site.register(BlogPost, BlogPostAdmin)
-admin.site.register(Comment)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(CommentsLink)
 admin.site.register(Profile, ProfileAdmin)
