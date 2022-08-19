@@ -1,3 +1,5 @@
+import re
+
 from django.conf import settings
 from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -6,7 +8,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from authapp.models import MyHabrUser
 from blogapp.models import BlogCategories
 from blogapp.models import Blogs
-
+from adminapp.models import Message
 
 # Create your models here.
 
@@ -90,6 +92,11 @@ class Comment(models.Model):
         db_table = 'comments'
         verbose_name = "Комментарий"
         verbose_name_plural = 'Комментарии'
+
+    def parse_tags(self):
+        if match := re.search(r'(^@\w+\b|\s@\w+\b)', self.text):
+            return [t.strip() for t in match.groups()]
+        return []
 
     def find_children(self):
         if not self.has_children:
