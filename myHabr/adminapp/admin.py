@@ -49,6 +49,7 @@ class MyHabrUserAdmin(admin.ModelAdmin):
         """
         return ','.join([g.name for g in obj.groups.all()]) if obj.groups.count() else ''
 
+
     def get_form(self, request, obj=None, **kwargs):
         # Ограничения для действий в форме
         form = super().get_form(request, obj, **kwargs)
