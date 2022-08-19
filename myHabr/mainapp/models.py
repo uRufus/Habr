@@ -94,7 +94,6 @@ class Comment(models.Model):
         verbose_name_plural = 'Комментарии'
 
     def parse_tags(self):
-        print(self.text)
         if match := re.search(r'(^@\w+\b|\s@\w+\b)', self.text):
             return [t.strip() for t in match.groups()]
         return []
