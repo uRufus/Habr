@@ -87,6 +87,12 @@
             outline: none;
         }
 
+        .ui-autocomplete {
+            background-color: white;
+            border: solid #4ac1f7;
+            max-width: 300px;
+        }
+
     </style>
 {% endblock %}
 {% block content %}
@@ -270,5 +276,17 @@
         function hide_message(event) {
             $('#message').hide()
         }
+
+      $( function() {
+        var availableTags = ["@moderator"];
+        $("#comment_text, [name='subcomment_text']").autocomplete({
+          source: availableTags,
+          position: {
+                       my: "left",
+                       at: "left center"
+                    }
+        });
+      } );
+
     </script>
 {% endblock %}

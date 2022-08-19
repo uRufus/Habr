@@ -1,10 +1,11 @@
+{% load mainapp_filters %}
 <ul class="comment-list">
     {% for comment in comments %}
         <li class="row comment">
             <div class="comment-body" id="{{ comment.id }}">
                 <h3>{{ comment.user.username }}</h3>
                 <div class="meta">время: {{ comment.created_at }} <button class="call_button" onclick="call_moderator({{ comment.id }})"><span class="tooltiptext">сообщить модератору</span>&#128276;</button></div>
-                <p>{{ comment.text }}</p>
+                <p>{{ comment.text|mark_tags }}</p>
 
                 <div class="d-flex flex-row mb-3">
                     <form method="POST" action="{% url 'comment-like' comment.pk %}" class="mb-0">
