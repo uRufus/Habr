@@ -50,6 +50,7 @@ class MyHabrUserAdmin(admin.ModelAdmin):
     # def admin(self, obj):
     #     return obj.is_superuser
 
+
     def get_form(self, request, obj=None, **kwargs):
         # Ограничения для действий в форме
         form = super().get_form(request, obj, **kwargs)
