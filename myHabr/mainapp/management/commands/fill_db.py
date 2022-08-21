@@ -1,6 +1,7 @@
 import json
 from django.core.management.base import BaseCommand
 from authapp.models import MyHabrUser
+from faq.models import Post
 from mainapp.models import BlogPost, Comment, CommentsLink, Tag
 from blogapp.models import Blogs, BlogCategories
 from profiles.models import Profile
@@ -36,6 +37,16 @@ class Command(BaseCommand):
             prf['user_id'] = _user
             new_profile = Profile(**prf)
             new_profile.save()
+
+        # Groups
+        Group.objects.all().delete()
+        names = ['administrator', 'moderator', 'User']
+        group = dict()
+        for i, name in enumerate(names):
+            group['id'] = i
+            group['name'] = name
+            new_group = Group(**group)
+            new_group.save()
 
         # Blog Categories
         categories = load_from_json('blogapp/fixtures/categories.json')
@@ -115,18 +126,6 @@ class Command(BaseCommand):
             new_commentlink = CommentsLink(**com)
             new_commentlink.save()
 
-
-
-        # Groups
-        Group.objects.all().delete()
-        names = ['administrator', 'moderator', 'User']
-        group = dict()
-        for i, name in enumerate(names):
-            group['id'] = i
-            group['name'] = name
-            new_group = Group(**group)
-            new_group.save()
-
         # Messages
         messages = load_from_json('adminapp/fixtures/messages.json')
         Message.objects.all().delete()
@@ -139,3 +138,12 @@ class Command(BaseCommand):
             mess['to_group'] = Group.objects.get(id=to_group)
             new_message = Message(**mess)
             new_message.save()
+
+        # FAQ post
+        faq_posts = load_from_json('faq/fixtures/faq_posts.json')
+        Post.objects.all().delete()
+        for faq_post in faq_posts:
+            fp = faq_post.get('fields')
+            fp['id'] = faq_post.get('pk')
+            new_fp = Post(**fp)
+            new_fp.save()

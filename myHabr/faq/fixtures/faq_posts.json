@@ -1,0 +1,32 @@
+[
+  {
+    "model": "faq.Post",
+    "pk": 1,
+    "fields": {
+      "title": "Первая статья FAQ",
+      "description": "Описание первой статьи",
+      "updated": "2021-11-25T18:52:21.303Z",
+      "timestamp": "2021-11-25T18:52:21.303Z"
+    }
+  },
+  {
+    "model": "faq.Post",
+    "pk": 2,
+    "fields": {
+      "title": "Вторая статья FAQ",
+      "description": "Описание второй статьи",
+      "updated": "2021-11-25T18:52:21.303Z",
+      "timestamp": "2021-11-25T18:52:21.303Z"
+    }
+  },
+  {
+    "model": "faq.Post",
+    "pk": 3,
+    "fields": {
+      "title": "Третья статья FAQ",
+      "description": "Описание третьей статьи",
+      "updated": "2021-11-25T18:52:21.303Z",
+      "timestamp": "2021-11-25T18:52:21.303Z"
+    }
+  }
+]
