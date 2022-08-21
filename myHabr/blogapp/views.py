@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
@@ -7,15 +8,38 @@ from .models import Blogs
 from mainapp.models import BlogPost
 from .forms import MyBlogForm
 
-class Mainmyblogs(ListView):
+logger = logging.getLogger(__name__)
+
+class AllBlogsListView(ListView):
+    """Отображаем список всех блогов для всех пользователей"""
+    model = Blogs
+    template_name = 'allblogs/allblogs.html'
+    paginate_by = 2
+    success_url = reverse_lazy('allblogs:allblogs')
+
+    def get_queryset(self, ):
+        return Blogs.objects.order_by('name').filter(status__in=Blogs.PUBLISHED)
+
+
+class ListHabrOfMyBlog(ListView):
+    """Просмотр статей в моём блоге"""
+    model = BlogPost
+    template_name = 'blogapp/habrinmyblog.html'
+    paginate_by = 2
+
+    def get_queryset(self):
+        return BlogPost.objects.filter(blog=self.kwargs["pk"]).order_by('-create_date')
+
+
+class MainMyBlogs(ListView):
     model = Blogs
     template_name = 'blogapp/index.html'
     # paginate_by = 1
 
     def get_queryset(self):
-        # obj = BlogPost.objects.filter(author=self.request.user).order_by('-create_date')
         obj = Blogs.objects.filter(user=self.request.user).order_by('category')
         return obj
+
 
 class MyBlogCreate(CreateView):
     model = Blogs
@@ -26,6 +50,7 @@ class MyBlogCreate(CreateView):
     def form_valid(self, form):
         form.instance.user_id = self.request.user.id
         return super().form_valid(form)
+
 
 class MyBlogDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Blogs

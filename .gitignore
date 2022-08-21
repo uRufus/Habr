@@ -1,7 +1,7 @@
 /myHabr/db.sqlite3
 myHabr/run.bat
 /myHabr/mainapp/__pycache__
-/myHabr/myHabr__pycache__
+/myHabr/myHabr/__pycache__
 000*.py
 # Byte-compiled / optimized / DLL files
 __pycache__/

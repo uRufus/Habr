@@ -18,10 +18,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from blogapp.views import category
+from blogapp.views import category, AllBlogsListView
 from mainapp import views as mainapp
 
 from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike
+
 
 urlpatterns = [
     path(r'admin_tools/', include('admin_tools.urls')),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('', mainapp.BlogListView.as_view(), name='index'),
     path('faq/', include('faq.urls')),
     path('myblogs/', include('blogapp.urls', namespace='blogapp')),
+    path('allblogs/', AllBlogsListView.as_view(), name='allblogs'),
     path('auth/', include('authapp.urls', namespace='authapp')),
     path('blog/', mainapp.BlogPostView.as_view(), name='blogpost'),
     path('blog/<int:pk>', mainapp.BlogPostDetail.as_view(), name='blogpost_detail'),
