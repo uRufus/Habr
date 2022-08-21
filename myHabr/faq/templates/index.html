@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block list %}
+    <b> Быстрый доступ к статьям<br></b>
     {% for obj in posts %}
 
         <a href="{{ obj.get_absolute_url }}"><b>{{ obj.title }} / </b></a>
@@ -11,25 +12,25 @@
 
 {% block content %}
     <div class="container">
-    {% if not posts %}
-        <b>Статьи не найдены</b>
-    {% else %}
-        {% for obj in posts %}
-            <H1>{{ obj.title }}</H1>
-            <img src="{{ obj.image.url }}" alt="">
-            <p>{{ obj.content|truncatechars:70 }}</p>
-            <span>{{ obj.timestamp }}</span>
-            <br><br><br>
-        {% endfor %}
-    {% endif %}
+        {% if not posts %}
+            <b>Статьи не найдены</b>
+        {% else %}
+            {% for obj in posts %}
+                <H1>{{ obj.title }}</H1>
+                <img src="{{ obj.image.url }}" alt="">
+                <p>{{ obj.content|truncatechars:70 }}</p>
+                <span>{{ obj.timestamp }}</span>
+                <br><br><br>
+            {% endfor %}
+        {% endif %}
 
 
-    {% if posts.has_previous %}
-        <a href="?page={{ posts.previous_page_number }}">Назад</a>
-    {% endif %}
-    <span>{{ posts.number }} / {{ posts.num_pages }}</span>
-    {% if posts.has_next %}
-        <a href="?page={{ posts.next_page_number }}">Вперед</a>
-    {% endif %}
+        {% if posts.has_previous %}
+            <a href="?page={{ posts.previous_page_number }}">Назад</a>
+        {% endif %}
+        <span>{{ posts.number }} / {{ posts.num_pages }}</span>
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}">Вперед</a>
+        {% endif %}
     </div>
 {% endblock %}
