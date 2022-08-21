@@ -21,6 +21,7 @@ class Message(models.Model):
     to_user = models.ForeignKey(MyHabrUser, null=True, blank=True, on_delete=models.CASCADE, verbose_name="адресат")
     to_group = models.ForeignKey(Group, null=True, blank=True, on_delete=models.CASCADE, verbose_name="адресат(группа)")
     text = models.TextField(blank=True, null=True, verbose_name="сообщение")
+    url = models.TextField(blank=True, null=True, verbose_name="Ссылка")
     is_active = models.BooleanField(default=True, verbose_name="Активно")
     type_message = models.CharField(max_length=1, choices=TYPE_MESSAGE, default=USER_TO_USER, verbose_name="Тип сообщения")
     created_at = models.DateField(auto_now_add=True)

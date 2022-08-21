@@ -1,79 +1,146 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
 {% block title %}
-    <title>
-    {{ object.title }} - MyHabr
-    </title>
+        {{ object.title }} - MyHabr
 {% endblock %}
 {% block css %}
-{{ block.super }}
+    {{ block.super }}
     <style>
         a:hover {
-           text-decoration: none;
+            text-decoration: none;
         }
 
         .btn, .form-control {
-          outline: none;
-          -webkit-box-shadow: none !important;
-          box-shadow: none !important;
-          border-radius: 0;
+            outline: none;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+            border-radius: 0;
         }
 
         .comment-body textarea {
             margin-bottom: 1em;
         }
+
         .children {
             padding-top: 1em !important;
             padding-bottom: 0 !important;
             margin-bottom: 1em !important;
         }
+
         .comment-list li {
             margin-bottom: 1em;
         }
 
+        .call_button {
+            border: none;
+            background-color: white;
+            transition: transform .25s;
+            display: inline-block;
+        }
+
+        .call_button:hover {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .call_button:focus {
+            outline: none;
+        }
+
+        .call_button .tooltiptext {
+            visibility: hidden;
+            width: 80px;
+            background-color: grey;
+            opacity: 0.5;
+            text-align: center;
+            padding: 1px 0;
+            border-radius: 3px;
+            position: absolute;
+            z-index: 1;
+            margin-left: 20px;
+        }
+
+        .call_button:hover .tooltiptext {
+            visibility: visible;
+        }
+
+        #message {
+            background-color: lightgreen;
+            padding: 1em;
+            position:fixed;
+            opacity: 0.8;
+            top:0;
+            max-width:100%;
+            z-index:100;
+            display: none;
+        }
+        #message_button {
+            display: inline-block;
+            transition: transform .25s;
+        }
+
+        #message_button:hover {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        #message_button:focus {
+            outline: none;
+        }
+
+        .ui-autocomplete {
+            background-color: white;
+            border: solid #4ac1f7;
+            max-width: 300px;
+        }
+
     </style>
-{%  endblock %}
+{% endblock %}
 {% block content %}
     <div class="container">
-          <div class="row blog-entries">
-              <div class="col-md-12 col-lg-8 main-content">
-                <h1>{{ object.title }} ({{ object.blog}} ({{ object.blog.category }}))</h1>
+        <div id="message">Сообщение модератору отправлено <span id="message_button" style="color: red" onclick="hide_message(event)">X</span></div>
+        <div class="row blog-entries">
+            <div class="col-md-12 col-lg-8 main-content">
+                <h1>{{ object.title }} ({{ object.blog }} ({{ object.blog.category }}))</h1>
                 <h2>Автор: {{ object.author }}</h2></br>
-                <hr>
+                <img src="{{ object.image_header.url }}">
                 </br>
-                {{ object.body }}
+                {{ object.body|safe }}
                 <hr>
                 </br>
                 {% if related %}
                     <div class="container relared">
-                      ЧИТАЙТЕ ПОХОЖЕЕ </br>
-                      {% for obj in related %}
-                         <a href="{% url 'blogpost_detail' obj.pk %}">'{{ obj.title }}'</a><<  читать далее </br> {{ obj.create_date }}  </br></br>
-                      {% endfor %}
+                        ЧИТАЙТЕ ПОХОЖЕЕ </br>
+                        {% for obj in related %}
+                            <a href="{% url 'blogpost_detail' obj.pk %}">'{{ obj.title }}'</a><<  читать далее </br>
+                            {{ obj.create_date }}  </br></br>
+                        {% endfor %}
                     </div>
                 {% endif %}
                 </br>
-                <a href="{% url 'blogpost'  %}"> НАЗАД </a> </br>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'blogpost' %}"> НАЗАД </a><br>
+                {% else %}
+                    <a href="#" type="button" onclick="history.back();"> НАЗАД </a>
+                {% endif %}
                 <hr>
                 </br>
-
-
                 <h3 class="mb-5">Комментарии</h3>
                 {% include 'comments/comments.html' %}
-                <h3 class="mb-1">Оставить комментарий:</h3>
-                <div class="comment-form-wrap pt-5">
-                    <form id="comment_form" class="p-5 bg-light">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="comment_text">Ваш комментарий:</label>
-                            <textarea name="comment_text" class="form-control" id="comment_text" rows="4"></textarea>
-                        </div>
-                        <button id="comment_send" type="submit" class="btn btn-primary">Комментировать</button>
-                    </form>
-                </div>
-
+                {% if user.is_authenticated %}
+                    <h3 class="mb-1">Оставить комментарий:</h3>
+                    <div class="comment-form-wrap pt-5">
+                        <form id="comment_form" class="p-5 bg-light">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="comment_text">Ваш комментарий:</label>
+                                <textarea name="comment_text" class="form-control" id="comment_text"
+                                          rows="4"></textarea>
+                            </div>
+                            <button id="comment_send" type="submit" class="btn btn-primary">Комментировать</button>
+                        </form>
+                    </div>
+                {% endif %}
             </div>
-
             <div class="col-md-12 col-lg-4 sidebar">
                 <div class="sidebar-box">
                     <h3 class="heading">Тэги</h3>
@@ -90,57 +157,58 @@
     <script>
         let form = $('#comment_form');
         let send_comment = $('#comment_send');
-        form.on('submit', function(event){
+        form.on('submit', function (event) {
             event.preventDefault();
             create_post();
         });
 
         function create_post() {
-        var comment_text = $('[name="comment_text"]').val();
-        $.ajax({
-            url : "/blog/comment/", // the endpoint
-            type : "POST", // http method
-            data : { comment_text : comment_text,
-                     blog_id: {{ object.pk }},
-                     csrfmiddlewaretoken: '{{ csrf_token }}',
-            },
-            success : function(json) {
-                $('.comment-list').replaceWith(json.comments);
-                $('[name="comment_text"]').val('');
+            var comment_text = $('[name="comment_text"]').val();
+            $.ajax({
+                url: "/blog/comment/", // the endpoint
+                type: "POST", // http method
+                data: {
+                    comment_text: comment_text,
+                    blog_id: {{ object.pk }},
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function (json) {
+                    $('.comment-list').replaceWith(json.comments);
+                    $('[name="comment_text"]').val('');
 
-            },
-            error : function(xhr, errmsg, err) {
-                console.log('error');
-            }
-        })
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log('error');
+                }
+            })
         }
 
         function sub_comment(e) {
             e.preventDefault();
-            let subcomment = $(e.target).parent() ;
+            let subcomment = $(e.target).parent();
             let comment_id = subcomment.attr('id');
             let subcomment_text = subcomment.find('textarea').first();
             if (subcomment_text.is(":hidden")) {
                 subcomment_text.attr("hidden", false);
-            }
-            else {
+            } else {
                 let comment_text = subcomment_text.val()
                 $.ajax({
-                    url : "/blog/sub_comment/",
-                    type : "POST",
-                    data : { comment_text : comment_text,
-                             comment_id: comment_id,
-                             blog_id: {{ object.pk }},
-                             csrfmiddlewaretoken: '{{ csrf_token }}',
-                    },
-                    success : function(json) {
-                         $(e.target).parent().next('.children').html(json.comment)
-                    },
-                    error : function(xhr, errmsg, err) {
-                        console.log('error');
+                        url: "/blog/sub_comment/",
+                        type: "POST",
+                        data: {
+                            comment_text: comment_text,
+                            comment_id: comment_id,
+                            blog_id: {{ object.pk }},
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                        },
+                        success: function (json) {
+                            $(e.target).parent().next('.children').html(json.comment)
+                        },
+                        error: function (xhr, errmsg, err) {
+                            console.log('error');
+                        }
                     }
-                }
-               )
+                )
                 subcomment_text.attr("hidden", true);
                 subcomment_text.val('');
             }
@@ -148,7 +216,7 @@
 
         function edit_comment(e) {
             e.preventDefault();
-            let subcomment = $(e.target).parent() ;
+            let subcomment = $(e.target).parent();
             let comment_id = subcomment.attr('id');
             let reply_button = subcomment.find('.reply').first();
             let subcomment_text = subcomment.find('textarea').first();
@@ -157,31 +225,68 @@
                 subcomment_text.val(previous_text);
                 subcomment_text.attr("hidden", false);
                 reply_button.attr("hidden", true);
-            }
-            else {
+            } else {
                 console.log(subcomment_text.val())
                 $.ajax({
-                    url : "/blog/comment_edit/",
-                    type : "POST",
-                    data : { comment_text : subcomment_text.val(),
-                             comment_id: comment_id,
-                             blog_id: {{ object.pk }},
-                             csrfmiddlewaretoken: '{{ csrf_token }}',
-                    },
-                    success : function(json) {
-                        console.log(json.new_text);
-                        subcomment.find('p').html(json.new_text + '<br>' + '<i>отредактировано ' + json.edited_at + '</i>')
-                    },
-                    error : function(xhr, errmsg, err) {
-                        console.log('error');
+                        url: "/blog/comment_edit/",
+                        type: "POST",
+                        data: {
+                            comment_text: subcomment_text.val(),
+                            comment_id: comment_id,
+                            blog_id: {{ object.pk }},
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                        },
+                        success: function (json) {
+                            console.log(json.new_text);
+                            subcomment.find('p').html(json.new_text + '<br>' + '<i>отредактировано ' + json.edited_at + '</i>')
+                        },
+                        error: function (xhr, errmsg, err) {
+                            console.log('error');
+                        }
                     }
-                }
-               )
+                )
                 subcomment_text.val('');
                 subcomment_text.attr("hidden", true);
                 reply_button.attr("hidden", false);
             }
         }
+
+        function call_moderator(comment_id) {
+            $('#message').show()
+                $.ajax({
+                        url: "/call_moderator/",
+                        type: "POST",
+                        data: {
+                            comment_id: comment_id,
+                            url: window.location.toString(),
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                        },
+                        success: function (json) {
+                            console.log(json.success)
+                            $('#message').show()
+                        },
+                        error: function (xhr, errmsg, err) {
+                            console.log('error');
+                        }
+                    }
+                )
+            }
+
+
+        function hide_message(event) {
+            $('#message').hide()
+        }
+
+      $( function() {
+        var availableTags = ["@moderator"];
+        $("#comment_text, [name='subcomment_text']").autocomplete({
+          source: availableTags,
+          position: {
+                       my: "left",
+                       at: "left center"
+                    }
+        });
+      } );
 
     </script>
 {% endblock %}

@@ -18,12 +18,46 @@ class PostModelAdmin(admin.ModelAdmin):
     class Meta:
         model = Post
 
+class BlogPostInlineAdmin(admin.TabularInline):
+    model = BlogPost
+
+    fields = ['title', 'tag_list', 'status', 'blog', 'update_date', 'like', 'dislike']
+    readonly_fields = ['update_date', 'tag_list', 'like', 'dislike']
+
+    def like(self, obj):
+        return obj.likes.count()
+
+    def dislike(self, obj):
+        return obj.dislikes.count()
+
+
+class CommentInlineAdmin(admin.TabularInline):
+    model = Comment
+    fields = ['user', 'parent', 'text', 'updated_at', 'like', 'dislike']
+    readonly_fields = ['updated_at', 'like', 'dislike']
+
+    def like(self, obj):
+        return obj.likes.count()
+
+    def dislike(self, obj):
+        return obj.dislikes.count()
+
+
 class MyHabrUserAdmin(admin.ModelAdmin):
+
+    fields = (("username", "first_name", "last_name"), "email", ("last_login", "date_joined", "is_active"),
+              ('is_superuser', 'is_staff'), 'groups')
     list_display = ["id", "username", "first_name", "last_name", "email", "is_active"]
     list_display_links = ["username"]
+    exclude = ['password']
     list_editable = ["is_active"]
     list_filter = ["is_active"]
     search_fields = ["username", "email", "is_active"]
+    inlines = [BlogPostInlineAdmin, CommentInlineAdmin]
+
+    # def admin(self, obj):
+    #     return obj.is_superuser
+
 
     def get_form(self, request, obj=None, **kwargs):
         # Ограничения для действий в форме
@@ -32,29 +66,36 @@ class MyHabrUserAdmin(admin.ModelAdmin):
         # Переменная для отключаемых полей
         disabled_fields = set()  # type Set[str]
 
-        # if not is_superuser:
-        #     form.base_fields['username'].disabled = True
-
         # Запрет изменения полей
         if not is_superuser:
             disabled_fields |= {
-                'username',
                 'is_superuser',
+                'is_staff',
+                'groups',
                 'user_permissions',
+                "last_login",
+                "date_joined",
             }
 
             # Запретить пользователям, не являющимся суперпользователями,
             # редактировать свои собственные разрешения
         if (
-                not is_superuser
-                and obj is not None
-                and obj == request.user
+            not is_superuser
+            and obj is not None
+            and obj != request.user
         ):
             disabled_fields |= {
-                'is_staff',
-                'is_superuser',
-                'groups',
-                'user_permissions',
+                "username",
+                "first_name",
+                "last_name",
+                "email",
+            }
+
+        if (not is_superuser
+            and obj is not None
+            and obj == request.user):
+            disabled_fields |= {
+                "is_active",
             }
 
         for f in disabled_fields:
@@ -82,10 +123,13 @@ class MessageAdmin(admin.ModelAdmin):
         model = Message
 
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "blog", "status", "create_date", "update_date"]
+    list_display = ["id", "title", "blog", "status", "tag_list", "create_date", "update_date"]
     list_display_links = ["title"]
-    list_filter = ["blog", "status"]
-    search_fields = ["title", "tag", "blog", "status"]
+    list_editable = ["status"]
+    list_filter = ["blog", "status", "tag_list"]
+    search_fields = ["title", "tag_list", "blog", "status"]
+    readonly_fields = ["tag_list", "create_date", "update_date"]
+
 
     class Meta:
         model = BlogPost
@@ -94,7 +138,6 @@ class BlogPostAdmin(admin.ModelAdmin):
 class BlogsAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "category", "user"]
     list_display_links = ["name"]
-    # list_editable = ["is_active"]
     list_filter = ["category", "user"]
     search_fields = ["category", "user"]
 
@@ -104,7 +147,6 @@ class BlogsAdmin(admin.ModelAdmin):
 class BlogCategoriesAdmin(admin.ModelAdmin):
     list_display = ["id", "name"]
     list_display_links = ["name"]
-    # list_editable = ["is_active"]
 
     class Meta:
         model = BlogCategories
@@ -116,12 +158,19 @@ class ProfileAdmin(admin.ModelAdmin):
     class Meta:
         model = Profile
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ["user", "parent", "text", "created_at"]
+    list_display_links = ["user", "text"]
+
+    class Meta:
+        model = Comment
+
 admin.site.register(MyHabrUser, MyHabrUserAdmin)
 admin.site.register(Message, MessageAdmin)
 admin.site.register(Blogs, BlogsAdmin)
 admin.site.register(BlogCategories, BlogCategoriesAdmin)
 admin.site.register(Post, PostModelAdmin)
 admin.site.register(BlogPost, BlogPostAdmin)
-admin.site.register(Comment)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(CommentsLink)
 admin.site.register(Profile, ProfileAdmin)

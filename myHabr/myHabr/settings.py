@@ -28,6 +28,10 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_tools',
+    'admin_tools.theming',
+    'admin_tools.menu',
+    'admin_tools.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +44,9 @@ INSTALLED_APPS = [
     'blogapp',
     'adminapp',
     'profiles',
+    'social_django',
+    "ckeditor",
+    "ckeditor_uploader",
 ]
 
 MIDDLEWARE = [
@@ -58,7 +65,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,
+        # 'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -66,7 +73,14 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'mainapp.context_processors.categories',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
+
             ],
+            'loaders': ['admin_tools.template_loaders.Loader',
+                        'django.template.loaders.filesystem.Loader',
+                        'django.template.loaders.app_directories.Loader',
+                        ]
         },
     },
 ]
@@ -117,20 +131,103 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (BASE_DIR / 'static',)
-
-# STATIC_ROOT = BASE_DIR / 'static'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'authapp.MyHabrUser'
 LOGIN_URL = '/auth/login'
+LOGIN_REDIRECT_URL = '/'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+EMAIL_USE_TLS = True
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.vk.VKOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = '51401064'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = '89SMzLUskdzszIbJFUle'
+SOCIAL_AUTH_VK_OAUTH2_API_VERSION = '5.131'
+SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+
+CSRF_TRUSTED_ORIGINS = ['https://kibarium.ru']
+
+ADMIN_TOOLS_INDEX_DASHBOARD = 'adminapp.dashboard.CustomIndexDashboard'
+ADMIN_TOOLS_APP_INDEX_DASHBOARD= 'adminapp.dashboard.CustomAppIndexDashboard'
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': [
+            {'name': 'clipboard', 'items': ['Undo', 'Redo']},
+            {'name': 'styles', 'items': ['Format', 'Font', 'FontSize']},
+            {'name': 'basicstyles',
+             'items': ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat', 'CopyFormatting']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'align', 'items': ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+            {'name': 'paragraph',
+             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote']},
+            {'name': 'insert', 'items': ['Image', 'Table']},
+            {'name': 'tools', 'items': ['Maximize']},
+            {'name': 'editing', 'items': ['Scayt']}
+        ],
+        'customConfig': '',
+        'disallowedContent': 'img{width,height,float}',
+        'extraAllowedContent': 'img[width,height,align]',
+        'extraPlugins': ','.join([
+            'tableresize',
+            'uploadimage',
+            # 'easyimage',
+            # 'uploadfile'
+        ]),
+        'height': 800,
+        'bodyClass': 'document-editor',
+        'format_tags': 'p;h1;h2;h3;pre',
+        'removeDialogTabs': 'image:advanced;link:advanced',
+        'stylesSet': [
+            {'name': 'Marker', 'element': 'span', 'attributes': {'class': 'marker'}},
+            {'name': 'Cited Work', 'element': 'cite'},
+            {'name': 'Inline Quotation', 'element': 'q'},
+            {
+                'name': 'Special Container',
+                'element': 'div',
+                'styles': {
+                    'padding': '5px 10px',
+                    'background': '#eee',
+                    'border': '1px solid #ccc'
+                }
+            },
+            {
+                'name': 'Compact table',
+                'element': 'table',
+                'attributes': {
+                    'cellpadding': '5',
+                    'cellspacing': '0',
+                    'border': '1',
+                    'bordercolor': '#ccc'
+                },
+                'styles': {
+                    'border-collapse': 'collapse'
+                }
+            },
+            {'name': 'Borderless Table', 'element': 'table',
+             'styles': {'border-style': 'hidden', 'background-color': '#E6E6FA'}},
+            {'name': 'Square Bulleted List', 'element': 'ul', 'styles': {'list-style-type': 'square'}}
+        ],
+    },
+}
 

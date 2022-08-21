@@ -9,7 +9,9 @@
                     <a href="{% url 'blogpost_detail-private' post.pk %}"> {{ post.title }} </a> - {{ post.author }} ( {{ post.blog.category.name }} )
                     <a href="{% url 'blogpost_update' post.pk %}"> Изм. </a>
                     <a href="{% url 'blogpost_delete' post.pk %}"> Удл. </a><br/>
-                    {{ post.body }}<br/>
+                    <img src="{{ post.image_header.url }}">
+                    {{ post.image_header }}<br/>
+                    {{ post.body|safe|striptags|truncatewords:30 }}<br/>
                     Статус статьи: {{ post.get_status_display }}<br/>
                     Дата создания: {{ post.create_date|date:'Y-m-d H:i' }}<br/>
                     <a href="{% url 'blogpost_detail' post.pk %}"> **Показать публичную страницу статьи**. </a>

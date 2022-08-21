@@ -1,16 +1,20 @@
 import re
+
+from django.template import Library
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
-from django.views import View
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from mainapp.models import BlogPost, Comment
+from adminapp.models import Message
+from django.contrib.auth.models import Group
 from .forms import BlogPostForm
 from .models import CommentsLink
 
@@ -21,7 +25,7 @@ class BlogListView(ListView):
     (сначала самые свежие)"""
     model = BlogPost
     template_name = 'mainapp/index.html'
-    paginate_by = 2
+    paginate_by = 3
 
     def get_queryset(self):
         return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
@@ -45,7 +49,6 @@ class BlogPostDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context_related = BlogPost.objects.filter(blog=self.object.blog, status='3').exclude(pk=self.object.pk)[:3]
-        print(context_related)
 
         comments = Comment.objects \
             .filter(commentslink__type='article',
@@ -113,6 +116,12 @@ class BlogPostDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 class BlogAddLike(LoginRequiredMixin, View):
+    """
+    [M] Как зарегистрированный пользователь
+    я хочу ставить один лайк или дизлайк к любой статье,
+    чтобы составить свое мнение о статье
+    """
+
     def post(self, request, pk, *args, **kwargs):
         post = BlogPost.objects.get(pk=pk)
 
@@ -144,6 +153,12 @@ class BlogAddLike(LoginRequiredMixin, View):
 
 
 class BlogAddDislike(LoginRequiredMixin, View):
+    """
+    [M] Как зарегистрированный пользователь
+    я хочу ставить один лайк или дизлайк к любой статье,
+    чтобы составить свое мнение о статье
+    """
+
     def post(self, request, pk, *args, **kwargs):
         post = BlogPost.objects.get(pk=pk)
 
@@ -173,9 +188,16 @@ class BlogAddDislike(LoginRequiredMixin, View):
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
 
+
 @method_decorator(csrf_exempt, name='post')
 @method_decorator(csrf_exempt, name='dispatch')
 class BlogAddCommentLike(LoginRequiredMixin, View):
+    """
+    [M] Как зарегистрированный пользователь я хочу ставить
+    один лайк или дизлайк к любому зарегистрированному пользователю,
+    чтобы составить свое мнение о том, что написал пользователь
+    """
+
     def post(self, request, pk, *args, **kwargs):
         comment = Comment.objects.get(pk=pk)
 
@@ -211,6 +233,12 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='post')
 @method_decorator(csrf_exempt, name='dispatch')
 class BlogAddCommentDislike(LoginRequiredMixin, View):
+    """
+    [M] Как зарегистрированный пользователь я хочу ставить
+    один лайк или дизлайк к любому зарегистрированному пользователю,
+    чтобы составить свое мнение о том, что написал пользователь
+    """
+
     def post(self, request, pk, *args, **kwargs):
         comment = Comment.objects.get(pk=pk)
 
@@ -241,6 +269,17 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
         if next is not None and not re.search(r'blog/\d+$', next):
             next = request.META.get('HTTP_REFERER')
         return HttpResponseRedirect(next)
+
+
+class NotifyListView(ListView):
+    """[M] Как зарегистрированный пользователь
+    я хочу получать уведомления о лайках своей статьи"""
+    model = BlogPost
+    template_name = 'mainapp/notify.html'
+    paginate_by = 3
+
+    def get_queryset(self):
+        return BlogPost.objects.filter(author=self.request.user).exclude(status='0')
 
 
 def blog_comment(request):
@@ -281,6 +320,7 @@ def blog_sub_comment(request):
                                 'user': request.user})
     return JsonResponse({'comment': comment})
 
+
 def blog_comment_edit(request):
     text = request.POST['comment_text']
     comment_id = request.POST['comment_id']
@@ -290,6 +330,20 @@ def blog_comment_edit(request):
     edited_at = comment.updated_at.strftime("%d-%m-%Y, %H:%M:%S")
     return JsonResponse({'new_text': text,
                          'edited_at': edited_at})
+
+
+def call_moderator(request):
+    comment_id = request.POST['comment_id']
+    url = request.POST['url']
+    message_text = f'Жалоба на комментарий под номером {comment_id}\n{url}'
+    Message.objects.create(
+        from_user=request.user,
+        to_group=Group.objects.get(name='moderator'),
+        text=message_text,
+        type_message='1'
+    )
+    return JsonResponse({"success": True})
+
 
 def similar_blogposts(request):
     pass

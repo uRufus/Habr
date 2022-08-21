@@ -1,0 +1,64 @@
+{% extends 'mainapp/base.html' %}
+{% load i18n %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        {% for post in blogs %}
+            <div class="row mb-5">
+                <div class="col">
+                    <div class="row g-3 p-2">
+                        <div class="col" style="background-color: white">
+                            <div class="my-1">
+                                <b>{{ post.author }}</b>
+                                <small>{{ post.create_date }}</small>
+                            </div>
+                            <div class="d-flex mb-3">
+                                {{ post.body|truncatewords:50 }}
+                            </div>
+                            <div class="col-md-12 mb-4 element-animate fadeInUp element-animated">
+	                            <img src="{{ post.image_header.url }}"
+		                            alt="Image placeholder"
+                                    class="img-fluid"
+                                    width="820">
+                            </div>
+                            <div class="d-flex flex-row">
+                                <form method="POST" action="{% url 'like' post.pk %}" class="mb-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button class="border-0 bg-white text-dark" type="submit">
+                                        {% if post.likes.all.count == 0 %}
+                                            <i class="far fa-thumbs-up"><span> 0</span></i>
+                                        {% else %}
+                                            <i class="far fa-thumbs-up"><span
+                                                    class="text-success"> +{{ post.likes.all.count }}</span></i>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                                <form method="POST" action="{% url 'dislike' post.pk %}" class="mb-0">
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button class="border-0 bg-white" type="submit">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.path }}">
+                                        <div class="text-danger">
+                                            {% if post.dislikes.all.count == 0 %}
+                                                <i class="far fa-thumbs-down"><span> 0</span></i>
+                                            {% else %}
+                                                <i class="far fa-thumbs-down">
+                                                    <span> -{{ post.dislikes.all.count }}</span>{% comment %}{% endcomment %}
+                                                </i>
+                                            {% endif %}
+                                        </div>
+                                    </button>
+                                </form>
+
+                            </div>
+                            <button class="btn btn-outline-white mt-3"><a href="{% url 'blogpost_detail' post.pk %}"
+                                                                          class="">Читать дальше</a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% include 'mainapp/includes/pagination.html' %}
+    </div>
+{% endblock %}

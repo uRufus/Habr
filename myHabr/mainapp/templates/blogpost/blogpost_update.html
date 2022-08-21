@@ -4,12 +4,13 @@
     <div class="container">
         <h1>Создание статьи</h1>
         <div class="form-group">
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
+                {{ form.media }}
                 {{ form.as_p }}
                 <button class="btn btn-secondary"> СОХРАНИТЬ</button>
             </form>
         </div>
-        <a href="{% url 'blogpost' %}"> Назад </a>
+        <a href="#" type="button" onclick="history.back();"> НАЗАД </a>
     </div>
 {% endblock %}

@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block content %}
+    <div class="container">
     {% if not posts %}
         <b>Статьи не найдены</b>
     {% else %}
@@ -30,4 +31,5 @@
     {% if posts.has_next %}
         <a href="?page={{ posts.next_page_number }}">Вперед</a>
     {% endif %}
+    </div>
 {% endblock %}
