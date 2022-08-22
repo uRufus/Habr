@@ -1,8 +1,9 @@
+import json
 import re
 
-from django.template import Library
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import HttpResponseRedirect
+from django.contrib.auth.models import Group
+from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -12,9 +13,8 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from mainapp.models import BlogPost, Comment
 from adminapp.models import Message
-from django.contrib.auth.models import Group
+from mainapp.models import BlogPost, Comment
 from .forms import BlogPostForm
 from .models import CommentsLink
 
@@ -148,8 +148,14 @@ class BlogAddLike(LoginRequiredMixin, View):
         if is_like:
             post.likes.remove(request.user)
 
-        next = request.POST.get('next', '/')
-        return HttpResponseRedirect(next)
+        return HttpResponse(
+            json.dumps({
+                'like_count': post.likes.all().count(),
+                'dislike_count': post.dislikes.all().count(),
+                # 'sum_rating': post.votes.sum_rating()
+            }),
+            content_type='application/json'
+        )
 
 
 class BlogAddDislike(LoginRequiredMixin, View):
@@ -185,8 +191,14 @@ class BlogAddDislike(LoginRequiredMixin, View):
         if is_dislike:
             post.dislikes.remove(request.user)
 
-        next = request.POST.get('next', '/')
-        return HttpResponseRedirect(next)
+        return HttpResponse(
+            json.dumps({
+                'like_count': post.likes.all().count(),
+                'dislike_count': post.dislikes.all().count(),
+                # 'sum_rating': post.votes.sum_rating()
+            }),
+            content_type='application/json'
+        )
 
 
 @method_decorator(csrf_exempt, name='post')
