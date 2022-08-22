@@ -3,36 +3,49 @@
     <li class="row comment sub_comment mt-5 mb-0">
         <div class="comment-body" id="{{ comm.id }}">
             <h3>{{ comm.user.username }}</h3>
-            <div class="meta">время: {{ comm.created_at }} <button class="call_button" onclick="call_moderator({{ comm.id }})"><span class="tooltiptext">сообщить модератору</span>&#128276;</button></div>
+            <div class="meta">время: {{ comm.created_at }}
+                <button class="call_button" onclick="call_moderator({{ comm.id }})"><span class="tooltiptext">сообщить модератору</span>&#128276;
+                </button>
+            </div>
             <p>{{ comm.text|mark_tags }}</p>
-
             <div class="d-flex flex-row mb-3">
-                <form method="POST" action="{% url 'comment-like' comm.pk %}" class="mb-0">
+                <form method="POST" action="{% url 'comment-like' comm.pk %}" class="like-form mb-0"
+                      id="{{ comm.pk }}">
+                    {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.path }}">
-                    <button class="border-0 bg-white text-dark" type="submit">
-                        {% if comm.post.likes.all.count == 0 %}
-                            <i class="far fa-thumbs-up"><span> 0</span></i>
-                        {% else %}
-                            <i class="far fa-thumbs-up"><span
-                                    class="text-success"> +{{ comm.likes.all.count }}</span></i>
-                        {% endif %}
+                    <button class="btn btn-light" type="submit">
+                        <div class="text-success">
+                            {% if comm.likes.all.count == 0 %}
+                                <div class="mr-2">
+                                    <i class="fa fa-thumbs-up like-{{ comm.pk }}">0</i>
+                                </div>
+                            {% else %}
+                                <div class="mr-2">
+                                    <i class="fa fa-thumbs-up like-{{ comm.pk }}">{{ comm.likes.all.count }}</i>
+                                </div>
+                            {% endif %}
+                        </div>
                     </button>
                 </form>
-                <form method="POST" action="{% url 'comment-dislike' comm.pk %}" class="mb-0">
+                <form method="POST" action="{% url 'comment-dislike' comm.pk %}" class="dislike-form mb-0"
+                      id="{{ comm.pk }}">
+                    {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.path }}">
-                    <button class="border-0 bg-white" type="submit">
-                        <input type="hidden" name="next" value="{{ request.path }}">
+                    <button class="btn btn-light" type="submit">
                         <div class="text-danger">
                             {% if comm.dislikes.all.count == 0 %}
-                                <i class="far fa-thumbs-down"><span> 0</span></i>
+                                <div class="mr-2">
+                                    <i class="fa fa-thumbs-down dislike-{{ comm.pk }}">0</i>
+                                </div>
                             {% else %}
-                                <i class="far fa-thumbs-down"><span> -{{ comm.dislikes.all.count }}</span></i>
+                                <div class="mr-2">
+                                    <i class="fa fa-thumbs-down dislike-{{ comm.pk }}">{{ comm.dislikes.all.count }}</i>
+                                </div>
                             {% endif %}
                         </div>
                     </button>
                 </form>
             </div>
-
             {% if user.is_authenticated %}
                 <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>
                 <a href="#" class="reply" onclick="sub_comment(event)">Ответить</a>
@@ -43,10 +56,9 @@
         </div>
         <ul class="children">
             {% if comm.has_children %}
-
                 {% include 'comments/subcomment.html' with children=comm.children %}
-
             {% endif %}
         </ul>
     </li>
+
 {% endfor %}
