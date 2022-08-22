@@ -4,30 +4,44 @@
         <li class="row comment">
             <div class="comment-body" id="{{ comment.id }}">
                 <h3>{{ comment.user.username }}</h3>
-                <div class="meta">время: {{ comment.created_at }} <button class="call_button" onclick="call_moderator({{ comment.id }})"><span class="tooltiptext">сообщить модератору</span>&#128276;</button></div>
+                <div class="meta">время: {{ comment.created_at }}
+                    <button class="call_button" onclick="call_moderator({{ comment.id }})"><span class="tooltiptext">сообщить модератору</span>&#128276;
+                    </button>
+                </div>
                 <p>{{ comment.text|mark_tags }}</p>
-
                 <div class="d-flex flex-row mb-3">
-                    <form method="POST" action="{% url 'comment-like' comment.pk %}" class="mb-0">
+                    <form method="POST" action="{% url 'comment-like' comment.pk %}" class="comment-like-form mb-0"
+                          id="{{ comment.pk }}">
+                        {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.path }}">
-                        <button class="border-0 bg-white text-dark" type="submit">
-                            {% if comment.post.likes.all.count == 0 %}
-                                <i class="far fa-thumbs-up"><span> 0</span></i>
-                            {% else %}
-                                <i class="far fa-thumbs-up"><span
-                                        class="text-success"> +{{ comment.likes.all.count }}</span></i>
-                            {% endif %}
+                        <button class="btn btn-light" type="submit">
+                            <div class="text-success">
+                                {% if comment.likes.all.count == 0 %}
+                                    <div class="mr-2">
+                                        <i class="fa fa-thumbs-up comment-like-{{ comment.pk }}">0</i>
+                                    </div>
+                                {% else %}
+                                    <div class="mr-2">
+                                        <i class="fa fa-thumbs-up comment-like-{{ comment.pk }}">{{ comment.likes.all.count }}</i>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </button>
                     </form>
-                    <form method="POST" action="{% url 'comment-dislike' comment.pk %}" class="mb-0">
+                    <form method="POST" action="{% url 'comment-dislike' comment.pk %}" class="comment-dislike-form mb-0"
+                          id="{{ comment.pk }}">
+                        {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.path }}">
-                        <button class="border-0 bg-white" type="submit">
-                            <input type="hidden" name="next" value="{{ request.path }}">
+                        <button class="btn btn-light" type="submit">
                             <div class="text-danger">
                                 {% if comment.dislikes.all.count == 0 %}
-                                    <i class="far fa-thumbs-down"><span> 0</span></i>
+                                    <div class="mr-2">
+                                        <i class="fa fa-thumbs-down comment-dislike-{{ comment.pk }}">0</i>
+                                    </div>
                                 {% else %}
-                                    <i class="far fa-thumbs-down"><span> -{{ comment.dislikes.all.count }}</span></i>
+                                    <div class="mr-2">
+                                        <i class="fa fa-thumbs-down comment-dislike-{{ comment.pk }}">{{ comment.dislikes.all.count }}</i>
+                                    </div>
                                 {% endif %}
                             </div>
                         </button>
