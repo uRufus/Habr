@@ -22,12 +22,17 @@ def post_save_user(created, **kwargs):
     info = (instance._meta.app_label, instance._meta.model_name)
     admin_url = reverse('admin:%s_%s_change' % info, args=(instance.pk,))
     if created:
-        Message.objects.create(
-            from_user=instance.author,
-            to_group=Group.objects.get(name='moderator'),
-            text=admin_url,
-            type_message='1'
-        )
+        # исключение для того, чтобы работало fill_db
+        try:
+            Message.objects.create(
+                from_user=instance.author,
+                to_group=Group.objects.get(name='moderator'),
+                text=admin_url,
+                type_message='1'
+            )
+        except Group.DoesNotExist:
+            pass
+
 
 
 @receiver(post_save, sender=CommentsLink)
