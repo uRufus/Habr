@@ -9,7 +9,7 @@
             </div>
             <p>{{ comm.text|mark_tags }}</p>
             <div class="d-flex flex-row mb-3">
-                <form method="POST" action="{% url 'comment-like' comm.pk %}" class="like-form mb-0"
+                <form method="POST" action="{% url 'comment-like' comm.pk %}" class="comment-like-form mb-0"
                       id="{{ comm.pk }}">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.path }}">
@@ -17,17 +17,17 @@
                         <div class="text-success">
                             {% if comm.likes.all.count == 0 %}
                                 <div class="mr-2">
-                                    <i class="fa fa-thumbs-up like-{{ comm.pk }}">0</i>
+                                    <i class="fa fa-thumbs-up comment-like-{{ comm.pk }}">0</i>
                                 </div>
                             {% else %}
                                 <div class="mr-2">
-                                    <i class="fa fa-thumbs-up like-{{ comm.pk }}">{{ comm.likes.all.count }}</i>
+                                    <i class="fa fa-thumbs-up comment-like-{{ comm.pk }}">{{ comm.likes.all.count }}</i>
                                 </div>
                             {% endif %}
                         </div>
                     </button>
                 </form>
-                <form method="POST" action="{% url 'comment-dislike' comm.pk %}" class="dislike-form mb-0"
+                <form method="POST" action="{% url 'comment-dislike' comm.pk %}" class="comment-dislike-form mb-0"
                       id="{{ comm.pk }}">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.path }}">
@@ -35,11 +35,11 @@
                         <div class="text-danger">
                             {% if comm.dislikes.all.count == 0 %}
                                 <div class="mr-2">
-                                    <i class="fa fa-thumbs-down dislike-{{ comm.pk }}">0</i>
+                                    <i class="fa fa-thumbs-down comment-dislike-{{ comm.pk }}">0</i>
                                 </div>
                             {% else %}
                                 <div class="mr-2">
-                                    <i class="fa fa-thumbs-down dislike-{{ comm.pk }}">{{ comm.dislikes.all.count }}</i>
+                                    <i class="fa fa-thumbs-down comment-dislike-{{ comm.pk }}">{{ comm.dislikes.all.count }}</i>
                                 </div>
                             {% endif %}
                         </div>
