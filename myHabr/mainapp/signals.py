@@ -7,15 +7,6 @@ from mainapp.utils import find_article_by_comment
 from django.urls import reverse
 
 
-@receiver(post_save, sender=Comment)
-def post_save_user(created, **kwargs):
-    instance = kwargs['instance']
-    if created:
-        print(f'Пользователь {instance.user} создан')
-    else:
-        print(f'Пользователь {instance.user} обновлен')
-
-
 @receiver(post_save, sender=BlogPost)
 def post_save_user(created, **kwargs):
     instance = kwargs['instance']
