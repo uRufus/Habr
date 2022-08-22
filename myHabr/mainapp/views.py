@@ -1,5 +1,4 @@
 import json
-import re
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
@@ -236,10 +235,19 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
         if is_like:
             comment.likes.remove(request.user)
 
-        next = request.POST.get('next')
-        if next is not None and not re.search(r'blog/\d+$', next):
-            next = request.META.get('HTTP_REFERER')
-        return HttpResponseRedirect(next)
+        # next = request.POST.get('next')
+        # if next is not None and not re.search(r'blog/\d+$', next):
+        #     next = request.META.get('HTTP_REFERER')
+        # return HttpResponseRedirect(next)
+
+        return HttpResponse(
+            json.dumps({
+                'comment_like_count': comment.likes.all().count(),
+                'comment_dislike_count': comment.dislikes.all().count(),
+                # 'sum_rating': post.votes.sum_rating()
+            }),
+            content_type='application/json'
+        )
 
 
 @method_decorator(csrf_exempt, name='post')
@@ -277,10 +285,19 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
         if is_dislike:
             comment.dislikes.remove(request.user)
 
-        next = request.POST.get('next')
-        if next is not None and not re.search(r'blog/\d+$', next):
-            next = request.META.get('HTTP_REFERER')
-        return HttpResponseRedirect(next)
+        # next = request.POST.get('next')
+        # if next is not None and not re.search(r'blog/\d+$', next):
+        #     next = request.META.get('HTTP_REFERER')
+        # return HttpResponseRedirect(next)
+
+        return HttpResponse(
+            json.dumps({
+                'comment_like_count': comment.likes.all().count(),
+                'comment_dislike_count': comment.dislikes.all().count(),
+                # 'sum_rating': post.votes.sum_rating()
+            }),
+            content_type='application/json'
+        )
 
 
 class NotifyListView(ListView):
