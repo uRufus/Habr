@@ -20,6 +20,8 @@ except ImportError:
     from django.utils.translation import ugettext_lazy as _
 from admin_tools.dashboard import modules, Dashboard, AppIndexDashboard
 from admin_tools.utils import get_admin_site_name
+from adminapp.admin_tools_module import ToolsModule
+from mainapp.models import BlogPost, Comment
 
 
 class CustomIndexDashboard(Dashboard):
@@ -79,6 +81,19 @@ class CustomIndexDashboard(Dashboard):
             ]
         ))
 
+        # append a recent actions module
+        self.children.append(modules.RecentActions(_('Recent Actions'), 5))
+
+        # append a feed module
+        self.children.append(modules.Feed(
+            _('Последние статьи сайта'),
+            feed_url="http://127.0.0.1:8000/feed/",
+            limit=10
+        ))
+
+        self.tools_data = BlogPost.objects.filter(status__gte=3)
+        self.children.append(ToolsModule(title=u"Инструменты администратора", message=[[el.author, el.blog, el.title, el.tag_list, el.status] for el in self.tools_data]))
+
         # append an app list module for "Applications"
         # self.children.append(modules.AppList(
         #     _('Applications'),
@@ -90,16 +105,6 @@ class CustomIndexDashboard(Dashboard):
         #     _('Administration'),
         #     models=('django.contrib.*',),
         # ))
-
-        # append a recent actions module
-        self.children.append(modules.RecentActions(_('Recent Actions'), 5))
-
-        # append a feed module
-        self.children.append(modules.Feed(
-            _('Последние статьи сайта'),
-            feed_url='/',
-            limit=5
-        ))
 
         # append another link list module for "support".
         # self.children.append(modules.LinkList(
