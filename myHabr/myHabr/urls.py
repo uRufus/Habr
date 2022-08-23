@@ -22,6 +22,7 @@ from blogapp.views import category, AllBlogsListView
 from mainapp import views as mainapp
 
 from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike
+from feeds import LatestPostsFeed
 
 
 urlpatterns = [
@@ -52,6 +53,7 @@ urlpatterns = [
     path('category/<int:pk>/', category, name='category'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('call_moderator/', mainapp.call_moderator, name='cal_moderator'),
+    path('feed/', LatestPostsFeed(), name='post_feed'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
