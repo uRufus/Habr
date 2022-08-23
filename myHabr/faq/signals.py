@@ -5,7 +5,7 @@ from faq.models import Post
 
 
 @receiver(post_save, sender=Post)
-def post_save_user(created, **kwargs):
+def post_save_faq(created, **kwargs):
     instance = kwargs['instance']
     if created:
         print(f'Статья {instance.title} создана')
