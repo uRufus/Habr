@@ -289,7 +289,7 @@
       } );
 
     $( document ).ready(function() {
-        $('.comment-like-form').submit(function(e){
+        $(document).on('submit', '.comment-like-form', function(e){
             e.preventDefault()
             const event_id = $(this).attr('id')
             const url = $(this).attr('action')
@@ -311,7 +311,7 @@
                 }
             })
         })
-        $('.comment-dislike-form').submit(function(e){
+        $(document).on('submit', '.comment-dislike-form', function(e){
             e.preventDefault()
             const event_id = $(this).attr('id')
             const url = $(this).attr('action')

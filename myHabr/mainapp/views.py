@@ -235,11 +235,6 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
         if is_like:
             comment.likes.remove(request.user)
 
-        # next = request.POST.get('next')
-        # if next is not None and not re.search(r'blog/\d+$', next):
-        #     next = request.META.get('HTTP_REFERER')
-        # return HttpResponseRedirect(next)
-
         return HttpResponse(
             json.dumps({
                 'comment_like_count': comment.likes.all().count(),
@@ -284,11 +279,6 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
 
         if is_dislike:
             comment.dislikes.remove(request.user)
-
-        # next = request.POST.get('next')
-        # if next is not None and not re.search(r'blog/\d+$', next):
-        #     next = request.META.get('HTTP_REFERER')
-        # return HttpResponseRedirect(next)
 
         return HttpResponse(
             json.dumps({
