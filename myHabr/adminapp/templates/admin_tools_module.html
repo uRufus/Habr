@@ -1,6 +1,6 @@
 {% extends "admin_tools/dashboard/module.html" %}
 {% block module_content %}
-<!--{{ module.data }}-->
+{#{{ module.data }}#}
 <!--    <ul>-->
 <!--        {% for val_dict in module.data %}-->
 <!--            <li><a href={{val_dict.url}}></a>{{val_dict.text}}</li>-->
@@ -18,12 +18,12 @@
         <!-- Основная часть таблицы -->
         {% for element in module.data %}
         <tr>
-	        <td>{{ element.from_user }}</td>
+	        <td><a href="">{{ element.from_user }}</a></td>
 	        <td><a href={{ element.url }}>{{ element.text }}</a> </td>
 	        <td>{% if element.type_message == '1' %}
-		            <a href="">Перейти к модерации статьи </a>
+		        <a href="/admin/mainapp/blogpost/{{ element.id }}/change/">Модерация статьи</a>
 		            {% else %}
-		                <a href="">Отреагировать на запрос</a>
+		                <a href="">Запрос модератору</a>
 		        {% endif %}</td>
 	        <td>{{ element.created_at }}</td>
 	        <td>{{ element.is_active }}</td>
