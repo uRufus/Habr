@@ -170,3 +170,4 @@ myHabr/fill.bat
 myHabr/old_db.sqlite3
 *.pyc
 */migrations/*
+/.idea/
