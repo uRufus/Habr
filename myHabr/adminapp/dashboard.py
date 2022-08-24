@@ -9,6 +9,7 @@ To activate your index dashboard add the following to your settings.py::
 And to activate the app index dashboard::
     ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'myHabr.dashboard.CustomAppIndexDashboard'
 """
+from adminapp.models import Message
 
 try:
     # we use django.urls import as version detection as it will fail on django 1.11 and thus we are safe to use
@@ -22,6 +23,7 @@ from admin_tools.dashboard import modules, Dashboard, AppIndexDashboard
 from admin_tools.utils import get_admin_site_name
 from adminapp.admin_tools_module import ToolsModule
 from mainapp.models import BlogPost, Comment
+from adminapp.admin import MessageAdmin
 
 
 class CustomIndexDashboard(Dashboard):
@@ -84,15 +86,20 @@ class CustomIndexDashboard(Dashboard):
         # append a recent actions module
         self.children.append(modules.RecentActions(_('Recent Actions'), 5))
 
+        # self.tools_data = Message.objects.filter(status__gte=3)
+        self.tools_data = list(Message.objects.values())
+        self.children.append(ToolsModule(
+            title=u"Обращения",
+            data=self.tools_data
+        ))
+        # self.children.append(ToolsModule(title='Последние сообщения', message=MessageAdmin.get_changelist_instance(self, context.request)))
         # append a feed module
+
         self.children.append(modules.Feed(
             _('Последние статьи сайта'),
-            feed_url="http://127.0.0.1:8000/feed/",
-            limit=10
+            feed_url=f"http://127.0.0.1:8000/feed/",
+            limit=7
         ))
-
-        self.tools_data = BlogPost.objects.filter(status__gte=3)
-        self.children.append(ToolsModule(title=u"Инструменты администратора", message=[[el.author, el.blog, el.title, el.tag_list, el.status] for el in self.tools_data]))
 
         # append an app list module for "Applications"
         # self.children.append(modules.AppList(

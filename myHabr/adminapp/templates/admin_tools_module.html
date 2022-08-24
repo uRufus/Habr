@@ -1,4 +1,24 @@
 {% extends "admin_tools/dashboard/module.html" %}
 {% block module_content %}
-    <h4>{{ module.message }}</h4>
+{#    {{ module.data }}#}
+    <table>
+      <!-- Ячейки верхнего колонтитула -->
+{#      <thead>#}
+        <tr>
+            {% for head in module.headers %}
+                <td>{{ head }}</td>
+            {% endfor %}
+        </tr>
+{#      </thead>#}
+      <tbody>
+        <!-- Основная часть таблицы -->
+        {% for element in module.data %}
+        <tr>
+            {% for key, values in element.items %}
+                <td>{{ values }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 {% endblock %}
