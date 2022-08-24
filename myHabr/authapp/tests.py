@@ -2,6 +2,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import *
 from mixer.backend.django import mixer
+from django.urls import include, path, reverse
 
 # from .views import *
 from authapp import models as mod
@@ -37,19 +38,21 @@ class TestAuthapp(TestCase):
         self.client.login(username=self.user_name, password=self.user_pswd)
         response = self.client.get('/auth/login/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(mod.MyHabrUser.objects.count(), 2)
         # self.assertEqual(len(response.data), 1)
         self.client.logout()
         response = self.client.get('/')
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, 200)
 
-    # def test_post_author(self):
-    #     self.client.login(username=self.user_name, password=self.user_pswd)
-    #     response = self.client.put('/profiles/create_update_profile/', data={
-    #         'first_name': "Паша",
-    #         'last_name': 'Куманев',
-    #         'birthday': 1900,
-    #         'name': ''
-    #     })
-    #     self.assertEqual(response.status_code, 200)
-    #     author = Profile.objects.get(pk=response.data.get('id'))
-    #     self.assertEqual(author.last_name, 'Куманев')
+    def test_post_author(self):
+        self.client.login(username=self.user_name, password=self.user_pswd)
+        res = self.client.post('/profiles/create_update_profile/', data={
+            'first_name': "Паша",
+            'last_name': 'Куманев',
+            'birthday': 1900,
+            'name': '123'
+        })
+        self.assertEqual(res.status_code, 200)
+        response = self.client.get('/profiles/create_update_profile/')
+        author = Profile.objects.get(pk=response.data.get('id'))
+        self.assertEqual(author.last_name, 'Куманев')
