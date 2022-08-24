@@ -15,14 +15,22 @@
                 <ul>
                     {% for post in object_list %}
                         {% if post.status != "0"  %}
-                        <li>
-                            <a href="{% url 'blogapp:habrinmyblog' post.pk %}"> {{ post.name }} </a> ( {{ post.category.name }} )<br/>
-                            <a href="{% url 'blogapp:myblog_update' post.pk %}"> Изм. </a>
-                            <a href="{% url 'blogapp:myblog_delete' post.pk %}"> Удл. </a><br/>
+
+                            <li>
+                                <a href="{% url 'blogapp:habrinmyblog' post.pk %}"> {{ post.name }} </a> ( {{ post.category.name }} )<br/>
+                                <div class="col-md-12 mb-4 element-animate fadeInUp element-animated">
+	                            <img src="{{ post.image_header.url }}"
+		                            alt="Image placeholder"
+                                    class="img-fluid"
+                                    width="820">
+                                </div>
+                                <a href="{% url 'blogapp:myblog_update' post.pk %}"> Изм. </a>
+                                <a href="{% url 'blogapp:myblog_delete' post.pk %}"> Удл. </a><br/>
                             </li>
                         {% endif %}
+                    <br/><br/>
                     {% endfor %}
-                </ul><br/>
+                </ul>
     {% endif %}
                 <br/>
                 <a href="{% url 'blogapp:myblog_create' %}"> Cоздать </a><br/>
