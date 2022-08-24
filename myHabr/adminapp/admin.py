@@ -107,17 +107,27 @@ class MyHabrUserAdmin(admin.ModelAdmin):
         model = MyHabrUser
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ["id", "from_user", "to_user", "type_message", "text", "created_at", "is_active"]
+    fields = (("type_message", "is_active"),
+              ("to_user", "to_group"),
+               "text", "url",
+              ("created_at", "updated_at"))
+    list_display = ["id", "from_user", "to_user", "type_message", "text", "clickable_url", "created_at", "is_active"]
+    readonly_fields = ["created_at", "updated_at"]
     list_display_links = ["from_user", "to_user"]
     list_editable = ["is_active"]
     list_filter = ["is_active", "created_at", "type_message"]
-    search_fields = ["from_user", "to_user", "is_active"]
+    search_fields = ["from_user", "to_user", "is_active", "to_group"]
     exclude = ["from_user"]
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'from_user', None) is None:
             obj.from_user = request.user
         obj.save()
+
+    def clickable_url(self, obj):
+        url = obj.url
+        from django.utils.html import format_html
+        return format_html(f"<a href='{url}'>{url}</a>")
 
     class Meta:
         model = Message
