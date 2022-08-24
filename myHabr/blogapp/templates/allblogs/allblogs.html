@@ -18,7 +18,7 @@
                                 <b>Блог ведёт: {{ post.user.username }}</b>
                             </div>
 
-                            <div class="d-flex flex-row">
+                                                        <div class="d-flex flex-row">
                                 <form method="POST" action="{% url 'like' post.pk %}" class="mb-0">
                                     {% csrf_token %}
                                     <input type="hidden" name="next" value="{{ request.path }}">
