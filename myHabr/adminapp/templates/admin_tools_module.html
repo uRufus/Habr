@@ -1,22 +1,32 @@
 {% extends "admin_tools/dashboard/module.html" %}
 {% block module_content %}
-{#    {{ module.data }}#}
+<!--{{ module.data }}-->
+<!--    <ul>-->
+<!--        {% for val_dict in module.data %}-->
+<!--            <li><a href={{val_dict.url}}></a>{{val_dict.text}}</li>-->
+<!--        {% endfor %}-->
+<!--    </ul>-->
     <table>
-      <!-- Ячейки верхнего колонтитула -->
-{#      <thead>#}
+    <thead>
         <tr>
-            {% for head in module.headers %}
+            {% for head in module.header_lst %}
                 <td>{{ head }}</td>
             {% endfor %}
         </tr>
-{#      </thead>#}
+    </thead>
       <tbody>
         <!-- Основная часть таблицы -->
         {% for element in module.data %}
         <tr>
-            {% for key, values in element.items %}
-                <td>{{ values }}</td>
-            {% endfor %}
+	        <td>{{ element.from_user }}</td>
+	        <td><a href={{ element.url }}>{{ element.text }}</a> </td>
+	        <td>{% if element.type_message == '1' %}
+		            <a href="">Перейти к модерации статьи </a>
+		            {% else %}
+		                <a href="">Отреагировать на запрос</a>
+		        {% endif %}</td>
+	        <td>{{ element.created_at }}</td>
+	        <td>{{ element.is_active }}</td>
         </tr>
         {% endfor %}
       </tbody>

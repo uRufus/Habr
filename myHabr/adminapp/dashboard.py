@@ -86,8 +86,15 @@ class CustomIndexDashboard(Dashboard):
         # append a recent actions module
         self.children.append(modules.RecentActions(_('Recent Actions'), 5))
 
-        # self.tools_data = Message.objects.filter(status__gte=3)
-        self.tools_data = list(Message.objects.values())
+        # Получаем все запросы к модератору (статья на модерацию и прямые обращения)
+        # self.tools_data = list(
+        #     Message.objects.filter(type_message=1).values_list('from_user', 'text', 'type_message', 'url', 'created_at') |
+        #     Message.objects.filter(type_message=3).values_list('from_user', 'text', 'type_message','url', 'created_at'))
+        self.tools_data = list(
+            Message.objects.filter(type_message=1).filter(is_active=True).values() |
+            Message.objects.filter(type_message=3).filter(is_active=True).values())
+
+        # Подключаем пользовательский модуль
         self.children.append(ToolsModule(
             title=u"Обращения",
             data=self.tools_data
