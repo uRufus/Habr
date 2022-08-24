@@ -3,14 +3,76 @@
     "model": "adminapp.Message",
     "pk": 1,
     "fields": {
-      "from_user": "",
+      "from_user": "root",
       "to_user": 2,
       "to_group": 1,
+      "url": "http://127.0.0.1:8000/blog/1",
       "text": "root",
       "is_active": 1,
       "type_message": 1,
       "created_at": "2021-11-25",
       "created_at": "2021-11-25"
+    }
+  },
+  {
+    "model": "adminapp.Message",
+    "pk": 2,
+    "fields": {
+      "from_user": "root",
+      "to_user": 2,
+      "to_group": 1,
+      "url": "http://127.0.0.1:8000/blog/1",
+      "text": "Проверка",
+      "is_active": 1,
+      "type_message": 2,
+      "created_at": "2021-11-26",
+      "created_at": "2021-11-26"
+    }
+  }
+  ,
+  {
+    "model": "adminapp.Message",
+    "pk": 3,
+    "fields": {
+      "from_user": "user1",
+      "to_user": 3,
+      "to_group": 1,
+      "url": "http://127.0.0.1:8000/blog/2",
+      "text": "Проверка2- Предположим, что здесь довольно длинное сообщение в 500 знаков, в котором автор, без сомнения весьма талантилвый и дельной, только строго по-делу, пишет и пишет и не может, а может быть не хочет остановиться",
+      "is_active": 1,
+      "type_message": 3,
+      "created_at": "2021-11-26",
+      "created_at": "2021-11-26"
+    }
+  },
+  {
+    "model": "adminapp.Message",
+    "pk": 4,
+    "fields": {
+      "from_user": "moderator",
+      "to_user": 1,
+      "to_group": 1,
+      "url": "http://127.0.0.1:8000/blog/1",
+      "text": "Проверка3",
+      "is_active": 1,
+      "type_message": 4,
+      "created_at": "2021-11-26",
+      "created_at": "2021-11-26"
+    }
+  },
+  {
+    "model": "adminapp.Message",
+    "pk": 5,
+    "fields": {
+      "from_user": "user1",
+      "to_user": 2,
+      "to_group": 1,
+      "url": "http://127.0.0.1:8000/blog/2",
+      "text": "Проверка4",
+      "is_active": 1,
+      "type_message": 2,
+      "created_at": "2021-11-27",
+      "created_at": "2021-11-27"
     }
   }
 ]
