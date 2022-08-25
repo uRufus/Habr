@@ -1835,3 +1835,9 @@ blockquote p {
     stroke-dashoffset: -136px;
   }
 }
+
+#notification_count {
+  font-weight: bold;
+  color: blue;
+  font-size: 1em;
+}

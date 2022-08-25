@@ -113,10 +113,10 @@ class MessageAdmin(admin.ModelAdmin):
               ("created_at", "updated_at"))
     list_display = ["id", "from_user", "to_user", "type_message", "text", "clickable_url", "created_at", "is_active"]
     readonly_fields = ["created_at", "updated_at"]
-    list_display_links = ["from_user", "to_user"]
+    list_display_links = ["from_user", "to_user", "text"]
     list_editable = ["is_active"]
     list_filter = ["is_active", "created_at", "type_message"]
-    search_fields = ["from_user", "to_user", "is_active", "to_group"]
+    search_fields = ["type_message", "text", "from_user"]
     exclude = ["from_user"]
 
     def save_model(self, request, obj, form, change):
@@ -133,7 +133,9 @@ class MessageAdmin(admin.ModelAdmin):
         model = Message
 
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "blog", "status", "tag_list", "create_date", "update_date"]
+
+    fields = (("author", "blog", "status"), "title","image_header", "body", "tag_list", ("create_date", "update_date"))
+    list_display = ("id", "title", "blog", "status", "tag_list", "create_date", "update_date", "like", "dislike")
     list_display_links = ["title"]
     list_editable = ["status"]
     list_filter = ["blog", "status", "tag_list"]
@@ -143,6 +145,12 @@ class BlogPostAdmin(admin.ModelAdmin):
 
     class Meta:
         model = BlogPost
+
+    def like(self, obj):
+        return obj.likes.count()
+
+    def dislike(self, obj):
+        return obj.dislikes.count()
 
 
 class BlogsAdmin(admin.ModelAdmin):

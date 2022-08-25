@@ -288,8 +288,7 @@
         });
       } );
 
-    $( document ).ready(function() {
-        $('.comment-like-form').submit(function(e){
+    $(document).on('submit', '.comment-like-form', function(e){
             e.preventDefault()
             const event_id = $(this).attr('id')
             const url = $(this).attr('action')
@@ -311,27 +310,27 @@
                 }
             })
         })
-        $('.comment-dislike-form').submit(function(e){
-            e.preventDefault()
-            const event_id = $(this).attr('id')
-            const url = $(this).attr('action')
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: {
-                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-                    'event_id':event_id,
-                },
-                success: function(response) {
-                     $(`.comment-dislike-${event_id}`).text(response.comment_dislike_count)
-                     $(`.comment-like-${event_id}`).text(response.comment_like_count)
-                },
-                error: function(response) {
-                    console.log('error', response)
-                }
-            })
+    $(document).on('submit', '.comment-dislike-form', function(e){
+        e.preventDefault()
+        const event_id = $(this).attr('id')
+        const url = $(this).attr('action')
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                'event_id':event_id,
+            },
+            success: function(response) {
+                 $(`.comment-dislike-${event_id}`).text(response.comment_dislike_count)
+                 $(`.comment-like-${event_id}`).text(response.comment_like_count)
+            },
+            error: function(response) {
+                console.log('error', response)
+            }
         })
-    });
+    })
+
 
 
     </script>
