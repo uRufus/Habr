@@ -8,7 +8,7 @@ from django.urls import reverse
 
 
 @receiver(post_save, sender=BlogPost)
-def post_save_user(created, **kwargs):
+def post_save_post(created, **kwargs):
     instance = kwargs['instance']
     info = (instance._meta.app_label, instance._meta.model_name)
     admin_url = reverse('admin:%s_%s_change' % info, args=(instance.pk,))
@@ -27,7 +27,7 @@ def post_save_user(created, **kwargs):
 
 
 @receiver(post_save, sender=CommentsLink)
-def post_save_user(created, **kwargs):
+def post_save_comment(created, **kwargs):
     comment = kwargs['instance'].comment
     call_moderator = '@moderator' in comment.parse_tags()
     if call_moderator:
