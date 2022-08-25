@@ -2,7 +2,7 @@ import json
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
@@ -299,6 +299,105 @@ class NotifyListView(ListView):
 
     def get_queryset(self):
         return BlogPost.objects.filter(author=self.request.user).exclude(status='0')
+
+
+class BlogRateArticlePlus(LoginRequiredMixin, View):
+    """
+    [S] Как зарегистрированный пользователь
+    я хочу видеть рейтинг для статей, чтобы
+    иметь возможность увеличивать или уменьшать
+    его значение
+    """
+
+    def post(self, request, pk, *args, **kwargs):
+        post = BlogPost.objects.get(pk=pk)
+
+        is_article_minus = False
+
+        for minus in post.downvoters.all():
+            if minus == request.user:
+                is_article_minus = True
+                break
+
+        if is_article_minus:
+            post.downvoters.remove(request.user)
+
+        is_article_plus = False
+
+        for plus in post.upvoters.all():
+            if plus == request.user:
+                is_article_plus = True
+                break
+
+        if not is_article_plus:
+            post.upvoters.add(request.user)
+
+        if is_article_plus:
+            post.upvoters.remove(request.user)
+
+        return HttpResponse(
+            json.dumps({
+                'upvoters': post.upvoters.count(),
+                'downvoters': post.downvoters.count(),
+            }),
+            content_type='application/json'
+        )
+
+
+class BlogRateArticleMinus(LoginRequiredMixin, View):
+    """
+    [S] Как зарегистрированный пользователь
+    я хочу видеть рейтинг для статей, чтобы
+    иметь возможность увеличивать или уменьшать
+    его значение
+    """
+
+    def post(self, request, pk, *args, **kwargs):
+        post = BlogPost.objects.get(pk=pk)
+
+        is_article_plus = False
+
+        for plus in post.upvoters.all():
+            if plus == request.user:
+                is_article_plus = True
+                break
+
+        if is_article_plus:
+            post.upvoters.remove(request.user)
+
+        is_article_minus = False
+
+        for minus in post.downvoters.all():
+            if minus == request.user:
+                is_article_minus = True
+                break
+
+        if not is_article_minus:
+            post.downvoters.add(request.user)
+
+        if is_article_minus:
+            post.downvoters.remove(request.user)
+
+        return HttpResponse(
+            json.dumps({
+                'upvoters': post.upvoters.count(),
+                'downvoters': post.downvoters.count(),
+            }),
+            content_type='application/json'
+        )
+#
+#
+# class BlogRateComment(LoginRequiredMixin, View):
+#     """
+#     [S] Как зарегистрированный пользователь
+#     я хочу видеть рейтинг для комментариев,
+#     чтобы иметь возможность увеличивать или
+#     уменьшать его значение
+#     """
+#
+#     def post(self, request, pk, *args, **kwargs):
+#         comment = Comment.objects.get(pk=pk)
+#         return
 
 
 def blog_comment(request):

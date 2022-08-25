@@ -29,14 +29,14 @@
                                         <div class="text-success">
                                             {% if post.likes.all.count == 0 %}
                                                 <div class="mr-2">
-                                                    <i class="fa fa-thumbs-up like-{{ post.pk }}" data-count='like'>0</i>
+                                                    <i class="fa fa-thumbs-up like-{{ post.pk }}">
+                                                    0</i>
                                                 </div>
                                             {% else %}
                                                 <div class="mr-2">
                                                     <i class="fa fa-thumbs-up like-{{ post.pk }}"
                                                        data-count='like'>{{ post.likes.all.count }}</i>
                                                 </div>
-
                                             {% endif %}
                                         </div>
                                     </button>
@@ -49,7 +49,8 @@
                                         <div class="text-danger">
                                             {% if post.dislikes.all.count == 0 %}
                                                 <div class="mr-0">
-                                                    <i class="fa fa-thumbs-down dislike-{{ post.pk }}" data-count='dislike'>0</i>
+                                                    <i class="fa fa-thumbs-down dislike-{{ post.pk }}">
+                                                    0</i>
                                                 </div>
                                             {% else %}
                                                 <div class="mr-2">
@@ -59,6 +60,48 @@
                                             {% endif %}
                                         </div>
                                     </button>
+                                </form>
+
+                                <form method="POST" action="{% url 'upvoters' post.pk %}" class="upvoters mb-0"
+                                      id="{{ post.pk }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button class="btn btn-light" type="submit">
+                                            {% if post.upvoters.count == 0 %}
+                                                <div class="mr-0">
+                                                    <i class="fa  fa-bar-chart upvoters-{{ post.pk }}">0</i>
+                                                </div>
+                                            {% else %}
+                                                <div class="mr-2">
+                                                    <i class="fa fa-bar-chart upvoters-{{ post.pk }}">+{{ post.upvoters.count }}</i>
+                                                </div>
+                                            {% endif %}
+                                    </button>
+                                </form>
+
+                                <form method="POST" action="{% url 'downvoters' post.pk %}" class="downvoters mb-0"
+                                      id="{{ post.pk }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button class="btn btn-light" type="submit">
+                                            {% if post.downvoters.count == 0 %}
+                                                <div class="mr-0">
+                                                    <i class="fa fa-bar-chart downvoters-{{ post.pk }}">0</i>
+                                                </div>
+                                            {% else %}
+                                                <div class="mr-2">
+                                                    <i class="fa fa-bar-chart downvoters-{{ post.pk }}">-{{ post.downvoters.count }}</i>
+                                                </div>
+                                            {% endif %}
+                                    </button>
+                                </form>
+
+
+                                <form method="POST" action="" class="mb-0"
+                                      id="{{ post.pk }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+
                                 </form>
 
                             </div>
@@ -115,6 +158,29 @@
                     }
                 })
             })
-        });
+
+            $(document).on('submit', '.sum_rate-form', function(e){
+                e.preventDefault()
+                const event_id = $(this).attr('id')
+                const url = $(this).attr('action')
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'event_id':event_id,
+                },
+                success: function(response) {
+                    $(`.rate1-${event_id}`).text(response.sum_rate_plus)
+                    $(`.rate2-${event_id}`).text(response.sum_rate_minus)
+                    $(`.rate0-${event_id}`).text(response.sum_rate_0)
+                },
+                error: function(response) {
+                    console.log('error', response)
+                }
+            })
+        })
+
+    });
     </script>
 {% endblock %}

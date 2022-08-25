@@ -28,7 +28,8 @@
                             </div>
                         </button>
                     </form>
-                    <form method="POST" action="{% url 'comment-dislike' comment.pk %}" class="comment-dislike-form mb-0"
+                    <form method="POST" action="{% url 'comment-dislike' comment.pk %}"
+                          class="comment-dislike-form mb-0"
                           id="{{ comment.pk }}">
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.path }}">

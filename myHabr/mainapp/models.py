@@ -1,14 +1,14 @@
 import re
 
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.db import models
-from ckeditor_uploader.fields import RichTextUploadingField
 
-
+from adminapp.models import Message
 from authapp.models import MyHabrUser
 from blogapp.models import BlogCategories
 from blogapp.models import Blogs
-from adminapp.models import Message
+
 
 # Create your models here.
 
@@ -36,12 +36,23 @@ class BlogPost(models.Model):
 
     )
 
+    UPVOTE_COUNT = 'UP'
+    DOWNVOTE_COUNT = 'DO'
+    CRITERIAS = [
+        (UPVOTE_COUNT, 'Upvotes'),
+        (DOWNVOTE_COUNT, 'Downvotes'),
+    ]
+
     title = models.CharField(max_length=255, verbose_name="название")
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор")
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='likes', blank=True,
                                    verbose_name="Лайк поста")
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='dislikes', blank=True,
                                       verbose_name="Дизлайк поста")
+    upvoters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='upvoters', blank=True,
+                                      verbose_name="Плюс к рейтингу статьи")
+    downvoters = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='downvoters', blank=True,
+                                        verbose_name="Минус к рейтингу статьи")
     tags = models.ManyToManyField(Tag, blank=True)
     # поле нужно, чтобы представлять тэги в форме как строку:
     tag_list = models.CharField(max_length=240, verbose_name="Тэги",
@@ -73,6 +84,24 @@ class BlogPost(models.Model):
                 self.status = "2"
         self.save()
 
+    def upvote(self, user):
+        if user in self.downvoters.all():
+            self.downvoters.remove(user)
+        if user in self.upvoters.all():
+            self.upvoters.remove(user)
+        else:
+            self.upvoters.add(user)
+        self.save()
+
+    def downvote(self, user):
+        if user in self.upvoters.all():
+            self.upvoters.remove(user)
+        if user in self.downvoters.all():
+            self.downvoters.remove(user)
+        else:
+            self.downvoters.add(user)
+        self.save()
+
 
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name='comment_user',
@@ -87,6 +116,10 @@ class Comment(models.Model):
                                    verbose_name="Лайк комментария")
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_dislikes', blank=True,
                                       verbose_name="Дизлайк комментария")
+    rate_comment_plus = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='rate_comment_plus', blank=True,
+                                               verbose_name="Плюс к рейтингу комментария")
+    rate_comment_minus = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='rate_comment_minus', blank=True,
+                                                verbose_name="Минус к рейтингу комментария")
 
     class Meta:
         db_table = 'comments'
@@ -104,8 +137,8 @@ class Comment(models.Model):
         else:
             self.children = (
                 Comment.objects
-                    .filter(commentslink__type='comment',
-                            commentslink__assigned_id=self.id)
+                .filter(commentslink__type='comment',
+                        commentslink__assigned_id=self.id)
             )
             if self.children:
                 for child in self.children:
