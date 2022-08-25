@@ -19,12 +19,17 @@
         {% for element in module.data %}
         <tr>
 	        <td><a href="">{{ element.from_user }}</a></td>
-	        <td><a href={{ element.url }}>{{ element.text }}</a> </td>
+	        <td><a href={{ element.url }}>{{ element.text| truncatewords:16 }}</a> </td>
 	        <td>{% if element.type_message == '1' %}
-		        <a href="/admin/mainapp/blogpost/{{ element.id }}/change/">Модерация статьи</a>
-		            {% else %}
-		                <a href="">Запрос модератору</a>
-		        {% endif %}</td>
+		            {% if element.get_blogpost_id_from_url %}
+		                <a href="/admin/mainapp/blogpost/{{ element.get_blogpost_id_from_url }}/change/">Модерация статьи</a>
+			            {% else %}
+			                <a href="/admin/mainapp/blogpost/?status__exact=2">Модерация статьи</a>
+		            {% endif %}
+	            {% else %}
+		            <a href="/admin/adminapp/message/{{ element.id }}/change/">Обращение к модератору</a>
+		        {% endif %}
+	        </td>
 	        <td>{{ element.created_at }}</td>
 	        <td>{{ element.is_active }}</td>
         </tr>

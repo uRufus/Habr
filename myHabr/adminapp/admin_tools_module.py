@@ -13,3 +13,9 @@ class ToolsModule(modules.DashboardModule):
 
     def is_empty(self):
         return ''
+
+    def get_blogpost_id_from_url(self, url):
+        try:
+            return int(url.split('blog/')[1])
+        except ValueError as err:
+            return f'{err}'
