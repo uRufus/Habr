@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -88,7 +88,7 @@ def send_under_review(request, pk):
         )
     except:
         pass
-    return HttpResponseRedirect(reverse('blogpost'))
+    return redirect(request.META['HTTP_REFERER'])
 
 
 class BlogPostCreate(CreateView):
