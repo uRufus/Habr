@@ -14,7 +14,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from adminapp.models import Message
 from mainapp.models import BlogPost, Comment
-from mainapp.utils import find_article_by_comment
+from mainapp.utils import create_comment_like_message, create_post_like_message
 from .forms import BlogPostForm
 from .models import CommentsLink
 
@@ -78,13 +78,15 @@ def send_under_review(request, pk):
     obj.save()
     info = (obj._meta.app_label, obj._meta.model_name)
     admin_url = reverse('admin:%s_%s_change' % info, args=(obj.pk,))
+    admin_url = request.build_absolute_uri(admin_url)
     # исключение для того, чтобы работало fill_db
     try:
         Message.objects.get_or_create(
             from_user=obj.author,
             to_group=Group.objects.get(name='moderator'),
             text=admin_url,
-            type_message='1'
+            type_message='1',
+            url=admin_url
         )
     except:
         pass
@@ -156,6 +158,7 @@ class BlogAddLike(LoginRequiredMixin, View):
 
         if not is_like:
             post.likes.add(request.user)
+            create_post_like_message(post,request, is_like=True)
 
         if is_like:
             post.likes.remove(request.user)
@@ -199,6 +202,7 @@ class BlogAddDislike(LoginRequiredMixin, View):
 
         if not is_dislike:
             post.dislikes.add(request.user)
+            create_post_like_message(post, request, is_like=False)
 
         if is_dislike:
             post.dislikes.remove(request.user)
@@ -244,19 +248,7 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
 
         if not is_like:
             comment.likes.add(request.user)
-            article_id = find_article_by_comment(comment.id)
-            article_url = reverse('blogpost_detail', args=[article_id])
-            article_url = request.build_absolute_uri(article_url)
-            url = f'{article_url}#{comment.id}'
-            com_len = 15 if len(comment.text) >= 15 else len(comment.text)
-            text = comment.text[:com_len]
-            Message.objects.get_or_create(
-                from_user=request.user,
-                to_user=comment.user,
-                type_message='0',
-                text=f'Пользователь {request.user.username} поставил Вашему'
-                     f' <a href={url}>комментарию ({text})</a> лайк.'
-            )
+            create_comment_like_message(comment, request, is_like=True)
 
         if is_like:
             comment.likes.remove(request.user)
@@ -307,6 +299,7 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
 
         if not is_dislike:
             comment.dislikes.add(request.user)
+            create_comment_like_message(comment, request, is_like=False)
 
         if is_dislike:
             comment.dislikes.remove(request.user)
@@ -335,7 +328,8 @@ class NotifyListView(ListView):
 
     def get_queryset(self):
         return Message.objects.filter(to_user=self.request.user)\
-                              .exclude(from_user=self.request.user)
+                              .exclude(from_user=self.request.user)\
+                              .order_by('is_read', '-created_at')
 
 
 def mark_read(request):
@@ -345,7 +339,8 @@ def mark_read(request):
 
 
 def message_count(request):
-    count = Message.objects.filter(to_user=request.user, is_read=False).count()
+    count = Message.objects.filter(to_user=request.user, is_read=False)\
+                           .exclude(from_user=request.user).count()
     return JsonResponse({'count': count})
 
 

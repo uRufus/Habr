@@ -27,37 +27,13 @@
         {% include 'mainapp/includes/pagination.html' %}
 
     </div>
-    {% csrf_token %}
+
 {% endblock %}
 
 {% block js %}
     {{ block.super }}
     <script>
-        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         message_count();
-        function message_count() {
-               $.ajax({
-                type: 'POST',
-                url: '/message_count/',
-                data: {
-                    'csrfmiddlewaretoken': csrftoken,
-                },
-                success: function(response) {
-                     console.log(response);
-                     let notifications = $('#notifications');
-                     let count = response.count;
-                     if (count > 0) {
-                         notifications.html(`Уведомления [<span id="notification_count">${count}</span>]`)
-                     }
-                     else {
-                         notifications.html('Уведомления')
-                     }
-                },
-                error: function(response) {
-                    console.log('error', response)
-                }
-            })
-        }
         $(document).on('mouseover ', '.table-info', function(e){
 
             let message = $(e.target.closest('.table-info'))
