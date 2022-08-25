@@ -101,7 +101,7 @@
 {#                <a class="nav-link active" href="{% url 'profiles:Profile' user.id %}">Профиль</a>#}
 {#              </li>#}
               <li class="nav-item">
-                <a class="nav-link active" href="{% url 'notify' %}">Уведомления</a>
+                <a class="nav-link active" id="notifications" href="{% url 'notify' %}">Уведомления</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link active" href="{% url 'blogpost' %}">Мои статьи</a>
@@ -239,6 +239,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         </div>
       </div>
     </footer>
+    {% csrf_token %}
     {% block js %}
         <!-- loader -->
         <div id="loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#f4b214"/></svg></div>
@@ -252,7 +253,37 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 
         <script src="/static/js/main.js"></script>
+        <script>
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        message_count();
+        function message_count() {
+               $.ajax({
+                type: 'POST',
+                url: '/message_count/',
+                data: {
+                    'csrfmiddlewaretoken': csrftoken,
+                },
+                success: function(response) {
+                     console.log(response);
+                     let notifications = $('#notifications');
+                     let count = response.count;
+                     console.log(count);
+                     if (count > 0) {
+                         notifications.html(`Уведомления [<span id="notification_count">${count}</span>]`)
+                     }
+                     else {
+                         notifications.html('Уведомления')
+                     }
+                },
+                error: function(response) {
+                    console.log('error', response)
+                }
+            })
+        }
+        setInterval(message_count, 5000);
+        </script>
     {% endblock %}
+
 </body>
 
 </html>
