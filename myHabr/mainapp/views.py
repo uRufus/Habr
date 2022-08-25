@@ -14,6 +14,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from adminapp.models import Message
 from mainapp.models import BlogPost, Comment
+from mainapp.utils import find_article_by_comment
 from .forms import BlogPostForm
 from .models import CommentsLink
 
@@ -75,6 +76,18 @@ def send_under_review(request, pk):
     obj = get_object_or_404(BlogPost, pk=pk)
     obj.status = BlogPost.UNDER_REVIEW
     obj.save()
+    info = (obj._meta.app_label, obj._meta.model_name)
+    admin_url = reverse('admin:%s_%s_change' % info, args=(obj.pk,))
+    # исключение для того, чтобы работало fill_db
+    try:
+        Message.objects.get_or_create(
+            from_user=obj.author,
+            to_group=Group.objects.get(name='moderator'),
+            text=admin_url,
+            type_message='1'
+        )
+    except:
+        pass
     return HttpResponseRedirect(reverse('blogpost'))
 
 
@@ -231,6 +244,19 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
 
         if not is_like:
             comment.likes.add(request.user)
+            article_id = find_article_by_comment(comment.id)
+            article_url = reverse('blogpost_detail', args=[article_id])
+            article_url = request.build_absolute_uri(article_url)
+            url = f'{article_url}#{comment.id}'
+            com_len = 15 if len(comment.text) >= 15 else len(comment.text)
+            text = comment.text[:com_len]
+            Message.objects.get_or_create(
+                from_user=request.user,
+                to_user=comment.user,
+                type_message='0',
+                text=f'Пользователь {request.user.username} поставил Вашему'
+                     f' <a href={url}>комментарию ({text})</a> лайк.'
+            )
 
         if is_like:
             comment.likes.remove(request.user)
@@ -302,13 +328,25 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
 
 class NotifyListView(ListView):
     """[M] Как зарегистрированный пользователь
-    я хочу получать уведомления о лайках своей статьи"""
-    model = BlogPost
+    я хочу получать уведомления"""
+    model = Message
     template_name = 'mainapp/notify.html'
-    paginate_by = 3
+    paginate_by = 10
 
     def get_queryset(self):
-        return BlogPost.objects.filter(author=self.request.user).exclude(status='0')
+        return Message.objects.filter(to_user=self.request.user)\
+                              .exclude(from_user=self.request.user)
+
+
+def mark_read(request):
+    message_id = request.POST['message_id']
+    Message.objects.filter(id=message_id).update(is_read=True)
+    return JsonResponse({'success': True})
+
+
+def message_count(request):
+    count = Message.objects.filter(to_user=request.user, is_read=False).count()
+    return JsonResponse({'count': count})
 
 
 def blog_comment(request):
