@@ -36,13 +36,6 @@ class BlogPost(models.Model):
 
     )
 
-    UPVOTE_COUNT = 'UP'
-    DOWNVOTE_COUNT = 'DO'
-    CRITERIAS = [
-        (UPVOTE_COUNT, 'Upvotes'),
-        (DOWNVOTE_COUNT, 'Downvotes'),
-    ]
-
     title = models.CharField(max_length=255, verbose_name="название")
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="автор")
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='likes', blank=True,
