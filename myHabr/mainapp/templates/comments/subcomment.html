@@ -48,7 +48,7 @@
                 </form>
                 <button class="btn btn-light">
                     <div class="mr-2">
-                        <i class="fa fa-bar-chart comment-vote-{{ post.pk }}">
+                        <i class="fa fa-bar-chart comment-vote-{{ comm.pk }}">
                             {{ comm.likes.all.count|sub:comm.dislikes.all.count }}
                         </i>
                     </div>
