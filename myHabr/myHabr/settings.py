@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'social_django',
     "ckeditor",
     "ckeditor_uploader",
+    'mathfilters',
 ]
 
 MIDDLEWARE = [
