@@ -339,8 +339,11 @@ def mark_read(request):
 
 
 def message_count(request):
-    count = Message.objects.filter(to_user=request.user, is_read=False)\
-                           .exclude(from_user=request.user).count()
+    if request.user.is_authenticated:
+        count = Message.objects.filter(to_user=request.user, is_read=False)\
+                               .exclude(from_user=request.user).count()
+    else:
+        count = 0
     return JsonResponse({'count': count})
 
 
