@@ -255,7 +255,9 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         <script src="/static/js/main.js"></script>
         <script>
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        {% if user.is_authenticated %}
         message_count();
+        {% endif %}
         function message_count() {
                $.ajax({
                 type: 'POST',
@@ -264,10 +266,8 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                     'csrfmiddlewaretoken': csrftoken,
                 },
                 success: function(response) {
-                     console.log(response);
                      let notifications = $('#notifications');
                      let count = response.count;
-                     console.log(count);
                      if (count > 0) {
                          notifications.html(`Уведомления [<span id="notification_count">${count}</span>]`)
                      }
@@ -280,7 +280,9 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                 }
             })
         }
+        {% if user.is_authenticated %}
         setInterval(message_count, 5000);
+        {% endif %}
         </script>
     {% endblock %}
 
