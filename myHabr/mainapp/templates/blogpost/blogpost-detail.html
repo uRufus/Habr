@@ -139,6 +139,8 @@
                             <button id="comment_send" type="submit" class="btn btn-primary">Комментировать</button>
                         </form>
                     </div>
+                {%  else %}
+                    <a href="{% url 'authapp:login' %}?next={{ request.get_full_path }}">Авторизоваться, чтобы оставлять комментарии</a>
                 {% endif %}
             </div>
             <div class="col-md-12 col-lg-4 sidebar">

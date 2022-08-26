@@ -18,7 +18,7 @@
                 <input class="form-control" type="submit" value="Войти">
             </form>
             <button class="btn btn-round form-control">
-                <a href="{% url 'authapp:register' %}" class="">
+                <a href="{% url 'authapp:register' %}{% if from_page %}?next={{ from_page }}{% endif %}" class="">
                     зарегистрироваться
                 </a>
             </button>
