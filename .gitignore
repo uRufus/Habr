@@ -5,6 +5,7 @@ myHabr/run.bat
 000*.py
 .idea/misc.xml
 .idea/Habr.iml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
