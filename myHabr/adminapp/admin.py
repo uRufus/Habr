@@ -55,10 +55,6 @@ class MyHabrUserAdmin(admin.ModelAdmin):
     search_fields = ["username", "email", "is_active"]
     inlines = [BlogPostInlineAdmin, CommentInlineAdmin]
 
-    # def admin(self, obj):
-    #     return obj.is_superuser
-
-
     def get_form(self, request, obj=None, **kwargs):
         # Ограничения для действий в форме
         form = super().get_form(request, obj, **kwargs)
@@ -93,7 +89,10 @@ class MyHabrUserAdmin(admin.ModelAdmin):
 
         if (not is_superuser
             and obj is not None
-            and obj == request.user):
+            and obj == request.user) \
+            or (not is_superuser
+            and obj is not None
+            and obj.is_superuser is True):
             disabled_fields |= {
                 "is_active",
             }
@@ -128,6 +127,31 @@ class MessageAdmin(admin.ModelAdmin):
         url = obj.url
         from django.utils.html import format_html
         return format_html(f"<a href='{url}'>{url}</a>")
+
+    def get_form(self, request, obj=None, **kwargs):
+        # Ограничения для действий в форме
+        form = super().get_form(request, obj, **kwargs)
+        is_superuser = request.user.is_superuser
+        # Переменная для отключаемых полей
+        disabled_fields = set()  # type Set[str]
+
+        # Запрет изменения полей
+        if not is_superuser:
+            disabled_fields |= {
+                "from_user",
+                "to_user",
+                "to_group",
+                "type_message",
+                "text",
+                "url",
+                "created_at",
+                "updated_at"
+            }
+
+        for f in disabled_fields:
+            if f in form.base_fields:
+                form.base_fields[f].disabled = True
+        return form
 
     class Meta:
         model = Message

@@ -31,3 +31,6 @@ class Message(models.Model):
         db_table = 'messages'
         verbose_name = "Сообщение"
         verbose_name_plural = 'Сообщения'
+
+    def __str__(self):
+        return f'from_{self.from_user}_{self.created_at}'
