@@ -20,10 +20,8 @@ from django.urls import path, include
 
 from blogapp.views import category, AllBlogsListView
 from mainapp import views as mainapp
-
 from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike
 from feeds import LatestPostsFeed
-
 
 urlpatterns = [
     path(r'admin_tools/', include('admin_tools.urls')),

@@ -1,14 +1,14 @@
 import re
 
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.db import models
-from ckeditor_uploader.fields import RichTextUploadingField
 
-
+from adminapp.models import Message
 from authapp.models import MyHabrUser
 from blogapp.models import BlogCategories
 from blogapp.models import Blogs
-from adminapp.models import Message
+
 
 # Create your models here.
 
@@ -104,8 +104,8 @@ class Comment(models.Model):
         else:
             self.children = (
                 Comment.objects
-                    .filter(commentslink__type='comment',
-                            commentslink__assigned_id=self.id)
+                .filter(commentslink__type='comment',
+                        commentslink__assigned_id=self.id)
             )
             if self.children:
                 for child in self.children:
