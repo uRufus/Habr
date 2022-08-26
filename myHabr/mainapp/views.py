@@ -239,11 +239,13 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
         if is_like:
             comment.likes.remove(request.user)
 
+        sum_rating_comments = comment.likes.all().count() - comment.dislikes.all().count()
+
         return HttpResponse(
             json.dumps({
                 'comment_like_count': comment.likes.all().count(),
                 'comment_dislike_count': comment.dislikes.all().count(),
-                # 'sum_rating': post.votes.sum_rating()
+                'sum_rating_comments': sum_rating_comments,
             }),
             content_type='application/json'
         )
@@ -284,11 +286,13 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
         if is_dislike:
             comment.dislikes.remove(request.user)
 
+        sum_rating_comments = comment.likes.all().count() - comment.dislikes.all().count()
+
         return HttpResponse(
             json.dumps({
                 'comment_like_count': comment.likes.all().count(),
                 'comment_dislike_count': comment.dislikes.all().count(),
-                # 'sum_rating': post.votes.sum_rating()
+                'sum_rating_comments': sum_rating_comments,
             }),
             content_type='application/json'
         )

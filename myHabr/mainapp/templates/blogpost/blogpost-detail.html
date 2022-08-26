@@ -305,6 +305,7 @@
                 success: function(response) {
                      $(`.comment-dislike-${event_id}`).text(response.comment_dislike_count)
                      $(`.comment-like-${event_id}`).text(response.comment_like_count)
+                     $(`.comment-vote-${event_id}`).text(response.sum_rating_comments)
                 },
                 error: function(response) {
                     console.log('error', response)
@@ -325,6 +326,7 @@
                 success: function(response) {
                      $(`.comment-dislike-${event_id}`).text(response.comment_dislike_count)
                      $(`.comment-like-${event_id}`).text(response.comment_like_count)
+                     $(`.comment-vote-${event_id}`).text(response.sum_rating_comments)
                 },
                 error: function(response) {
                     console.log('error', response)
