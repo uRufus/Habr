@@ -21,6 +21,7 @@ from django.urls import path, include
 from blogapp.views import category, AllBlogsListView
 from mainapp import views as mainapp
 from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike
+from feeds import LatestPostsFeed
 
 urlpatterns = [
     path(r'admin_tools/', include('admin_tools.urls')),
@@ -46,10 +47,13 @@ urlpatterns = [
     path('blog/<int:pk>/dislike/', BlogAddDislike.as_view(), name='dislike'),
     path('profiles/', include('profiles.urls', namespace='profiles')),
     path('notify/', mainapp.NotifyListView.as_view(), name='notify'),
-    path('', include('social_django.urls')),
+    path('notify/', mainapp.NotifyListView.as_view(), name='notify'),
+    path('mark_read/', mainapp.mark_read, name='mark_read'),
+    path('message_count/', mainapp.message_count, name='message_count'),
     path('category/<int:pk>/', category, name='category'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('call_moderator/', mainapp.call_moderator, name='cal_moderator'),
+    path('feed/', LatestPostsFeed(), name='post_feed'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

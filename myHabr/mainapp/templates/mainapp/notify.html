@@ -1,63 +1,58 @@
 {% extends 'mainapp/base.html' %}
 {% load i18n %}
 {% load static %}
+{% block title %}
+    Уведомления
+{% endblock %}
+
+
 {% block content %}
     <div class="container">
-        <div class="d-flex justify-content-start">
-            <div class="mb-4">Уведомления от пользователей, которые поставили мне лайк или дизлайк</div>
-        </div>
-        {% for post in object_list %}
-            <div class="p-2 mb-2 bg-light text-dark">
-                Статья: <a href="{% url 'blogpost_detail-private' post.pk %}">{{ post.title }} </a>
-            </div>
-            <div class="row">
-                {% if post.likes.all.count == 0 %}
-                    <div class="col text mb-3">
-                        Пока нет лайков
-                    </div>
-                {% else %}
-                    <div class="col">
-                        <div class="text mb-3">Лайк поста
-                            <div class="mr-3 mb-3">
-                                <select class="form-select" multiple aria-label="multiple select example">
-                                    <ul class="list-group">
-                                        {% for like in post.likes.all %}
-                                            <option>
-                                                <li class="list-unstyled">{{ like }}</li>
-                                            </option>
-                                        {% endfor %}
-                                    </ul>
-                                </select>
-
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-                {% if post.dislikes.all.count == 0 %}
-                    <div class="col text mb-3">
-                        Пока нет дизлайков
-                    </div>
-                {% else %}
-                    <div class="col">
-                        <div class="text mb-3">Дизайк поста
-                            <div class="mr-3 mb-3">
-                                <select class="form-select" multiple aria-label="multiple select example">
-                                    <ul class="list-group">
-                                        {% for like in post.dislikes.all %}
-                                            <option>
-                                                <li class="list-unstyled">{{ like }}</li>
-                                            </option>
-                                        {% endfor %}
-                                    </ul>
-                                </select>
-
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
-        <div class="mt-5"></div>
+        <table class="table">
+            <tbody>
+            {% autoescape off %}
+            {% for message in object_list %}
+                <tr {% if not message.is_read %}class="table-info"{% endif %} id="{{ message.id }}">
+                    <td>
+                        {{ message.created_at }}
+                    </td>
+                    <td>
+                        {{ message.text }}
+                    </td>
+                </tr>
+            {% endfor %}
+            {% endautoescape %}
+            </tbody>
+        </table>
         {% include 'mainapp/includes/pagination.html' %}
+
     </div>
+
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        message_count();
+        $(document).on('mouseover ', '.table-info', function(e){
+
+            let message = $(e.target.closest('.table-info'))
+            let message_id = message.attr('id')
+            $.ajax({
+            type: 'POST',
+            url: '/mark_read/',
+            data: {
+                'csrfmiddlewaretoken': csrftoken,
+                'message_id': message_id,
+            },
+            success: function(response) {
+                 message.removeClass('table-info');
+                 message_count();
+            },
+            error: function(response) {
+                console.log('error', response)
+            }
+        })
+        })
+    </script>
 {% endblock %}

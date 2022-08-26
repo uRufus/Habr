@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -14,6 +14,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from adminapp.models import Message
 from mainapp.models import BlogPost, Comment
+from mainapp.utils import create_comment_like_message, create_post_like_message
 from .forms import BlogPostForm
 from .models import CommentsLink
 
@@ -75,7 +76,21 @@ def send_under_review(request, pk):
     obj = get_object_or_404(BlogPost, pk=pk)
     obj.status = BlogPost.UNDER_REVIEW
     obj.save()
-    return HttpResponseRedirect(reverse('blogpost'))
+    info = (obj._meta.app_label, obj._meta.model_name)
+    admin_url = reverse('admin:%s_%s_change' % info, args=(obj.pk,))
+    admin_url = request.build_absolute_uri(admin_url)
+    # исключение для того, чтобы работало fill_db
+    try:
+        Message.objects.get_or_create(
+            from_user=obj.author,
+            to_group=Group.objects.get(name='moderator'),
+            text=admin_url,
+            type_message='1',
+            url=admin_url
+        )
+    except:
+        pass
+    return redirect(request.META['HTTP_REFERER'])
 
 
 class BlogPostCreate(CreateView):
@@ -143,6 +158,7 @@ class BlogAddLike(LoginRequiredMixin, View):
 
         if not is_like:
             post.likes.add(request.user)
+            create_post_like_message(post,request, is_like=True)
 
         if is_like:
             post.likes.remove(request.user)
@@ -188,6 +204,7 @@ class BlogAddDislike(LoginRequiredMixin, View):
 
         if not is_dislike:
             post.dislikes.add(request.user)
+            create_post_like_message(post, request, is_like=False)
 
         if is_dislike:
             post.dislikes.remove(request.user)
@@ -235,6 +252,7 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
 
         if not is_like:
             comment.likes.add(request.user)
+            create_comment_like_message(comment, request, is_like=True)
 
         if is_like:
             comment.likes.remove(request.user)
@@ -282,6 +300,7 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
 
         if not is_dislike:
             comment.dislikes.add(request.user)
+            create_comment_like_message(comment, request, is_like=False)
 
         if is_dislike:
             comment.dislikes.remove(request.user)
@@ -300,13 +319,30 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
 
 class NotifyListView(ListView):
     """[M] Как зарегистрированный пользователь
-    я хочу получать уведомления о лайках своей статьи"""
-    model = BlogPost
+    я хочу получать уведомления"""
+    model = Message
     template_name = 'mainapp/notify.html'
-    paginate_by = 3
+    paginate_by = 10
 
     def get_queryset(self):
-        return BlogPost.objects.filter(author=self.request.user).exclude(status='0')
+        return Message.objects.filter(to_user=self.request.user)\
+                              .exclude(from_user=self.request.user)\
+                              .order_by('is_read', '-created_at')
+
+
+def mark_read(request):
+    message_id = request.POST['message_id']
+    Message.objects.filter(id=message_id).update(is_read=True)
+    return JsonResponse({'success': True})
+
+
+def message_count(request):
+    if request.user.is_authenticated:
+        count = Message.objects.filter(to_user=request.user, is_read=False)\
+                               .exclude(from_user=request.user).count()
+    else:
+        count = 0
+    return JsonResponse({'count': count})
 
 
 def blog_comment(request):

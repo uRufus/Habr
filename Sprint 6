@@ -6,3 +6,4 @@
 5) Для заполнения БД используйте python manage.py fill_db
 6) Для запуска используйте python manage.py runserver
 7) У созданных пользователей стоит пароль 1
+8) команда для запуска теста python manage.py test

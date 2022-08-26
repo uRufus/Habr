@@ -14,6 +14,8 @@
       <a href="{% url 'blogpost_update' object.pk %}" type="button"> Изм. </a></br>
         {% if object.status == "1" %}
             <button><a href="{% url 'send_under_review' object.pk %}"> Согласовать публикацию </a></button></br>
+        {% elif object.status == "2" %}
+            <button disabled>На модерации</button></br>
         {% endif %}
         <a href="#" type="button" onclick="history.back();"> НАЗАД </a>
         </br>

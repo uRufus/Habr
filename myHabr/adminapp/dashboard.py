@@ -9,6 +9,7 @@ To activate your index dashboard add the following to your settings.py::
 And to activate the app index dashboard::
     ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'myHabr.dashboard.CustomAppIndexDashboard'
 """
+from adminapp.models import Message
 
 try:
     # we use django.urls import as version detection as it will fail on django 1.11 and thus we are safe to use
@@ -20,6 +21,9 @@ except ImportError:
     from django.utils.translation import ugettext_lazy as _
 from admin_tools.dashboard import modules, Dashboard, AppIndexDashboard
 from admin_tools.utils import get_admin_site_name
+from adminapp.admin_tools_module import ToolsModule
+from mainapp.models import BlogPost, Comment
+from adminapp.admin import MessageAdmin
 
 
 class CustomIndexDashboard(Dashboard):
@@ -79,6 +83,31 @@ class CustomIndexDashboard(Dashboard):
             ]
         ))
 
+        # append a recent actions module
+        self.children.append(modules.RecentActions(_('Recent Actions'), 5))
+
+        # Получаем все запросы к модератору (статья на модерацию и прямые обращения)
+        # self.tools_data = list(
+        #     Message.objects.filter(type_message=1).values_list('from_user', 'text', 'type_message', 'url', 'created_at') |
+        #     Message.objects.filter(type_message=3).values_list('from_user', 'text', 'type_message','url', 'created_at'))
+        self.tools_data = list(
+            Message.objects.filter(type_message=1).filter(is_active=True).values() |
+            Message.objects.filter(type_message=3).filter(is_active=True).values())
+
+        # Подключаем пользовательский модуль
+        self.children.append(ToolsModule(
+            title=u"Обращения",
+            data=self.tools_data
+        ))
+        # self.children.append(ToolsModule(title='Последние сообщения', message=MessageAdmin.get_changelist_instance(self, context.request)))
+        # append a feed module
+
+        self.children.append(modules.Feed(
+            _('Последние статьи сайта'),
+            feed_url=f"http://127.0.0.1:8000/feed/",
+            limit=7
+        ))
+
         # append an app list module for "Applications"
         # self.children.append(modules.AppList(
         #     _('Applications'),
@@ -90,16 +119,6 @@ class CustomIndexDashboard(Dashboard):
         #     _('Administration'),
         #     models=('django.contrib.*',),
         # ))
-
-        # append a recent actions module
-        self.children.append(modules.RecentActions(_('Recent Actions'), 5))
-
-        # append a feed module
-        self.children.append(modules.Feed(
-            _('Последние статьи сайта'),
-            feed_url='/',
-            limit=5
-        ))
 
         # append another link list module for "support".
         # self.children.append(modules.LinkList(
