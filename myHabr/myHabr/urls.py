@@ -20,8 +20,7 @@ from django.urls import path, include
 
 from blogapp.views import category, AllBlogsListView
 from mainapp import views as mainapp
-from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike, BlogRateArticleMinus, \
-    BlogRateArticlePlus
+from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike
 
 urlpatterns = [
     path(r'admin_tools/', include('admin_tools.urls')),
@@ -45,9 +44,6 @@ urlpatterns = [
     path('blog/comment/<int:pk>/dislike/', BlogAddCommentDislike.as_view(), name='comment-dislike'),
     path('blog/<int:pk>/like/', BlogAddLike.as_view(), name='like'),
     path('blog/<int:pk>/dislike/', BlogAddDislike.as_view(), name='dislike'),
-    path('blog/<int:pk>/rate_plus/', BlogRateArticlePlus.as_view(), name='upvoters'),
-    path('blog/<int:pk>/rate_minus/', BlogRateArticleMinus.as_view(), name='downvoters'),
-    # path('blog/comment/<int:pk>/rate/', BlogRateComment.as_view(), name='sum_rating_comment'),
     path('profiles/', include('profiles.urls', namespace='profiles')),
     path('notify/', mainapp.NotifyListView.as_view(), name='notify'),
     path('', include('social_django.urls')),
