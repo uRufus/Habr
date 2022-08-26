@@ -12,7 +12,7 @@ from .models import MyHabrUser
 # Регистрация пользователя
 def register(request):
     title = 'регистрация'
-
+    from_page = request.GET.get('next')
     if request.method == 'POST':
         register_form = MyHabrUserRegisterForm(request.POST, request.FILES)
 
@@ -22,13 +22,17 @@ def register(request):
             get_user = MyHabrUser.objects.get(username=request.POST.get('username'),
                                               first_name=request.POST.get('first_name'), email=request.POST.get('email'))
             new_profile = Profile.objects.create(user_id=get_user, first_name=request.POST.get('first_name'))
+            if from_page := request.POST.get('from_page'):
+                return HttpResponseRedirect(
+                    reverse('authapp:login') + '?next=' + from_page)
             return HttpResponseRedirect(reverse('authapp:login'))
     else:
         register_form = MyHabrUserRegisterForm()
 
     content = {
         'title': title,
-        'register_form': register_form
+        'register_form': register_form,
+        'from_page': from_page
     }
 
     return render(request, 'authapp/register.html', content)
@@ -36,6 +40,7 @@ def register(request):
 
 # Аутентификация пользователя
 def login(request):
+    from_page = request.GET.get('next')
     title = 'вход'
 
     login_form = MyHabrUserLoginForm(data=request.POST or None)
@@ -61,6 +66,7 @@ def login(request):
         'title': title,
         'login_form': login_form,
         'next': next,
+        'from_page': from_page
     }
 
     return render(request, 'authapp/login.html', content)
