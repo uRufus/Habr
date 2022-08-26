@@ -3,8 +3,8 @@ myHabr/run.bat
 /myHabr/mainapp/__pycache__
 /myHabr/myHabr/__pycache__
 000*.py
-misc.xml
-Habr.iml
+.idea/misc.xml
+.idea/Habr.iml
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
