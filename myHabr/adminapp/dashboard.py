@@ -93,7 +93,7 @@ class CustomIndexDashboard(Dashboard):
 
         self.children.append(modules.Feed(
             _('Последние статьи сайта'),
-            feed_url=f"http://127.0.0.1:8000/feed/",
+            feed_url=f"https://kibarium.ru/feed/",
             limit=7
         ))
 
