@@ -22,8 +22,6 @@ except ImportError:
 from admin_tools.dashboard import modules, Dashboard, AppIndexDashboard
 from admin_tools.utils import get_admin_site_name
 from adminapp.admin_tools_module import ToolsModule
-from mainapp.models import BlogPost, Comment
-from adminapp.admin import MessageAdmin
 
 
 class CustomIndexDashboard(Dashboard):
@@ -42,8 +40,8 @@ class CustomIndexDashboard(Dashboard):
             collapsible=False,
             children=[
                 [_('Return to site'), '/'],
-                [_('Change password'),reverse('%s:password_change' % site_name)],
-                [_('Log out'), reverse('%s:logout' % site_name)],
+                [_('Change password'), reverse(f'{site_name}:password_change')],
+                [_('Log out'), reverse(f'{site_name}:logout')],
             ]
         ))
 
@@ -52,33 +50,34 @@ class CustomIndexDashboard(Dashboard):
             display="tabs",
             children=[
                 modules.ModelList(
-                        title = u'Пользователи',
-                        models=(
-                            'authapp.models.MyHabrUser',
-                            'profiles.models.Profile',
-                            'django.contrib.auth.models.Group'
-                        ),
+                    title = 'Пользователи',
+                    models=(
+                        'authapp.models.MyHabrUser',
+                        'profiles.models.Profile',
+                        'django.contrib.auth.models.Group'
+                    ),
                 ),
                 modules.ModelList(
-                        title = u'Контент сайта',
-                        models=(
-                            'mainapp.models.BlogPost',
-                            'mainapp.models.Comment',
-                            'faq.models.Post',
-                        ),
+                    title = u'Контент сайта',
+                    models=(
+                        'mainapp.models.BlogPost',
+                        'mainapp.models.Comment',
+                        'faq.models.Post',
+                    ),
                 ),
                 modules.ModelList(
-                        title = u'Рубрикаторы',
-                        models=(
-                            'blogapp.models.Blogs',
-                            'blogapp.models.BlogCategories',
-                        )
+                    title = u'Рубрикаторы',
+                    models=(
+                        'blogapp.models.Blogs',
+                        'blogapp.models.BlogCategories',
+                    )
                 ),
+
                 modules.ModelList(
-                        title = u'Коммуникация',
-                        models=(
-                            'adminapp.models.Message',
-                        ),
+                    title = u'Коммуникация',
+                    models=(
+                        'adminapp.models.Message',
+                    ),
                 ),
             ]
         ))
@@ -86,61 +85,17 @@ class CustomIndexDashboard(Dashboard):
         # append a recent actions module
         self.children.append(modules.RecentActions(_('Recent Actions'), 5))
 
-        # Получаем все запросы к модератору (статья на модерацию и прямые обращения)
-        # self.tools_data = list(
-        #     Message.objects.filter(type_message=1).values_list('from_user', 'text', 'type_message', 'url', 'created_at') |
-        #     Message.objects.filter(type_message=3).values_list('from_user', 'text', 'type_message','url', 'created_at'))
-        self.tools_data = list(
-            Message.objects.filter(type_message=1).filter(is_active=True).values() |
-            Message.objects.filter(type_message=3).filter(is_active=True).values())
 
         # Подключаем пользовательский модуль
         self.children.append(ToolsModule(
-            title=u"Обращения",
-            data=self.tools_data
+            title=u"Обращения"
         ))
-        # self.children.append(ToolsModule(title='Последние сообщения', message=MessageAdmin.get_changelist_instance(self, context.request)))
-        # append a feed module
 
         self.children.append(modules.Feed(
             _('Последние статьи сайта'),
             feed_url=f"http://127.0.0.1:8000/feed/",
             limit=7
         ))
-
-        # append an app list module for "Applications"
-        # self.children.append(modules.AppList(
-        #     _('Applications'),
-        #     exclude=('django.contrib.*',),
-        # ))
-
-        # append an app list module for "Administration"
-        # self.children.append(modules.AppList(
-        #     _('Administration'),
-        #     models=('django.contrib.*',),
-        # ))
-
-        # append another link list module for "support".
-        # self.children.append(modules.LinkList(
-        #     _('Support'),
-        #     children=[
-        #         {
-        #             'title': _('Django documentation'),
-        #             'url': 'http://docs.djangoproject.com/',
-        #             'external': True,
-        #         },
-        #         {
-        #             'title': _('Django "django-users" mailing list'),
-        #             'url': 'http://groups.google.com/group/django-users',
-        #             'external': True,
-        #         },
-        #         {
-        #             'title': _('Django irc channel'),
-        #             'url': 'irc://irc.freenode.net/django',
-        #             'external': True,
-        #         },
-        #     ]
-        # ))
 
 
 class CustomAppIndexDashboard(AppIndexDashboard):

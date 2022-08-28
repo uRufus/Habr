@@ -163,11 +163,13 @@ class BlogAddLike(LoginRequiredMixin, View):
         if is_like:
             post.likes.remove(request.user)
 
+        sum_rating = post.likes.all().count() - post.dislikes.all().count()
+
         return HttpResponse(
             json.dumps({
                 'like_count': post.likes.all().count(),
                 'dislike_count': post.dislikes.all().count(),
-                # 'sum_rating': post.votes.sum_rating()
+                'sum_rating': sum_rating,
             }),
             content_type='application/json'
         )
@@ -207,11 +209,13 @@ class BlogAddDislike(LoginRequiredMixin, View):
         if is_dislike:
             post.dislikes.remove(request.user)
 
+        sum_rating = post.likes.all().count() - post.dislikes.all().count()
+
         return HttpResponse(
             json.dumps({
                 'like_count': post.likes.all().count(),
                 'dislike_count': post.dislikes.all().count(),
-                # 'sum_rating': post.votes.sum_rating()
+                'sum_rating': sum_rating,
             }),
             content_type='application/json'
         )
@@ -253,16 +257,13 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
         if is_like:
             comment.likes.remove(request.user)
 
-        # next = request.POST.get('next')
-        # if next is not None and not re.search(r'blog/\d+$', next):
-        #     next = request.META.get('HTTP_REFERER')
-        # return HttpResponseRedirect(next)
+        sum_rating_comments = comment.likes.all().count() - comment.dislikes.all().count()
 
         return HttpResponse(
             json.dumps({
                 'comment_like_count': comment.likes.all().count(),
                 'comment_dislike_count': comment.dislikes.all().count(),
-                # 'sum_rating': post.votes.sum_rating()
+                'sum_rating_comments': sum_rating_comments,
             }),
             content_type='application/json'
         )
@@ -304,16 +305,13 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
         if is_dislike:
             comment.dislikes.remove(request.user)
 
-        # next = request.POST.get('next')
-        # if next is not None and not re.search(r'blog/\d+$', next):
-        #     next = request.META.get('HTTP_REFERER')
-        # return HttpResponseRedirect(next)
+        sum_rating_comments = comment.likes.all().count() - comment.dislikes.all().count()
 
         return HttpResponse(
             json.dumps({
                 'comment_like_count': comment.likes.all().count(),
                 'comment_dislike_count': comment.dislikes.all().count(),
-                # 'sum_rating': post.votes.sum_rating()
+                'sum_rating_comments': sum_rating_comments,
             }),
             content_type='application/json'
         )
@@ -339,8 +337,11 @@ def mark_read(request):
 
 
 def message_count(request):
-    count = Message.objects.filter(to_user=request.user, is_read=False)\
-                           .exclude(from_user=request.user).count()
+    if request.user.is_authenticated:
+        count = Message.objects.filter(to_user=request.user, is_read=False)\
+                               .exclude(from_user=request.user).count()
+    else:
+        count = 0
     return JsonResponse({'count': count})
 
 

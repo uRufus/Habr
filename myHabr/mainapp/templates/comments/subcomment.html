@@ -1,7 +1,8 @@
 {% load mainapp_filters %}
+{% load mathfilters %}
 {% for comm in children %}
     <li class="row comment sub_comment mt-5 mb-0">
-        <div class="comment-body" id="{{ comm.id }}">
+        <div class="comment-body bg-light p-2" id="{{ comm.id }}">
             <h3>{{ comm.user.username }}</h3>
             <div class="meta">время: {{ comm.created_at }}
                 <button class="call_button" onclick="call_moderator({{ comm.id }})"><span class="tooltiptext">сообщить модератору</span>&#128276;
@@ -45,6 +46,13 @@
                         </div>
                     </button>
                 </form>
+                <button class="btn btn-light">
+                    <div class="mr-2">
+                        <i class="fa fa-bar-chart comment-vote-{{ comm.pk }}">
+                            {{ comm.likes.all.count|sub:comm.dislikes.all.count }}
+                        </i>
+                    </div>
+                </button>
             </div>
             {% if user.is_authenticated %}
                 <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>

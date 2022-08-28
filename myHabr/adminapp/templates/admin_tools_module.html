@@ -1,11 +1,7 @@
 {% extends "admin_tools/dashboard/module.html" %}
 {% block module_content %}
-{#{{ module.data }}#}
-<!--    <ul>-->
-<!--        {% for val_dict in module.data %}-->
-<!--            <li><a href={{val_dict.url}}></a>{{val_dict.text}}</li>-->
-<!--        {% endfor %}-->
-<!--    </ul>-->
+{#{{ module.get_data }}#}
+
     <table>
     <thead>
         <tr>
@@ -31,9 +27,20 @@
 		        {% endif %}
 	        </td>
 	        <td>{{ element.created_at }}</td>
-	        <td>{{ element.is_active }}</td>
+{#            <td><input type="checkbox" name="is_active{{ element.id }}" checked={{ element.is_active }}#}
+{#		            onchange={{ module.reload }}></td>#}
         </tr>
         {% endfor %}
       </tbody>
     </table>
 {% endblock %}
+
+<script>
+    function reload(name) {
+        alert(name);
+    }
+</script>
+
+{#<script language="JavaScript">#}
+{#    alert()#}
+{#</script>#}
