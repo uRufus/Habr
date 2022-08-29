@@ -57,36 +57,44 @@ def update_profile(request, id):
     # Получаем из БД данные профиля
     profile = Profile.objects.get(user_id=user)
 
+    # Если имеем Гет запрос загружаем форму
+    profile_form = ProfileForm()
+    # Устанавливаем имеющиеся значенрия из каждой формы
+    profile_form['first_name'].initial = profile.first_name
+    profile_form['last_name'].initial = profile.last_name
+    profile_form['age'].initial = profile.age
+    profile_form['text'].initial = profile.text
+    profile_form['image'].initial = profile.image
+    context = {
+        'profile_form': profile_form,
+        'profile_form_url': profile.image,
+        'empty_keys': []
+    }
+
     if request.method == 'POST':
         # При пост запросе получвем данные из формы
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         age = request.POST.get('age')
         text = request.POST.get('text')
+        for key, value in request.POST.items():
+            if value == '' and key != 'image':
+                context['empty_keys'].append(key)
+            else:
+                pass
 
         # Применяем данные к объекту
-        profile.first_name = first_name
-        profile.last_name = last_name
-        profile.age = age
-        profile.text = text
-        if request.FILES:
-            profile.image = request.FILES['image']
-        profile.save()
-
-        # Возвращаемся на страницу пользователя
-        return HttpResponseRedirect(reverse('profiles:update', args=[id]))
-
+        if len(context['empty_keys']) == 0:
+            profile.first_name = first_name
+            profile.last_name = last_name
+            profile.age = age
+            profile.text = text
+            if request.FILES:
+                profile.image = request.FILES['image']
+            profile.save()
+            # Возвращаемся на страницу пользователя
+            return HttpResponseRedirect(reverse('profiles:update', args=[id]))
+        else:
+            return render(request=request, template_name='create_update_profile.html', context=context)
     else:
-        # Если имеем Гет запрос загружаем форму
-        profile_form = ProfileForm()
-        # Устанавливаем имеющиеся значенрия из каждой формы
-        profile_form['first_name'].initial = profile.first_name
-        profile_form['last_name'].initial = profile.last_name
-        profile_form['age'].initial = profile.age
-        profile_form['text'].initial = profile.text
-        profile_form['image'].initial = profile.image
-        context = {
-            'profile_form': profile_form,
-            'profile_form_url': profile.image
-        }
         return render(request=request, template_name='create_update_profile.html', context=context)
