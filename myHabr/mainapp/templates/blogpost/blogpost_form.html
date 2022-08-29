@@ -15,9 +15,9 @@
                 {% csrf_token %}
                 {{ form.media }}
                 {{ form.as_p }}
-                <input type="submit">
+                <input type="submit" value="Загрузить статью">
             </form>
         </div>
-                <a href="{% url 'blogpost' %}"> Назад </a>
+        <a href="{% url 'blogpost' %}"> Назад </a>
     </div>
 {% endblock %}
