@@ -9,10 +9,10 @@ class ProfileForm(forms.Form):
     text = forms.CharField(widget=forms.Textarea, label='О себе: ', required=False)
     image = forms.ImageField(widget=forms.FileInput(), required=False)
 
-    def form_initial(self, id):
-        # Пытаюсь в цикле поставить значение элемента формы initial из БД НЕ ПОЛУЧАЕТСЯ
-        obj = Profile.objects.in_bulk([id])
-
-        for k, v in self.fields.items():
-            for id_ob in obj:
-                self.fields[k].initial = obj[id_ob][k]
+    # def form_initial(self, id):
+    #     # Пытаюсь в цикле поставить значение элемента формы initial из БД НЕ ПОЛУЧАЕТСЯ
+    #     obj = Profile.objects.in_bulk([id])
+    #
+    #     for k, v in self.fields.items():
+    #         for id_ob in obj:
+    #             self.fields[k].initial = obj[id_ob][k]

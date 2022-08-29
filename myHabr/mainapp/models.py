@@ -1,15 +1,15 @@
 import re
 
-from ckeditor_uploader.fields import RichTextUploadingField
 from django.conf import settings
 from django.db import models
+from ckeditor_uploader.fields import RichTextUploadingField
 
-from adminapp.models import Message
+
 from authapp.models import MyHabrUser
 from blogapp.models import BlogCategories
 from blogapp.models import Blogs
-
-
+from adminapp.models import Message
+from authapp import models as mod
 # Create your models here.
 
 
@@ -42,6 +42,7 @@ class BlogPost(models.Model):
                                    verbose_name="Лайк поста")
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='dislikes', blank=True,
                                       verbose_name="Дизлайк поста")
+
     tags = models.ManyToManyField(Tag, blank=True)
     # поле нужно, чтобы представлять тэги в форме как строку:
     tag_list = models.CharField(max_length=240, verbose_name="Тэги",
@@ -104,8 +105,8 @@ class Comment(models.Model):
         else:
             self.children = (
                 Comment.objects
-                .filter(commentslink__type='comment',
-                        commentslink__assigned_id=self.id)
+                    .filter(commentslink__type='comment',
+                            commentslink__assigned_id=self.id)
             )
             if self.children:
                 for child in self.children:
