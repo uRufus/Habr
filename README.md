@@ -6,192 +6,261 @@
 
 Основные системные требования:
 
-* Ubuntu 20.04 LTS
-* Python 3.8
-* PostgreSQL 12
-* Django 3.1
-* Зависимости (Python) из requirements.txt
+* archlinux-2022.08.05
+* python-3.10.6-1-x86_64
+* nginx-1.22.0-2-x86_64
+* postgresql-14.5-1-x86_64
+* django 3.2.14
+* gunicorn 20.1.0
+* Зависимости (python) из requirement.txt
 
 ### Установка необходимого ПО
-#### обновляем информацию о репозиториях
+Обновляем информацию о репозиториях
 ```
-apt update
+pacman -Suy
 ```
-#### Установка nginx, СУБД PostgreSQL, Git, virtualenv, gunicorn
-nginx
+#### Установка nginx, postgresql, git, python, python-pip
 ```
-apt install nginx
-```
-СУБД PostgreSQL
-```
-apt install postgresql postgresql-contrib
-После установки проверяем статус СУБД, командой: service postgresql status
-```
-Git
-```
-apt install git-core
-```
-virtualenv
-```
-apt install python3-venv
-```
-gunicorn
-```
-apt install gunicorn
+pacman -S nginx postgresql git python python-pip
 ```
 #### Настраиваем виртуальное окружение
-При необходимости, для установки менеджера пакетов pip выполняем команду:
+Создаем и активируем виртуальное окружение
 ```
-apt install python3-pip
+mkdir /srv/http/Habr && cd /srv/http/Habr
+python3 -m venv venv
+source venv/bin/activate
 ```
-Создаем и активируем виртуальное окружение:
+На https://github.com/settings/keys добавляем наш ключ
 ```
-mkdir /opt/venv
-python3 -m venv /opt/venv/xabr_env
-source /opt/venv/xabr_env/bin/activate
-```
-Создаем директории под логи:
-```
-mkdir /opt/venv/xabr_env/run/
-mkdir /opt/venv/xabr_env/logs/
-mkdir /opt/venv/xabr_env/logs/nginx/
-```
-Устанавливаем права:
-```
-chown -R hh /opt/venv/xabr_env
+cat ~/.ssh/id_rsa.pub ---> https://github.com/settings/keys
 ```
 Клонируем репозиторий:
 ```
-git clone git@github.com:Dmitrii2019/xabr.git /opt/venv/xabr_env/src
-cd xabr_env/
+git clone git@github.com:uRufus/Habr.git
+cd Habr/ && mv * .. && cd .. && rm -rf Habr/
 ```
 Ставим зависимости:
 ```
-pip3 install -r /opt/venv/xabr_env/src/xabr/requirements.txt
+python3 venv/bin/pip3 install -r requirement.txt
 ```
-#### «PostgreSQL» Запускаем интерпретатор команд сервера:
+#### Postgresql. Запускаем интерпретатор команд сервера:
 ```
-sudo -u postgres psql
+sudo -iu postgres
+[postgres]$ initdb --locale=ru_RU.UTF-8 -E UTF8 -D /var/lib/postgres/data
+exit
+systemctl enable postgresql.service && systemctl start postgresql.service
 ```
-Создаем BD
+Добавляем пользователя
 ```
-CREATE DATABASE Xabr;
+useradd -m habr -G wheel
 ```
-Создаем пользователя 
+Создаем БД
 ```
-CREATE USER "USER_NAME" with NOSUPERUSER PASSWORD 'PASSWORD';
+sudo -iu postgres
+[postgres@arch ~]$ createuser --interactive
+Введите имя новой роли: habr
+Должна ли новая роль иметь полномочия суперпользователя? (y - да/n - нет) n
+Новая роль должна иметь право создавать базы данных? (y - да/n - нет) n
+Новая роль должна иметь право создавать другие роли? (y - да/n - нет) n
+[postgres@arch ~]$ createdb habr
+exit
 ```
-Вобовляем превелегии
+Перезапускам Postgresql
 ```
-GRANT ALL PRIVILEGES ON DATABASE Xabr TO "USER_NAME";
+systemctl restart postgresql
 ```
-Выставляем кодировку 'UTF8'
+Проверяем доступность postgresql базы проекте
 ```
-ALTER ROLE "USER_NAME" SET CLIENT_ENCODING TO 'UTF8';
-```
-Устанавливается уровень изоляции
-```
-ALTER ROLE "USER_NAME" SET default_transaction_isolation TO 'READ COMMITTED';
-```
-Выставляем TIME ZONE
-```
-ALTER ROLE "USER_NAME" SET TIME ZONE "TIME ZONE";
-```
-Для выхода пишем «\q».
-#### Суперпользователь
-```
-python3 manage.py createsuperuser
-```
-к примеру (логин/пароль): admin:admin
-#### Выполнение миграций и сбор статических файлов проекта
-Выполняем миграции:
-```
-python3 manage.py migrate
-```
-Собираем статику:
-```
-python3 manage.py collectstatic
-```
-#### Заполнить базу данных тестовыми данными (не обязательно)
-```
-python3 manage.py fill_db
-```
-#### Импортируем данные (не обязательно)
-```
-python manage.py loaddata db.json
-```
-#### Тест запуска
-```
-python3 manage.py runserver
-```
-#### Назначение прав доступа
-```
-chown -R xabr /home/xabr_env/
-chmod -R 755 /home/xabr_env/xabr/
-```
-Настроим параметры службы «gunicorn»
-```
-sudo nano /etc/systemd/system/gunicorn.service
-
-
-[Unit]
-Description=gunicorn daemon
-After=network.target
-
-[Service]
-User=USER_NAME
-Group=www-data
-WorkingDirectory=/home/xabr_env/xabr
-ExecStart=/home/xabr_env/xabr/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/xabr_env/xabr/xabr.sock xabr.wsgi
-
-[Install]
-WantedBy=multi-user.target
-
-```
-Активирование и запуск сервиса
-```
-sudo systemctl enable gunicorn
-sudo systemctl start gunicorn
-sudo systemctl status gunicorn
-```
-Настройки параметров для nginx
-```
-sudo nano /etc/nginx/sites-available/xabr.conf
-
-server {
-    listen 80;
-    server_name 151.248.117.226; ### server_name необхоимо написать ip-адрес сервера
-
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location /static/ {
-        root /home/xabr_env/xabr;
-    }
-
-    location /media/ {
-        root /home/xabr_env/xabr;
-    }
-
-    location / {
-        include proxy_params;
-        proxy_pass http://unix:/home/xabr/xabr/xabr.sock;
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'habr',
+        'USER': 'habr',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': 5432,
     }
 }
 ```
-Перезапускаем службу «nginx»
+#### Назначение прав доступа
 ```
-sudo systemctl restart nginx
+cd /srv/http/Habr/
+chown -R habr:habr *
+find . -type d -exec chmod 755 {} \;
+find . -type f -exec chmod 644 {} \;
 ```
-#### Активировируем сайт
+#### Выполнение миграций проекта
+Работаем о пользователя habr
 ```
-sudo ln -s /etc/nginx/sites-available/xabr /etc/nginx/sites-enabled
+sudo -iu habr
 ```
+Выполняем миграции
+```
+cd /srv/http/Habr/myHabr
+../venv/bin/python3 manage.py makemigrations
+../venv/bin/python3 manage.py migrate
+../venv/bin/python3 manage.py fill_db
+```
+#### Тест запуска
+```
+../venv/bin/python3 manage.py runserver 0.0.0.0:8000
+Ctrl-C
+exit
+```
+#### Установка gunicorn.
+Настроим параметры службы «gunicorn» - gunicorn.sock
+```
+../venv/bin/python3 /srv/http/Habr/venv/bin/pip3 install gunicorn psycopg2-binary 
+```
+```
+vim /etc/systemd/system/gunicorn.socket
+```
+```
+[Unit]
+Description=gunicorn socket
 
-### После этого в браузере можно ввести ip-адрес сервера и откроется проект.
-#### Выкат изменений из Git:
+[Socket]
+ListenStream=/run/gunicorn.socket
+SocketUser=http
+
+[Install]
+WantedBy=sockets.target
 ```
-source /opt/venv/xabr/bin/activate
-cd /opt/venv/xabr/src
-git pull origin master
-pip3 install -r requirements.txt
-python3 manage.py migrate
-python3 manage.py collectstatic
+и
+```
+vim /etc/systemd/system/gunicorn.service
+```
+```
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=habr
+Group=habr
+WorkingDirectory=/srv/http/Habr/myHabr
+ExecStart=/srv/http/Habr/venv/bin/gunicorn --access-logfile - --workers 5 --bind unix:/run/gunicorn.socket myHabr.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+```
+Активирование и запуск сервиса
+```
+systemctl daemon-reload
+systemctl enable gunicorn.socket
+systemctl start gunicorn.socket
+systemctl enable gunicorn
+systemctl start gunicorn
+systemctl status gunicorn
+```
+#### Настройка nginx
+Содержимое /etc/nginx/nginx.conf
+```
+user http;
+worker_processes 2;
+worker_cpu_affinity auto;
+
+events {
+    multi_accept on;
+    worker_connections 16;
+}
+
+http {
+    charset utf-8;
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    server_tokens off;
+    log_not_found off;
+    types_hash_max_size 4096;
+    client_max_body_size 16M;
+
+    include mime.types;
+    default_type application/octet-stream;
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log warn;
+
+    upstream app_servers2 {
+        server unix:/run/gunicorn.socket fail_timeout=0;
+    }
+
+    include /etc/nginx/sites-enabled/*;
+}
+```
+Создаем два каталога: /etc/nginx/sites-available и /etc/nginx/sites-enabled 
+```
+mkdir /etc/nginx/sites-available
+mkdir /etc/nginx/sites-enabled
+```
+```
+vim /etc/nginx/sites-available/kibarium.ru
+```
+```
+server {
+  server_name kibarium.ru www.kibarium.ru;
+  access_log /var/log/nginx/kibarium.ru.access.log;
+  error_log /var/log/nginx/kibarium.ru.error.log;
+
+
+  location /static/ {
+    alias /srv/http/Habr/myHabr/static/;
+  }
+
+  location /media/ {
+    alias /srv/http/Habr/myHabr/media/;
+  }
+
+  location /images/ {
+    alias /srv/http/Habr/myHabr/static/images/;
+  }
+
+  location / {
+    proxy_pass         http://app_servers2;
+    proxy_redirect     off;
+    proxy_set_header   Host $host;
+    proxy_set_header   X-Real-IP $remote_addr;
+    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header   X-Forwarded-Host $server_name;
+
+    auth_basic "Restricted Access!";
+    auth_basic_user_file /srv/http/Habr/.htpasswd;
+  }
+
+
+  listen 443 ssl; # managed by Certbot
+  ssl_certificate /etc/letsencrypt/live/kibarium.ru/fullchain.pem; # managed by Certbot
+  ssl_certificate_key /etc/letsencrypt/live/kibarium.ru/privkey.pem; # managed by Certbot
+  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+server {
+  if ($host = kibarium.ru) {
+      return 301 https://$host$request_uri;
+  } # managed by Certbot
+
+  listen 80;
+  server_name kibarium.ru www.kibarium.ru;
+    return 404; # managed by Certbot
+}
+```
+#### Активируем сайт
+```
+ln -s /etc/nginx/sites-available/kibarium.ru /etc/nginx/sites-enabled/kibarium.ru
+```
+Включаем в загрузку
+```
+systemctl enable nginx.service
+```
+Перезапускаем службу nginx
+```
+systemctl restart nginx.service
+```
+Теперь можно перезапустить сервер
+```shell
+shutdown -r now
+```
+### После этого в браузере по адресу https://kibarium.ru открывается проект.
