@@ -8,6 +8,10 @@
                 <div class="meta">время: {{ comment.created_at }}
                     <button class="call_button" onclick="call_moderator({{ comment.id }})"><span class="tooltiptext">сообщить модератору</span>&#128276;
                     </button>
+                    {% if request.user.is_staff %}
+                    <button class="delete_message_button" onclick="delete_comment({{ comment.id }})">&#128465;
+                    </button>
+                    {% endif %}
                 </div>
                 <p>{{ comment.text|mark_tags }}</p>
                 <div class="d-flex flex-row mb-3">
