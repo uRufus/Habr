@@ -20,5 +20,6 @@ def post_save_comment(created, **kwargs):
             from_user=comment.user,
             to_group=Group.objects.get(name='moderator'),
             text=message_text,
-            type_message='1'
+            type_message='1',
+            url=article_url
         )
