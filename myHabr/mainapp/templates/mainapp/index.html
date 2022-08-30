@@ -19,7 +19,7 @@
                                      width="820">
                             </div>
                             <div class="d-flex mb-3">
-                                {{ post.body|truncatewords:50 }}
+                                {{ post.body|safe|truncatewords:50 }}
                             </div>
                             <div class="d-flex flex-row">
                                 <form method="POST" action="{% url 'like' post.pk %}" class="like-form mb-0"
