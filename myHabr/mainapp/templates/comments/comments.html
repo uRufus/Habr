@@ -1,9 +1,8 @@
 {% load mainapp_filters %}
-{% load mathfilters %}
 <ul class="comment-list">
     {% for comment in comments %}
         <li class="row comment">
-            <div class="comment-body bg-light p-2" id="{{ comment.id }}">
+            <div class="comment-body" id="{{ comment.id }}">
                 <h3>{{ comment.user.username }}</h3>
                 <div class="meta">время: {{ comment.created_at }}
                     <button class="call_button" onclick="call_moderator({{ comment.id }})"><span class="tooltiptext">сообщить модератору</span>&#128276;
@@ -33,8 +32,7 @@
                             </div>
                         </button>
                     </form>
-                    <form method="POST" action="{% url 'comment-dislike' comment.pk %}"
-                          class="comment-dislike-form mb-0"
+                    <form method="POST" action="{% url 'comment-dislike' comment.pk %}" class="comment-dislike-form mb-0"
                           id="{{ comment.pk }}">
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.path }}">
@@ -52,13 +50,6 @@
                             </div>
                         </button>
                     </form>
-                    <button class="btn btn-light">
-                        <div class="mr-2">
-                            <i class="fa fa-bar-chart comment-vote-{{ comment.pk }}">
-                                {{ comment.likes.all.count|sub:comment.dislikes.all.count }}
-                            </i>
-                        </div>
-                    </button>
                 </div>
                 {% if user.is_authenticated %}
                     <textarea hidden name="subcomment_text" class="form-control" rows="3"></textarea>

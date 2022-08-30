@@ -32,7 +32,3 @@ class BlogPostForm(forms.ModelForm):
             'body': forms.Textarea(attrs={'class': 'form-control'}),
             'tag_list': forms.TextInput(attrs={'class': 'form-control'})
         }
-
-    # def __init__(self, *args, **kwargs):
-    #     super(BlogPostForm, self).__init__(*args, **kwargs)
-    #     self.fields['blog'].queryset = BlogPost.objects.filter(blog__user="1")
