@@ -14,7 +14,7 @@ class LatestPostsFeed(Feed):
 
 
     def items(self):
-        return BlogPost.objects.all()[:5]
+        return BlogPost.objects.all()[:10]
 
 
     def item_title(self, item):

@@ -87,6 +87,7 @@ class Comment(models.Model):
                                    verbose_name="Лайк комментария")
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_dislikes', blank=True,
                                       verbose_name="Дизлайк комментария")
+    is_active = models.BooleanField(default=True, verbose_name="Активно")
 
     class Meta:
         db_table = 'comments'
@@ -110,6 +111,9 @@ class Comment(models.Model):
             if self.children:
                 for child in self.children:
                     child.find_children()
+
+    def __str__(self):
+        return f'from_{self.user}|{self.created_at}'
 
 
 class CommentsLink(models.Model):

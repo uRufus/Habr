@@ -34,11 +34,10 @@ class BlogListView(ListView):
 class BlogPostView(ListView):
     model = BlogPost
     template_name = "blogpost.html"
-    ordering = ['-create_date']
 
     def get_queryset(self):
         user = self.request.user
-        return BlogPost.objects.filter(author=user).exclude(status="0")
+        return BlogPost.objects.filter(author=user).exclude(status="0").order_by('-create_date')
 
 
 class BlogPostDetail(DetailView):

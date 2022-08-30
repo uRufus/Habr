@@ -1,7 +1,10 @@
+import sys
+sys.path.append('../mainapp')
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import Group
 from authapp.models import MyHabrUser
+
+# from myHabr.mainapp.models import Comment
 # Create your models here.
 
 class Message(models.Model):
@@ -34,4 +37,5 @@ class Message(models.Model):
         verbose_name_plural = 'Сообщения'
 
     def __str__(self):
-        return f'from_{self.from_user}_{self.created_at}'
+        return f'from_{self.from_user}|{self.created_at}'
+
