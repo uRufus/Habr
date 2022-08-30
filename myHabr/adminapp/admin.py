@@ -159,12 +159,12 @@ class MessageAdmin(admin.ModelAdmin):
 class BlogPostAdmin(admin.ModelAdmin):
 
     fields = (("author", "blog", "status"), "title","image_header", "body", "tag_list", ("create_date", "update_date"))
-    list_display = ("id", "title", "blog", "status", "tag_list", "create_date", "update_date", "like", "dislike")
+    list_display = ("author", "title", "blog", "status", "tag_list", "create_date", "like", "dislike")
     list_display_links = ["title"]
     list_editable = ["status"]
     list_filter = ["blog", "status", "tag_list"]
-    search_fields = ["title", "tag_list", "blog", "status"]
-    readonly_fields = ["tag_list", "create_date", "update_date"]
+    search_fields = ["body", "title", "create_date"]
+    readonly_fields = ["tag_list", "create_date", "tag_list", "author", "blog", "update_date"]
 
 
     class Meta:
@@ -201,11 +201,19 @@ class ProfileAdmin(admin.ModelAdmin):
         model = Profile
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ["user", "parent", "text", "created_at"]
+    fields = ("user", "text", ("created_at", "updated_at"), ("has_children", "parent"))
+    list_display = ["user", "parent", "text", "created_at", "like", "dislike"]
     list_display_links = ["user", "text"]
+    readonly_fields = ["created_at", "updated_at","user", "text",]
 
     class Meta:
         model = Comment
+
+    def like(self, obj):
+        return obj.likes.count()
+
+    def dislike(self, obj):
+        return obj.dislikes.count()
 
 admin.site.register(MyHabrUser, MyHabrUserAdmin)
 admin.site.register(Message, MessageAdmin)

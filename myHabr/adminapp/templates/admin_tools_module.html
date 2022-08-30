@@ -14,14 +14,10 @@
         <!-- Основная часть таблицы -->
         {% for element in module.data %}
         <tr>
-	        <td><a href="">{{ element.from_user }}</a></td>
+	        <td><a href="/admin/authapp/myhabruser/?q={{ element.from_user }}">{{ element.from_user }}</a></td>
 	        <td><a href={{ element.url }}>{{ element.text| truncatewords:16 }}</a> </td>
 	        <td>{% if element.type_message == '1' %}
-		            {% if element.get_blogpost_id_from_url %}
-		                <a href="/admin/mainapp/blogpost/{{ element.get_blogpost_id_from_url }}/change/">Модерация статьи</a>
-			            {% else %}
-			                <a href="/admin/mainapp/blogpost/?status__exact=2">Модерация статьи</a>
-		            {% endif %}
+		        <a href="/admin/mainapp/blogpost/?status__exact=2">Модерация статьи</a>
 	            {% else %}
 		            <a href="/admin/adminapp/message/{{ element.id }}/change/">Обращение к модератору</a>
 		        {% endif %}
