@@ -7,6 +7,8 @@
             <div class="meta">время: {{ comm.created_at }}
                 <button class="call_button" onclick="call_moderator({{ comm.id }})"><span class="tooltiptext">сообщить модератору</span>&#128276;
                 </button>
+                <button class="delete_message_button" onclick="delete_comment({{ comm.id }})">&#128465;
+                    </button>
             </div>
             <p>{{ comm.text|mark_tags }}</p>
             <div class="d-flex flex-row mb-3">

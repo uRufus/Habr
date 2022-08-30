@@ -14,7 +14,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from adminapp.models import Message
 from mainapp.models import BlogPost, Comment
-from mainapp.utils import create_comment_like_message, create_post_like_message
+from mainapp.utils import (create_comment_like_message,
+                           create_post_like_message, find_article_by_comment)
 from .forms import BlogPostForm
 from .models import CommentsLink
 
@@ -351,6 +352,9 @@ def blog_comment(request):
     comment = Comment.objects.create(user=user, text=text)
     CommentsLink.objects.create(comment=comment, type='article',
                                 assigned_id=blog_id)
+    article_id = find_article_by_comment(comment.id)
+    article = BlogPost.objects.get(id=article_id)
+    comment.send_message(request, article)
     comments = Comment.objects \
         .filter(commentslink__type='article',
                 commentslink__assigned_id=blog_id) \
@@ -392,6 +396,13 @@ def blog_comment_edit(request):
     edited_at = comment.updated_at.strftime("%d-%m-%Y, %H:%M:%S")
     return JsonResponse({'new_text': text,
                          'edited_at': edited_at})
+
+
+def delete_comment(request):
+    comment_id = request.POST['comment_id']
+    Comment.objects.get(id=comment_id).delete()
+    return JsonResponse({'success': True})
+
 
 
 def call_moderator(request):
