@@ -5,6 +5,3 @@ class MainappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'mainapp'
     verbose_name = "Статьи и комментарии"
-
-    def ready(self):
-        import mainapp.signals
