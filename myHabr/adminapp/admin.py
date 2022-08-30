@@ -201,9 +201,10 @@ class ProfileAdmin(admin.ModelAdmin):
         model = Profile
 
 class CommentAdmin(admin.ModelAdmin):
-    fields = ("user", "text", ("created_at", "updated_at"), ("has_children", "parent"))
-    list_display = ["user", "parent", "text", "created_at", "like", "dislike"]
+    fields = ("user", "text", ("created_at", "updated_at"), ("has_children", "parent", "is_active"))
+    list_display = ["user", "parent", "text", "created_at", "is_active", "like", "dislike"]
     list_display_links = ["user", "text"]
+    list_editable = ["is_active"]
     readonly_fields = ["created_at", "updated_at","user", "text",]
 
     class Meta:
@@ -214,6 +215,7 @@ class CommentAdmin(admin.ModelAdmin):
 
     def dislike(self, obj):
         return obj.dislikes.count()
+
 
 admin.site.register(MyHabrUser, MyHabrUserAdmin)
 admin.site.register(Message, MessageAdmin)
