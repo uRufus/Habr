@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
 
+from django.urls import reverse
 
 from authapp.models import MyHabrUser
 from blogapp.models import BlogCategories
@@ -111,6 +112,23 @@ class Comment(models.Model):
             if self.children:
                 for child in self.children:
                     child.find_children()
+
+
+    def send_message(self, request, article):
+        article_url = reverse('blogpost_detail', args=[article.id])
+        article_url = request.build_absolute_uri(article_url) + \
+                      f'#{str(self.id)}'
+        Message.objects.get_or_create(
+            from_user=self.user,
+            to_user=article.author,
+            text=f'Пользователь {self.user.username} оставил к Вашей статье '
+                 f'"{article.title}"  <a href="{article_url}">комментарий</a>',
+            type_message='0',
+            url=article_url
+        )
+
+    def __str__(self):
+        return f'from_{self.user}|{self.created_at}'
 
 
 class CommentsLink(models.Model):

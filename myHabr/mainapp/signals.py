@@ -1,7 +1,7 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib.auth.models import Group
-from mainapp.models import BlogPost, Comment, CommentsLink
+from mainapp.models import CommentsLink
 from adminapp.models import Message
 from mainapp.utils import find_article_by_comment
 from django.urls import reverse

@@ -64,6 +64,27 @@
             visibility: visible;
         }
 
+        .delete_message_button {
+            border: none;
+            background-color: white;
+            transition: transform .25s;
+            display: inline-block;
+        }
+
+        .delete_message_button:hover {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .delete_message_button:focus {
+            outline: none;
+        }
+
+        .delete_message_button {
+            font-size: 1.3rem;
+            color: red;
+        }
+
         #message {
             background-color: lightgreen;
             padding: 1em;
@@ -271,6 +292,25 @@
                     }
                 )
             }
+
+        function delete_comment(comment_id) {
+            $.ajax({
+                    url: "/delete_comment/",
+                    type: "POST",
+                    data: {
+                        comment_id: comment_id,
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    success: function (json) {
+                        console.log(json.success);
+                        $(`#${comment_id}`).closest('.row.comment').remove()
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log('error');
+                    }
+                }
+            )
+        }
 
 
         function hide_message(event) {
