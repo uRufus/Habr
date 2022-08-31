@@ -11,14 +11,6 @@
 
 {% block content %}
 <div class="container">
-    {% if empty_keys %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <strong>Не заполнены следующие поля:</strong> {{empty_keys}}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    {% endif %}
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="text-center">

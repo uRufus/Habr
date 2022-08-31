@@ -64,27 +64,6 @@
             visibility: visible;
         }
 
-        .delete_message_button {
-            border: none;
-            background-color: white;
-            transition: transform .25s;
-            display: inline-block;
-        }
-
-        .delete_message_button:hover {
-            transform: scale(1.2);
-            cursor: pointer;
-        }
-
-        .delete_message_button:focus {
-            outline: none;
-        }
-
-        .delete_message_button {
-            font-size: 1.3rem;
-            color: red;
-        }
-
         #message {
             background-color: lightgreen;
             padding: 1em;
@@ -122,12 +101,10 @@
         <div class="row blog-entries">
             <div class="col-md-12 col-lg-8 main-content">
                 <h1>{{ object.title }} ({{ object.blog }} ({{ object.blog.category }}))</h1>
-                <h2>Автор: {{ object.author }}</h2></br>
-                <img src="{{ object.image_header.url }}"
-                     class="img-fluid"
-                     width="820"><br/>
+                <h2>Автор:<a href="{% url 'profiles:profile'  object.author.id user.id %}">{{ object.author }}</a> </h2></br>
+                <img src="{{ object.image_header.url }}">
                 </br>
-                {{ object.body|safe }}
+                {{ object.body|safe }}{{ object.body|safe }}
                 <hr>
                 </br>
                 {% if related %}
@@ -295,25 +272,6 @@
                 )
             }
 
-        function delete_comment(comment_id) {
-            $.ajax({
-                    url: "/delete_comment/",
-                    type: "POST",
-                    data: {
-                        comment_id: comment_id,
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                    },
-                    success: function (json) {
-                        console.log(json.success);
-                        $(`#${comment_id}`).closest('.row.comment').remove()
-                    },
-                    error: function (xhr, errmsg, err) {
-                        console.log('error');
-                    }
-                }
-            )
-        }
-
 
         function hide_message(event) {
             $('#message').hide()
@@ -331,7 +289,7 @@
       } );
 
     $( document ).ready(function() {
-        $(document).on('submit', '.comment-like-form', function(e){
+        $('.comment-like-form').submit(function(e){
             e.preventDefault()
             const event_id = $(this).attr('id')
             const url = $(this).attr('action')
@@ -347,14 +305,13 @@
                 success: function(response) {
                      $(`.comment-dislike-${event_id}`).text(response.comment_dislike_count)
                      $(`.comment-like-${event_id}`).text(response.comment_like_count)
-                     $(`.comment-vote-${event_id}`).text(response.sum_rating_comments)
                 },
                 error: function(response) {
                     console.log('error', response)
                 }
             })
         })
-        $(document).on('submit', '.comment-dislike-form', function(e){
+        $('.comment-dislike-form').submit(function(e){
             e.preventDefault()
             const event_id = $(this).attr('id')
             const url = $(this).attr('action')
@@ -368,7 +325,6 @@
                 success: function(response) {
                      $(`.comment-dislike-${event_id}`).text(response.comment_dislike_count)
                      $(`.comment-like-${event_id}`).text(response.comment_like_count)
-                     $(`.comment-vote-${event_id}`).text(response.sum_rating_comments)
                 },
                 error: function(response) {
                     console.log('error', response)
