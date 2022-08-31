@@ -122,7 +122,7 @@
         <div class="row blog-entries">
             <div class="col-md-12 col-lg-8 main-content">
                 <h1>{{ object.title }} ({{ object.blog }} ({{ object.blog.category }}))</h1>
-                <h2>Автор: {{ object.author }}</h2></br>
+                <h2>Автор:<a href="{% url 'profiles:profile'  object.author.id user.id %}">{{ object.author }}</a></h2></br>
                 <img src="{{ object.image_header.url }}"
                      class="img-fluid"
                      width="820"><br/>
