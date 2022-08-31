@@ -56,6 +56,7 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('call_moderator/', mainapp.call_moderator, name='cal_moderator'),
     path('feed/', LatestPostsFeed(), name='post_feed'),
+    path('', include('social_django.urls', namespace='social')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

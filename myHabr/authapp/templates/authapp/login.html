@@ -1,4 +1,4 @@
-{% extends 'authapp/base.html' %}
+{% extends 'mainapp/base.html' %}
 {% load i18n %}
 {% load static %}
 
@@ -22,10 +22,10 @@
                     зарегистрироваться
                 </a>
             </button>
-            <div class="d-flex justify-content-center mb-5">
-                <a href="/login/vk-oauth2"><img src="/static/images/VK_Compact_Logo.svg.png" width="30" class="avatar-3"
-                                            data-toggle="tooltip"
-                                            title="{% trans 'Вход через VK' %}" alt="Вход через VK"></a>
+            <div class="d-flex justify-content-center mt-3">
+                <a href="{% url 'social:begin' 'vk-oauth2' %}">
+                    <img src="/static/images/VK_Compact_Logo.svg.png" width="30"
+                </a>
             </div>
         </div>
     </div>
