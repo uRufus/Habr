@@ -101,5 +101,5 @@ class Category(ListView):
         context = {
             'object_list': blogs
         }
-        return render(request=request, template_name='categories/category.html', context=context)
+        return render(request=request, template_name='mainapp/index.html', context=context)
 
