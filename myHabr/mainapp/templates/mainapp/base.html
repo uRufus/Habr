@@ -95,7 +95,7 @@
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                <a class="nav-link active" href="{% url 'profiles:profile' user.id user.id %}">Профиль</a>
+                <a class="nav-link active" href="{% url 'profiles:profile' user.id %}">Профиль</a>
               </li>
 {#              <li class="nav-item">#}
 {#                <a class="nav-link active" href="{% url 'profiles:Profile' user.id %}">Профиль</a>#}
