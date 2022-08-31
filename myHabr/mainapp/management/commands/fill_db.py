@@ -87,7 +87,7 @@ class Command(BaseCommand):
         BlogPost.objects.all().delete()
         for blogpost in blogposts:
             bl = blogpost.get('fields')
-            tags =  bl.pop('tags')
+            tags = bl.pop('tags')
             bl['id'] = blogpost.get('pk')
             user = bl.get('author')
             _user = MyHabrUser.objects.get(id=user)

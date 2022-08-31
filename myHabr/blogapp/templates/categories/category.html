@@ -3,7 +3,19 @@
 {% load static %}
 {% block content %}
     <div class="container">
-        {% for post in blogs %}
+        <div class="row">
+        <form method="POST" action="" class="mb-0" >
+            {% csrf_token %}
+            <input type='hidden' value='0' name='pk'>
+            <button class="btn btn-light" type="submit" >По рейтингу</button>
+        </form>
+        <form method="POST" action="" class="mb-0" >
+            {% csrf_token %}
+            <input type='hidden' value='1' name='pk'>
+            <button class="btn btn-light" type="submit" >По дате</button>
+        </form>
+        </div>
+        {% for post in object_list %}
             <div class="row mb-5">
                 <div class="col">
                     <div class="row g-3 p-2">

@@ -1,10 +1,11 @@
 import json
+from operator import itemgetter
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -30,6 +31,20 @@ class BlogListView(ListView):
 
     def get_queryset(self):
         return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
+
+    def post(self, request, *args, **kwargs):
+        blogs = BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
+        if self.request.POST.get('pk') == '0':
+            new_blogs = [[(blog.likes.count() - blog.dislikes.count()), blog] for blog in blogs]
+            new_blogs = sorted(new_blogs, key=itemgetter(0), reverse=True)
+            blogs = []
+            for i in new_blogs:
+                blogs.append(i[1])
+
+        context = {
+            'object_list': blogs
+        }
+        return render(request=request, template_name='mainapp/index.html', context=context)
 
 
 class BlogPostView(ListView):

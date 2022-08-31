@@ -18,7 +18,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from blogapp.views import category, AllBlogsListView
+import blogapp
+from blogapp.views import Category, AllBlogsListView
 from mainapp import views as mainapp
 from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike
 from feeds import LatestPostsFeed
@@ -51,7 +52,7 @@ urlpatterns = [
     path('notify/', mainapp.NotifyListView.as_view(), name='notify'),
     path('mark_read/', mainapp.mark_read, name='mark_read'),
     path('message_count/', mainapp.message_count, name='message_count'),
-    path('category/<int:pk>/', category, name='category'),
+    path('category/<int:pk>/', Category.as_view(), name='category'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('call_moderator/', mainapp.call_moderator, name='cal_moderator'),
     path('feed/', LatestPostsFeed(), name='post_feed'),
