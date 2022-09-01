@@ -10,10 +10,47 @@
 {% endblock %}
 
 {% block content %}
+<link href="{% static 'profile/css/profile_button_like.css' %}" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="{% static 'profile/js/like.js' %}"></script>
+
 <div class="container">
     <div class="row mb-4">
         <div class="col-md-6">
-            <h1>Информация о профиле {{ name }}</h1>
+            <div>
+            Информация о профиле {{ name }}
+                {% if user.id != profile_id.id and guest == False %}
+                    {% if guest %}
+                    <a href="{% url 'profiles:like' 0 profile_id.id %}" class="like-button">
+                    {% else %}
+                    <a href="{% url 'profiles:like' user.id profile_id.id %}" class="like-button">
+                    {% endif %}
+                        {% if true_like %}
+                        <i class="material-icons is-liked bouncy">favorite </i>
+                        {% else %}
+                        <i class="material-icons not-liked bouncy">favorite_border </i>
+                        {% endif %}
+                        {{ profile.likes }}
+                    <span class="like-overlay"></span>
+                    </a>
+                    {% if true_dislike %}
+                        {% if guest %}
+                        <a href="{% url 'profiles:dislike' 0 profile_id.id %}"><img src="{% static 'profile/img/active_dis.jpg' %}"> </a> {{ profile.dislikes }}
+                        {% else %}
+                        <a href="{% url 'profiles:dislike' user.id profile_id.id %}"><img src="{% static 'profile/img/active_dis.jpg' %}"> </a> {{ profile.dislikes }}
+                        {% endif %}
+                    {% else %}
+                        {% if guest %}
+                        <a href="{% url 'profiles:dislike' 0 profile_id.id %}"><img src="{% static 'profile/img/off_dis.jpg' %}"> </a> {{ profile.dislikes }}
+                        {% else %}
+                        <a href="{% url 'profiles:dislike' user.id profile_id.id %}"><img src="{% static 'profile/img/off_dis.jpg' %}"> </a> {{ profile.dislikes }}
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    Сколько лайков {{ profile.likes }} Сколько дислайков {{ profile.dislikes }}
+                {% endif %}
+            </div>
         </div>
     </div>
     <div class="row blog-entries">
@@ -44,6 +81,7 @@
             </form>
         </div>
     </div>
+    {% if user.id == profile_id.id %}
     <div class="col-md-6 form-group">
         <a href="{% url 'profiles:update' user.id %}" class="btn-group-toggle">Редактировать профиль</a>
     </div>
@@ -53,5 +91,7 @@
     <div class="col-md-6 form-group">
         <a href="{% url 'blogpost' %}" class="btn-group-toggle">Все мои статьи</a>
     </div>
+    {% endif %}
 </div>
+
 {% endblock %}
