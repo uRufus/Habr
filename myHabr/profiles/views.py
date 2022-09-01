@@ -13,49 +13,72 @@ from django.db.models import F
 # Create your views here.
 
 def profile(request, id_profile, user):
-    # Получаем объект пользователя к которому заходим в профиль. И его профиль
-    reg_user = MyHabrUser.objects.get(id=user)
-    reg_profile = Profile.objects.get(user_id=reg_user)
+    if user:
+        # Получаем объект пользователя к которому заходим в профиль. И его профиль
+        reg_user = MyHabrUser.objects.get(id=user)
+        reg_profile = Profile.objects.get(user_id=reg_user)
 
-    # Получаем объект пользователя к которому заходим в профиль.
-    user = MyHabrUser.objects.get(id=id_profile)
-    # Получаем из БД данные профиля
-    profile = Profile.objects.get(user_id=user)
+        # Получаем объект пользователя к которому заходим в профиль.
+        user = MyHabrUser.objects.get(id=id_profile)
+        # Получаем из БД данные профиля
+        profile = Profile.objects.get(user_id=user)
 
-    # Условие если хоть какие то данные заполнены то мы передаем заполненные данные
-    # Если имеется имя или фамилия
-    if profile.first_name or profile.last_name:
-        # Создаем переменную name, которая отразит в тэге title данные.
-        name = f'{profile.first_name} {profile.last_name}'
-    else:
-        # Если таких данных нет то передает False
-        name = False
-
-    # Находим делал ли лайк зарег профиль профилю к которому зашел
-    try:
-        like = LikeProfile.objects.get(who_did=reg_user, to_whom_did=user)
-
-    except:
-        true_like = False
-        true_dislike = False
-        print('вышла ошибка')
-    # Если зарег пользователь лайкал профиль автора то мы определяем был ли это лайк или нет
-    else:
-        if like.how == 'L':
-            true_like = True
+        # Условие если хоть какие то данные заполнены то мы передаем заполненные данные
+        # Если имеется имя или фамилия
+        if profile.first_name or profile.last_name:
+            # Создаем переменную name, которая отразит в тэге title данные.
+            name = f'{profile.first_name} {profile.last_name}'
         else:
+            # Если таких данных нет то передает False
+            name = False
+
+        # Находим делал ли лайк зарег профиль профилю к которому зашел
+        try:
+            like = LikeProfile.objects.get(who_did=reg_user, to_whom_did=user)
+
+        except:
             true_like = False
-        if like.how == 'D':
-            true_dislike = True
-        else:
             true_dislike = False
+        # Если зарег пользователь лайкал профиль автора то мы определяем был ли это лайк или нет
+        else:
+            if like.how == 'L':
+                true_like = True
+            else:
+                true_like = False
+            if like.how == 'D':
+                true_dislike = True
+            else:
+                true_dislike = False
 
-    print(f'{true_like} значение')
-    context = {
-        'profile': profile, 'name': name, 'profile_id': user, 'reg_profile': reg_profile, 'true_like': true_like, 'true_dislike': true_dislike
+        guest = False
 
-    }
-    return render(request=request, template_name='profile.html', context=context)
+        context = {
+            'profile': profile, 'name': name, 'profile_id': user, 'reg_profile': reg_profile, 'true_like': true_like, 'true_dislike': true_dislike, 'guest': guest
+
+        }
+        return render(request=request, template_name='profile.html', context=context)
+
+    else:
+        # Получаем объект пользователя к которому заходим в профиль.
+        user = MyHabrUser.objects.get(id=id_profile)
+        # Получаем из БД данные профиля
+        profile = Profile.objects.get(user_id=user)
+
+        # Условие если хоть какие то данные заполнены то мы передаем заполненные данные
+        # Если имеется имя или фамилия
+        if profile.first_name or profile.last_name:
+            # Создаем переменную name, которая отразит в тэге title данные.
+            name = f'{profile.first_name} {profile.last_name}'
+        else:
+            # Если таких данных нет то передает False
+            name = False
+
+        guest = True
+
+        context = {
+            'profile': profile, 'name': name, 'profile_id': user, 'guest': guest
+        }
+        return render(request=request, template_name='profile.html', context=context)
 
 
 def create_profile(request, id):
