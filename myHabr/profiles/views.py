@@ -14,7 +14,7 @@ from django.db.models import F
 
 def profile(request, id_profile, user):
     if user:
-        # Получаем объект пользователя к которому заходим в профиль. И его профиль
+        # Получаем объект пользователя который заходим в профиль. И его профиль
         reg_user = MyHabrUser.objects.get(id=user)
         reg_profile = Profile.objects.get(user_id=reg_user)
 
@@ -51,11 +51,12 @@ def profile(request, id_profile, user):
                 true_dislike = False
 
         guest = False
-
+        profile_form_url = profile.image
         context = {
-            'profile': profile, 'name': name, 'profile_id': user, 'reg_profile': reg_profile, 'true_like': true_like, 'true_dislike': true_dislike, 'guest': guest
+            'profile': profile, 'name': name, 'profile_id': user, 'reg_profile': reg_profile, 'true_like': true_like, 'true_dislike': true_dislike, 'guest': guest, 'profile_form_url': profile_form_url,
 
         }
+
         return render(request=request, template_name='profile.html', context=context)
 
     else:
@@ -74,12 +75,11 @@ def profile(request, id_profile, user):
             name = False
 
         guest = True
-
+        profile_form_url = profile.image
         context = {
-            'profile': profile, 'name': name, 'profile_id': user, 'guest': guest
+            'profile': profile, 'name': name, 'profile_id': user, 'guest': guest, 'profile_form_url': profile_form_url,
         }
         return render(request=request, template_name='profile.html', context=context)
-
 
 def create_profile(request, id):
     if request.method == 'POST':
@@ -105,6 +105,15 @@ def update_profile(request, id):
     user = MyHabrUser.objects.get(id=id)
     # Получаем из БД данные профиля
     profile = Profile.objects.get(user_id=user)
+
+    # Условие если хоть какие то данные заполнены то мы передаем заполненные данные
+    # Если имеется имя или фамилия
+    if profile.first_name or profile.last_name:
+        # Создаем переменную name, которая отразит в тэге title данные.
+        name = f'{profile.first_name} {profile.last_name}'
+    else:
+        # Если таких данных нет то передает False
+        name = False
 
     if request.method == 'POST':
         # При пост запросе получвем данные из формы
