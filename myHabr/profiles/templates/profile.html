@@ -59,6 +59,12 @@
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-4 form-group">
+                        <img src="{{ profile_form_url.url }}">
+                    </div>
+                
+                </div>
+                <div class="row">
+                    <div class="col-md-4 form-group">
                         <label for="name">Имя</label>
                         <input type="text" id="name" class="form-control " value="{{profile.first_name}}">
                     </div>
