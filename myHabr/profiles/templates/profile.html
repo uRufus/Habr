@@ -10,48 +10,132 @@
 {% endblock %}
 
 {% block content %}
+
 <div class="container">
     <div class="row mb-4">
-        <div class="col-md-6">
-            <h1>Информация о профиле {{ name }}</h1>
+        <div class="col-md-12">
+            <div class="text-center">
+                <h1>Информация о профиле</h1>
+                <h2>{{ name }}</h2>
+                    {% if user.id != profile_id.id and guest == False %}
+                    {% if guest %}
+                    <form method="POST" action="{% url 'profiles:like' 0 profile_id.id %}" class="like-form mb-0" id="">
+                    {% else %}
+                    <form method="POST" action="{% url 'profiles:like' user.id profile_id.id %}" class="like-form mb-0" id="">
+                    {% endif %}
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="">
+                    <button class="btn btn-light" type="submit">
+                        <div class="text-success">
+                            {% if true_like %}
+                                <div class="mr-2">
+                                    <i class="fa fa-thumbs-up like-{{ profile_id.id }}">{{ profile.likes }}</i>
+                                </div>
+                            {% else %}
+                                <div class="mr-2">
+                                    <i class="fa fa-thumbs-up like-{{ profile_id.id }}">{{ profile.likes }}</i>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </button>
+                    </form>
+                    {% if guest %}
+                    <form method="POST" action="{% url 'profiles:dislike' 0 profile_id.id %}" class="dislike-form mb-0" id="">
+                    {% else %}
+                    <form method="POST" action="{% url 'profiles:dislike' user.id profile_id.id %}" class="dislike-form mb-0" id="">
+                    {% endif %}
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button class="btn btn-light" type="submit">
+                            <div class="text-danger">
+                                {% if true_dislike %}
+                                    <div class="mr-0">
+                                        <i class="fa fa-thumbs-down dislike-{{ profile_id.id }}">{{ profile.dislikes }}</i>
+                                    </div>
+                                {% else %}
+                                    <div class="mr-2">
+                                        <i class="fa fa-thumbs-down dislike-{{ profile_id.id }}">{{ profile.dislikes }}</i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </button>
+                    </form>
+                {% else %}
+                    Сколько лайков {{ profile.likes }} Сколько дислайков {{ profile.dislikes }}
+                {% endif %}
+                    <h5>
+                        <div class="col-md-12 mb-4 element-animate fadeInUp element-animated">
+                            <img src="{{ profile.image.url }}"
+                                 alt="Image Placeholder"
+                                 width="640"
+                                 height="480"
+                                 class="img-fluid rounded-circle">
+                        </div>
+                    </h5>
+            </div>
         </div>
     </div>
     <div class="row blog-entries">
-        <div class="col-md-12 col-lg-8 main-content">
-            <form action="#" method="post">
+        <div class="col-md-12 col-lg-12 main-content">
+            <form action="#" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-4 form-group">
-                        <label for="name">Имя</label>
-                        <input type="text" id="name" class="form-control " value="{{profile.first_name}}">
+                        <tr>
+                            <th><label>Имя</label></th>
+                            <td><input type="text" readonly
+                                       class="form-control "
+                                       name="{{profile.first_name}}"
+                                       value="{{profile.first_name}}">
+                            </td>
+                        </tr>
                     </div>
                     <div class="col-md-4 form-group">
-                        <label for="phone">Фамилия</label>
-                        <input type="text" id="phone" class="form-control " value="{{profile.last_name}}">
+                        <tr>
+                            <th><label>Фамилия</label></th>
+                            <td><input type="text" readonly
+                                       class="form-control "
+                                       name="{{profile.last_name}}"
+                                       value="{{profile.last_name}}">
+                            </td>
+                        </tr>
                     </div>
                     <div class="col-md-4 form-group">
-                        <label for="email">Возраст</label>
-                        <input id="email" class="form-control " value="{{profile.age}}">
+                        <tr>
+                            <th><label>Возраст</label></th>
+                            <td><input type="number" readonly
+                                       class="form-control "
+                                       name="{{profile.age}}"
+                                       value="{{profile.age}}">
+                            </td>
+                        </tr>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 form-group">
-                        <label for="message">О себе</label>
-                        <textarea name="message" id="message" class="form-control " cols="30"
-                                  rows="8">{{profile.text}}</textarea>
+                        <tr>
+                            <th><label>О себе</label></th>
+                            <td><textarea readonly
+                                          class="form-control"
+                                          cols="40"
+                                          rows="10">{{profile.text}}</textarea>
+                            </td>
+                        </tr>
                     </div>
                 </div>
             </form>
+            {% if user.id == profile_id.id %}
+            <div class="col-md-6 form-group">
+                <a href="{% url 'profiles:update' user.id %}" class="btn-group-toggle">Редактировать профиль</a>
+            </div>
+            <div class="col-md-6 form-group">
+                <a href="{% url 'blogpost_create' %}" class="btn-group-toggle">Написать статью</a>
+            </div>
+            <div class="col-md-6 form-group">
+                <a href="{% url 'blogpost' %}" class="btn-group-toggle">Все мои статьи</a>
+            </div>
+            {% endif %}
         </div>
-    </div>
-    <div class="col-md-6 form-group">
-        <a href="{% url 'profiles:update' user.id %}" class="btn-group-toggle">Редактировать профиль</a>
-    </div>
-    <div class="col-md-6 form-group">
-        <a href="{% url 'blogpost_create' %}" class="btn-group-toggle">Написать статью</a>
-    </div>
-    <div class="col-md-6 form-group">
-        <a href="{% url 'blogpost' %}" class="btn-group-toggle">Все мои статьи</a>
     </div>
 </div>
 {% endblock %}

@@ -1,7 +1,20 @@
 {% extends 'mainapp/base.html' %}
 {% load static %}
+{% load mathfilters %}
 {% block content %}
     <div class="container">
+        <div class="row">
+        <form method="POST" action="" class="mb-0" >
+            {% csrf_token %}
+            <input type='hidden' value='0' name='pk'>
+            <button class="btn btn-light" type="submit" >По рейтингу</button>
+        </form>
+        <form method="POST" action="" class="mb-0" >
+            {% csrf_token %}
+            <input type='hidden' value='1' name='pk'>
+            <button class="btn btn-light" type="submit" >По дате</button>
+        </form>
+        </div>
         {% for post in object_list %}
             <div class="row mb-5">
                 <div class="col">
@@ -12,48 +25,67 @@
                                 <small>{{ post.create_date }}</small>
                             </div>
                             <div class="col-md-12 mb-4 element-animate fadeInUp element-animated">
-	                            <img src="{{ post.image_header.url }}"
-		                            alt="Image placeholder"
-                                    class="img-fluid"
-                                    width="820">
+                                <img src="{{ post.image_header.url }}"
+                                     alt="Image placeholder"
+                                     class="img-fluid"
+                                     width="820">
                             </div>
                             <div class="d-flex mb-3">
-                                {{ post.body|truncatewords:50 }}
+                                {{ post.body|safe|truncatewords:50 }}
                             </div>
-
                             <div class="d-flex flex-row">
-                                <form method="POST" action="{% url 'like' post.pk %}" class="mb-0">
+                                <form method="POST" action="{% url 'like' post.pk %}" class="like-form mb-0"
+                                     id="{{ post.pk }}">
                                     {% csrf_token %}
                                     <input type="hidden" name="next" value="{{ request.path }}">
-                                    <button class="border-0 bg-white text-dark" type="submit">
-                                        {% if post.likes.all.count == 0 %}
-                                            <i class="far fa-thumbs-up"><span> 0</span></i>
-                                        {% else %}
-                                            <i class="far fa-thumbs-up"><span
-                                                    class="text-success"> +{{ post.likes.all.count }}</span></i>
-                                        {% endif %}
-                                    </button>
-                                </form>
-                                <form method="POST" action="{% url 'dislike' post.pk %}" class="mb-0">
-                                    <input type="hidden" name="next" value="{{ request.path }}">
-                                    <button class="border-0 bg-white" type="submit">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="next" value="{{ request.path }}">
-                                        <div class="text-danger">
-                                            {% if post.dislikes.all.count == 0 %}
-                                                <i class="far fa-thumbs-down"><span> 0</span></i>
+                                    <button class="btn btn-light" type="submit">
+                                        <div class="text-success">
+                                            {% if post.likes.all.count == 0 %}
+                                                <div class="mr-2">
+                                                    <i class="fa fa-thumbs-up like-{{ post.pk }}">0</i>
+                                                </div>
                                             {% else %}
-                                                <i class="far fa-thumbs-down">
-                                                    <span> -{{ post.dislikes.all.count }}</span>{% comment %}{% endcomment %}
-                                                </i>
+                                                <div class="mr-2">
+                                                    <i class="fa fa-thumbs-up like-{{ post.pk }}">{{ post.likes.all.count }}</i>
+                                                </div>
                                             {% endif %}
                                         </div>
                                     </button>
                                 </form>
+                                <form method="POST" action="{% url 'dislike' post.pk %}" class="dislike-form mb-0"
+                                      id="{{ post.pk }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                    <button class="btn btn-light" type="submit">
+                                        <div class="text-danger">
+                                            {% if post.dislikes.all.count == 0 %}
+                                                <div class="mr-0">
+                                                    <i class="fa fa-thumbs-down dislike-{{ post.pk }}">0</i>
+                                                </div>
+                                            {% else %}
+                                                <div class="mr-2">
+                                                    <i class="fa fa-thumbs-down dislike-{{ post.pk }}">{{ post.dislikes.all.count }}</i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </button>
+                                </form>
+                                <button class="btn btn-light">
+                                    <div class="mr-2">
+                                        <i class="fa fa-bar-chart vote-{{ post.pk }}">
+                                        {{ post.likes.all.count|sub:post.dislikes.all.count }}
+                                        </i>
+                                    </div>
+                                </button>
+                                <form method="POST" action="" class="mb-0"
+                                      id="{{ post.pk }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+                                </form>
 
                             </div>
                             <button class="btn btn-light mt-3"><a href="{% url 'blogpost_detail' post.pk %}"
-                                                                          class="">Читать дальше</a></button>
+                                                                  class="">Читать дальше</a></button>
                         </div>
                     </div>
                 </div>
@@ -61,4 +93,52 @@
         {% endfor %}
         {% include 'mainapp/includes/pagination.html' %}
     </div>
+    <script>
+        "use strict";
+
+        $( document ).ready(function() {
+            $(document).on('submit', '.like-form', function(e){
+                e.preventDefault()
+                const event_id = $(this).attr('id')
+                const url = $(this).attr('action')
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'event_id':event_id,
+                    },
+                    success: function(response) {
+                         $(`.like-${event_id}`).text(response.like_count)
+                         $(`.dislike-${event_id}`).text(response.dislike_count)
+                         $(`.vote-${event_id}`).text(response.sum_rating)
+                    },
+                    error: function(response) {
+                        console.log('error', response)
+                    }
+                })
+            })
+            $(document).on('submit', '.dislike-form', function(e){
+                e.preventDefault()
+                const event_id = $(this).attr('id')
+                const url = $(this).attr('action')
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'event_id':event_id,
+                    },
+                    success: function(response) {
+                         $(`.dislike-${event_id}`).text(response.dislike_count)
+                         $(`.like-${event_id}`).text(response.like_count)
+                         $(`.vote-${event_id}`).text(response.sum_rating)
+                    },
+                    error: function(response) {
+                        console.log('error', response)
+                    }
+                })
+            })
+    });
+    </script>
 {% endblock %}

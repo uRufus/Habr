@@ -263,4 +263,6 @@ systemctl restart nginx.service
 ```shell
 shutdown -r now
 ```
+
 ### После этого в браузере по адресу https://kibarium.ru открывается проект.
+

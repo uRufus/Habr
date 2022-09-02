@@ -1,4 +1,4 @@
-{% extends 'authapp/base.html' %}
+{% extends 'mainapp/base.html' %}
 {% load static %}
 
 {% block content %}
@@ -12,6 +12,9 @@
                 {% csrf_token %}
                 {{ register_form.as_p }}
                 <br>
+                {% if from_page %}
+                    <input type="hidden" name="from_page" value="{{ from_page }}">
+                {% endif %}
                 <input class="form-control" type="submit" value="Зарегистрироваться">
             </form>
         </div>

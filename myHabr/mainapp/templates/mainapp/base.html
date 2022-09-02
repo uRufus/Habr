@@ -15,9 +15,7 @@
         <link rel="stylesheet" href="/static/css/owl.carousel.min.css">
 
         <link rel="stylesheet" href="/static/fonts/ionicons/css/ionicons.min.css">
-{#        <link rel="stylesheet" href="/static/fonts/fontawesome/css/font-awesome.min.css">#}
-        <!-- Changed by Bozhkov for normal work-->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+        <link rel="stylesheet" href="/static/fonts/fontawesome/css/font-awesome.min.css">
         <link rel="stylesheet" href="/static/fonts/flaticon/font/flaticon.css">
 
         <!-- Theme Style -->
@@ -48,28 +46,6 @@
 <body>
 <!-- upper part-->
     <header role="banner">
-      <div class="top-bar">
-        <div class="container">
-          <div class="row">
-            <div class="col-9 social">
-              <a href="#"><span class="fa fa-twitter"></span></a>
-              <a href="#"><span class="fa fa-facebook"></span></a>
-              <a href="#"><span class="fa fa-instagram"></span></a>
-              <a href="#"><span class="fa fa-youtube-play"></span></a>
-              <a href="#"><span class="fa fa-vimeo"></span></a>
-              <a href="#"><span class="fa fa-snapchat"></span></a>
-            </div>
-            <div class="col-3 search-top">
-              <!-- <a href="#"><span class="fa fa-search"></span></a> -->
-              <form action="#" class="search-top-form">
-                <span class="icon fa fa-search"></span>
-                <input type="text" id="s" placeholder="Type keyword to search...">
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="container logo-wrap">
         <div class="row pt-5">
           <div class="col-12 text-center">
@@ -97,13 +73,13 @@
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                <a class="nav-link active" href="{% url 'profiles:update' user.id%}">Профиль</a>
+                <a class="nav-link active" href="{% url 'profiles:profile' user.id user.id %}">Профиль</a>
               </li>
 {#              <li class="nav-item">#}
 {#                <a class="nav-link active" href="{% url 'profiles:Profile' user.id %}">Профиль</a>#}
 {#              </li>#}
               <li class="nav-item">
-                <a class="nav-link active" href="{% url 'notify' %}">Уведомления</a>
+                <a class="nav-link active" id="notifications" href="{% url 'notify' %}">Уведомления</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link active" href="{% url 'blogpost' %}">Мои статьи</a>
@@ -241,6 +217,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         </div>
       </div>
     </footer>
+    {% csrf_token %}
     {% block js %}
         <!-- loader -->
         <div id="loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#f4b214"/></svg></div>
@@ -254,7 +231,39 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 
 
         <script src="/static/js/main.js"></script>
+        <script>
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        {% if user.is_authenticated %}
+        message_count();
+        {% endif %}
+        function message_count() {
+               $.ajax({
+                type: 'POST',
+                url: '/message_count/',
+                data: {
+                    'csrfmiddlewaretoken': csrftoken,
+                },
+                success: function(response) {
+                     let notifications = $('#notifications');
+                     let count = response.count;
+                     if (count > 0) {
+                         notifications.html(`Уведомления [<span id="notification_count">${count}</span>]`)
+                     }
+                     else {
+                         notifications.html('Уведомления')
+                     }
+                },
+                error: function(response) {
+                    console.log('error', response)
+                }
+            })
+        }
+        {% if user.is_authenticated %}
+        setInterval(message_count, 5000);
+        {% endif %}
+        </script>
     {% endblock %}
+
 </body>
 
 </html>

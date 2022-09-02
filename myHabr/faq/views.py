@@ -1,5 +1,3 @@
-
-
 # Create your views here.
 from django.core.paginator import Paginator
 from django.http import HttpResponse
@@ -13,7 +11,6 @@ def home(request):
     paginator = Paginator(postList, 10)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
-
     context = {
         "posts": posts,
         "title": "Главная страница блога",
@@ -22,10 +19,14 @@ def home(request):
     }
     return render(request, "index.html", context)
 
+
 def single(request, id=None):
     post = get_object_or_404(Post, id=id)
 
     context = {
         "post": post,
+        "description": post.description,
+        "content": post.content,
+        "keywords": post.keywords.split()
     }
     return render(request, "single.html", context)

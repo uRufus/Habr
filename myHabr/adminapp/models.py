@@ -1,7 +1,10 @@
+import sys
+sys.path.append('../mainapp')
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import Group
 from authapp.models import MyHabrUser
+
+# from myHabr.mainapp.models import Comment
 # Create your models here.
 
 class Message(models.Model):
@@ -24,6 +27,7 @@ class Message(models.Model):
     url = models.TextField(blank=True, null=True, verbose_name="Ссылка")
     is_active = models.BooleanField(default=True, verbose_name="Активно")
     type_message = models.CharField(max_length=1, choices=TYPE_MESSAGE, default=USER_TO_USER, verbose_name="Тип сообщения")
+    is_read = models.BooleanField(default=False, null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
@@ -31,3 +35,7 @@ class Message(models.Model):
         db_table = 'messages'
         verbose_name = "Сообщение"
         verbose_name_plural = 'Сообщения'
+
+    def __str__(self):
+        return f'from_{self.from_user}|{self.created_at}'
+

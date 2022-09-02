@@ -27,6 +27,7 @@ class Blogs(models.Model):
     category = models.ForeignKey(BlogCategories, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, verbose_name="название")
     status = models.CharField(max_length=1, choices=BLOG_STATUS, default=PUBLISHED, verbose_name="статус блога")
+    image_header = models.ImageField(upload_to='blogposts/', default='default_blogpost.png')
 
     def __str__(self):
         return self.name

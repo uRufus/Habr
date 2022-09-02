@@ -1,5 +1,5 @@
 from django import forms
-from .models import BlogPost, Tag
+from .models import BlogPost, Tag, Blogs
 
 
 class BlogPostForm(forms.ModelForm):
@@ -32,3 +32,8 @@ class BlogPostForm(forms.ModelForm):
             'body': forms.Textarea(attrs={'class': 'form-control'}),
             'tag_list': forms.TextInput(attrs={'class': 'form-control'})
         }
+
+    def __init__(self, *args, **kwargs):
+        super(BlogPostForm, self).__init__(*args, **kwargs)
+        blogs = Blogs.objects.filter(user=self.initial['user'])
+        self.fields['blog'].queryset = blogs

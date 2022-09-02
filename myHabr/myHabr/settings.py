@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'social_django',
     "ckeditor",
     "ckeditor_uploader",
+    'mathfilters',
 ]
 
 MIDDLEWARE = [
@@ -164,7 +165,7 @@ SOCIAL_AUTH_VK_OAUTH2_API_VERSION = '5.131'
 SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
-CSRF_TRUSTED_ORIGINS = ['https://kibarium.ru']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']
 
 ADMIN_TOOLS_INDEX_DASHBOARD = 'adminapp.dashboard.CustomIndexDashboard'
 ADMIN_TOOLS_APP_INDEX_DASHBOARD= 'adminapp.dashboard.CustomAppIndexDashboard'

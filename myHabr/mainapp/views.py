@@ -1,10 +1,11 @@
-import re
+import json
+from operator import itemgetter
 
-from django.template import Library
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import HttpResponseRedirect
+from django.contrib.auth.models import Group
+from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -12,9 +13,10 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from mainapp.models import BlogPost, Comment
 from adminapp.models import Message
-from django.contrib.auth.models import Group
+from mainapp.models import BlogPost, Comment
+from mainapp.utils import (create_comment_like_message,
+                           create_post_like_message, find_article_by_comment)
 from .forms import BlogPostForm
 from .models import CommentsLink
 
@@ -30,15 +32,28 @@ class BlogListView(ListView):
     def get_queryset(self):
         return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
 
+    def post(self, request, *args, **kwargs):
+        blogs = BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
+        if self.request.POST.get('pk') == '0':
+            new_blogs = [[(blog.likes.count() - blog.dislikes.count()), blog] for blog in blogs]
+            new_blogs = sorted(new_blogs, key=itemgetter(0), reverse=True)
+            blogs = []
+            for i in new_blogs:
+                blogs.append(i[1])
+
+        context = {
+            'object_list': blogs
+        }
+        return render(request=request, template_name='mainapp/index.html', context=context)
+
 
 class BlogPostView(ListView):
     model = BlogPost
     template_name = "blogpost.html"
-    ordering = ['-create_date']
 
     def get_queryset(self):
         user = self.request.user
-        return BlogPost.objects.filter(author=user).exclude(status="0")
+        return BlogPost.objects.filter(author=user).exclude(status="0").order_by('-create_date')
 
 
 class BlogPostDetail(DetailView):
@@ -76,7 +91,21 @@ def send_under_review(request, pk):
     obj = get_object_or_404(BlogPost, pk=pk)
     obj.status = BlogPost.UNDER_REVIEW
     obj.save()
-    return HttpResponseRedirect(reverse('blogpost'))
+    info = (obj._meta.app_label, obj._meta.model_name)
+    admin_url = reverse('admin:%s_%s_change' % info, args=(obj.pk,))
+    admin_url = request.build_absolute_uri(admin_url)
+    # исключение для того, чтобы работало fill_db
+    try:
+        Message.objects.get_or_create(
+            from_user=obj.author,
+            to_group=Group.objects.get(name='moderator'),
+            text=admin_url,
+            type_message='1',
+            url=admin_url
+        )
+    except:
+        pass
+    return redirect(request.META['HTTP_REFERER'])
 
 
 class BlogPostCreate(CreateView):
@@ -84,6 +113,11 @@ class BlogPostCreate(CreateView):
     form_class = BlogPostForm
     template_name = "blogpost/blogpost_form.html"
     success_url = reverse_lazy("blogpost")
+
+    def get_initial(self):
+        user = self.request.user.id
+        self.initial = {"user": user}
+        return self.initial
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -95,6 +129,11 @@ class BlogPostUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = BlogPostForm
     template_name = "blogpost/blogpost_update.html"
     success_url = reverse_lazy("blogpost")
+
+    def get_initial(self):
+        user = self.request.user.id
+        self.initial = {"user": user}
+        return self.initial
 
     def test_func(self):
         post = self.get_object()
@@ -144,12 +183,21 @@ class BlogAddLike(LoginRequiredMixin, View):
 
         if not is_like:
             post.likes.add(request.user)
+            create_post_like_message(post,request, is_like=True)
 
         if is_like:
             post.likes.remove(request.user)
 
-        next = request.POST.get('next', '/')
-        return HttpResponseRedirect(next)
+        sum_rating = post.likes.all().count() - post.dislikes.all().count()
+
+        return HttpResponse(
+            json.dumps({
+                'like_count': post.likes.all().count(),
+                'dislike_count': post.dislikes.all().count(),
+                'sum_rating': sum_rating,
+            }),
+            content_type='application/json'
+        )
 
 
 class BlogAddDislike(LoginRequiredMixin, View):
@@ -181,12 +229,21 @@ class BlogAddDislike(LoginRequiredMixin, View):
 
         if not is_dislike:
             post.dislikes.add(request.user)
+            create_post_like_message(post, request, is_like=False)
 
         if is_dislike:
             post.dislikes.remove(request.user)
 
-        next = request.POST.get('next', '/')
-        return HttpResponseRedirect(next)
+        sum_rating = post.likes.all().count() - post.dislikes.all().count()
+
+        return HttpResponse(
+            json.dumps({
+                'like_count': post.likes.all().count(),
+                'dislike_count': post.dislikes.all().count(),
+                'sum_rating': sum_rating,
+            }),
+            content_type='application/json'
+        )
 
 
 @method_decorator(csrf_exempt, name='post')
@@ -220,14 +277,21 @@ class BlogAddCommentLike(LoginRequiredMixin, View):
 
         if not is_like:
             comment.likes.add(request.user)
+            create_comment_like_message(comment, request, is_like=True)
 
         if is_like:
             comment.likes.remove(request.user)
 
-        next = request.POST.get('next')
-        if next is not None and not re.search(r'blog/\d+$', next):
-            next = request.META.get('HTTP_REFERER')
-        return HttpResponseRedirect(next)
+        sum_rating_comments = comment.likes.all().count() - comment.dislikes.all().count()
+
+        return HttpResponse(
+            json.dumps({
+                'comment_like_count': comment.likes.all().count(),
+                'comment_dislike_count': comment.dislikes.all().count(),
+                'sum_rating_comments': sum_rating_comments,
+            }),
+            content_type='application/json'
+        )
 
 
 @method_decorator(csrf_exempt, name='post')
@@ -261,25 +325,49 @@ class BlogAddCommentDislike(LoginRequiredMixin, View):
 
         if not is_dislike:
             comment.dislikes.add(request.user)
+            create_comment_like_message(comment, request, is_like=False)
 
         if is_dislike:
             comment.dislikes.remove(request.user)
 
-        next = request.POST.get('next')
-        if next is not None and not re.search(r'blog/\d+$', next):
-            next = request.META.get('HTTP_REFERER')
-        return HttpResponseRedirect(next)
+        sum_rating_comments = comment.likes.all().count() - comment.dislikes.all().count()
+
+        return HttpResponse(
+            json.dumps({
+                'comment_like_count': comment.likes.all().count(),
+                'comment_dislike_count': comment.dislikes.all().count(),
+                'sum_rating_comments': sum_rating_comments,
+            }),
+            content_type='application/json'
+        )
 
 
 class NotifyListView(ListView):
     """[M] Как зарегистрированный пользователь
-    я хочу получать уведомления о лайках своей статьи"""
-    model = BlogPost
+    я хочу получать уведомления"""
+    model = Message
     template_name = 'mainapp/notify.html'
-    paginate_by = 3
+    paginate_by = 10
 
     def get_queryset(self):
-        return BlogPost.objects.filter(author=self.request.user).exclude(status='0')
+        return Message.objects.filter(to_user=self.request.user)\
+                              .exclude(from_user=self.request.user)\
+                              .order_by('is_read', '-created_at')
+
+
+def mark_read(request):
+    message_id = request.POST['message_id']
+    Message.objects.filter(id=message_id).update(is_read=True)
+    return JsonResponse({'success': True})
+
+
+def message_count(request):
+    if request.user.is_authenticated:
+        count = Message.objects.filter(to_user=request.user, is_read=False)\
+                               .exclude(from_user=request.user).count()
+    else:
+        count = 0
+    return JsonResponse({'count': count})
 
 
 def blog_comment(request):
@@ -289,6 +377,9 @@ def blog_comment(request):
     comment = Comment.objects.create(user=user, text=text)
     CommentsLink.objects.create(comment=comment, type='article',
                                 assigned_id=blog_id)
+    article_id = find_article_by_comment(comment.id)
+    article = BlogPost.objects.get(id=article_id)
+    comment.send_message(request, article)
     comments = Comment.objects \
         .filter(commentslink__type='article',
                 commentslink__assigned_id=blog_id) \
@@ -330,6 +421,13 @@ def blog_comment_edit(request):
     edited_at = comment.updated_at.strftime("%d-%m-%Y, %H:%M:%S")
     return JsonResponse({'new_text': text,
                          'edited_at': edited_at})
+
+
+def delete_comment(request):
+    comment_id = request.POST['comment_id']
+    Comment.objects.get(id=comment_id).delete()
+    return JsonResponse({'success': True})
+
 
 
 def call_moderator(request):

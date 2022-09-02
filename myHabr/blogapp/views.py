@@ -1,4 +1,6 @@
 import logging
+from operator import itemgetter
+
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView, UpdateView
@@ -77,9 +79,29 @@ class MyBlogUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return False
 
 
-def category(request, pk):
-    blogs = BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED, blog=pk)
-    context = {
-        'blogs': blogs
-    }
-    return render(request=request, template_name='categories/category.html', context=context)
+class Category(ListView):
+    model = BlogPost
+    template_name = 'mainapp/index.html'
+    paginate_by = 3
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        blog = Blogs.objects.filter(category=pk)
+        return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED, blog__in=blog)
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs['pk']
+        blog = Blogs.objects.filter(category=pk)
+        blogs = BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED, blog__in=blog)
+        if self.request.POST.get('pk') == '0':
+            new_blogs = [[(blog.likes.count() - blog.dislikes.count()), blog] for blog in blogs]
+            new_blogs = sorted(new_blogs, key=itemgetter(0), reverse=True)
+            blogs = []
+            for i in new_blogs:
+                blogs.append(i[1])
+
+        context = {
+            'object_list': blogs
+        }
+        return render(request=request, template_name='mainapp/index.html', context=context)
+
