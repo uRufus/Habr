@@ -159,13 +159,13 @@ class MessageAdmin(admin.ModelAdmin):
 class BlogPostAdmin(admin.ModelAdmin):
 
     fields = (("author", "blog", "status"), "title","image_header", "body", "tag_list", ("create_date", "update_date"))
-    list_display = ("author", "title", "blog", "status", "tag_list", "create_date", "like", "dislike")
+    list_display = ("id", "author", "title", "blog", "status", "tag_list", "create_date", "like", "dislike")
     list_display_links = ["title"]
     list_editable = ["status"]
     list_filter = ["blog", "status", "tag_list"]
     search_fields = ["body", "title", "create_date"]
-    readonly_fields = ["tag_list", "create_date", "tag_list", "author", "blog", "update_date"]
-
+    # readonly_fields = ["tag_list", "create_date", "tag_list", "author", "blog", "update_date"]
+    readonly_fields = ["create_date","author", "update_date"]
 
     class Meta:
         model = BlogPost
@@ -175,6 +175,11 @@ class BlogPostAdmin(admin.ModelAdmin):
 
     def dislike(self, obj):
         return obj.dislikes.count()
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, "author", None) is None:
+            obj.author = request.user
+        obj.save()
 
 
 class BlogsAdmin(admin.ModelAdmin):
