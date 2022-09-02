@@ -114,6 +114,11 @@ class BlogPostCreate(CreateView):
     template_name = "blogpost/blogpost_form.html"
     success_url = reverse_lazy("blogpost")
 
+    def get_initial(self):
+        user = self.request.user.id
+        self.initial = {"user": user}
+        return self.initial
+
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
