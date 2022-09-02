@@ -3,15 +3,33 @@
 
 
 {% block content %}
-
-
-  {% if post.visible %}
-    <h1>{{ post.title }}</h1>
-
-    <p>{{ post.content }}</p>
-  {% else %}
-    <p>Страница не найдена</p>
-  {% endif %}
-
-    <a href="{%   url 'faq' %}"> <b> назад </b> </a>
+{% if post.visible %}
+<div class="container">
+    <div class="row blog-entries">
+        <div class="col-md-12 col-lg-8 main-content">
+            <h1>{{ post.title }}</h1>
+            <br>
+            <h3>Описание</h3>
+            {{ description}}
+            <br><br>
+            <h3>Инструкция</h3>
+            {{content}}
+            <br>
+            {% else %}
+            <p>Страница не найдена</p>
+            {% endif %}
+            <a href="{%   url 'faq' %}"> <b>Вернуться назад</b> </a>
+        </div>
+        <div class="col-md-12 col-lg-4 sidebar">
+            <div class="sidebar-box">
+                <h3 class="heading">Тэги</h3>
+                <ul class="tags">
+                    {% for tag in keywords %}
+                    <li><a href="#">{{ tag }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
