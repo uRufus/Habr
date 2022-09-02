@@ -1,10 +1,11 @@
 import json
+from operator import itemgetter
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect, HttpResponse
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -14,7 +15,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from adminapp.models import Message
 from mainapp.models import BlogPost, Comment
-from mainapp.utils import create_comment_like_message, create_post_like_message
+from mainapp.utils import (create_comment_like_message,
+                           create_post_like_message, find_article_by_comment)
 from .forms import BlogPostForm
 from .models import CommentsLink
 
@@ -29,6 +31,20 @@ class BlogListView(ListView):
 
     def get_queryset(self):
         return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
+
+    def post(self, request, *args, **kwargs):
+        blogs = BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED)
+        if self.request.POST.get('pk') == '0':
+            new_blogs = [[(blog.likes.count() - blog.dislikes.count()), blog] for blog in blogs]
+            new_blogs = sorted(new_blogs, key=itemgetter(0), reverse=True)
+            blogs = []
+            for i in new_blogs:
+                blogs.append(i[1])
+
+        context = {
+            'object_list': blogs
+        }
+        return render(request=request, template_name='mainapp/index.html', context=context)
 
 
 class BlogPostView(ListView):
@@ -97,6 +113,11 @@ class BlogPostCreate(CreateView):
     form_class = BlogPostForm
     template_name = "blogpost/blogpost_form.html"
     success_url = reverse_lazy("blogpost")
+
+    def get_initial(self):
+        user = self.request.user.id
+        self.initial = {"user": user}
+        return self.initial
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -351,6 +372,9 @@ def blog_comment(request):
     comment = Comment.objects.create(user=user, text=text)
     CommentsLink.objects.create(comment=comment, type='article',
                                 assigned_id=blog_id)
+    article_id = find_article_by_comment(comment.id)
+    article = BlogPost.objects.get(id=article_id)
+    comment.send_message(request, article)
     comments = Comment.objects \
         .filter(commentslink__type='article',
                 commentslink__assigned_id=blog_id) \
@@ -392,6 +416,13 @@ def blog_comment_edit(request):
     edited_at = comment.updated_at.strftime("%d-%m-%Y, %H:%M:%S")
     return JsonResponse({'new_text': text,
                          'edited_at': edited_at})
+
+
+def delete_comment(request):
+    comment_id = request.POST['comment_id']
+    Comment.objects.get(id=comment_id).delete()
+    return JsonResponse({'success': True})
+
 
 
 def call_moderator(request):

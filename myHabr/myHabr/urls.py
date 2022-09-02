@@ -18,7 +18,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from blogapp.views import category, AllBlogsListView
+import blogapp
+from blogapp.views import Category, AllBlogsListView
 from mainapp import views as mainapp
 from mainapp.views import BlogAddCommentLike, BlogAddLike, BlogAddDislike, BlogAddCommentDislike
 from feeds import LatestPostsFeed
@@ -41,6 +42,7 @@ urlpatterns = [
     path('blog/comment/', mainapp.blog_comment, name='blog_comment'),
     path('blog/sub_comment/', mainapp.blog_sub_comment, name='blog_sub_comment'),
     path('blog/comment_edit/', mainapp.blog_comment_edit, name='blog_comment_edit'),
+    path('delete_comment/', mainapp.delete_comment, name='delete_comment'),
     path('blog/comment/<int:pk>/like/', BlogAddCommentLike.as_view(), name='comment-like'),
     path('blog/comment/<int:pk>/dislike/', BlogAddCommentDislike.as_view(), name='comment-dislike'),
     path('blog/<int:pk>/like/', BlogAddLike.as_view(), name='like'),
@@ -50,10 +52,11 @@ urlpatterns = [
     path('notify/', mainapp.NotifyListView.as_view(), name='notify'),
     path('mark_read/', mainapp.mark_read, name='mark_read'),
     path('message_count/', mainapp.message_count, name='message_count'),
-    path('category/<int:pk>/', category, name='category'),
+    path('category/<int:pk>/', Category.as_view(), name='category'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('call_moderator/', mainapp.call_moderator, name='cal_moderator'),
     path('feed/', LatestPostsFeed(), name='post_feed'),
+    path('', include('social_django.urls', namespace='social')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

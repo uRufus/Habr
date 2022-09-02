@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.urls import reverse
 
 # Register your models here.
 from adminapp.models import Message
@@ -166,6 +167,33 @@ class BlogPostAdmin(admin.ModelAdmin):
     search_fields = ["body", "title", "create_date"]
     # readonly_fields = ["tag_list", "create_date", "tag_list", "author", "blog", "update_date"]
     readonly_fields = ["create_date","author", "update_date"]
+
+    def save_model(self, request, obj, form, change):
+        obj.user = request.user
+        if change:
+            message = ''
+            author = obj.author
+            article_url = reverse('blogpost_detail', args=[obj.id])
+            article_url = request.build_absolute_uri(article_url)
+            new_status = obj.status
+            old_status = BlogPost.objects.get(id=obj.id).status
+            if old_status == '1' and new_status == '3':
+                message = f'Ваша статья <a href={article_url}>{obj.title}</a>'\
+                          f' одобрена'
+            elif new_status == '0' and old_status != new_status:
+                message = f'Ваша статья <a href={article_url}>{obj.title}</a>'\
+                          f' удалена'
+            elif new_status == '4' and old_status != new_status:
+                message = f'Ваша статья <a href={article_url}>{obj.title}</a>'\
+                          f' заблокирована'
+            if message:
+                Message.objects.get_or_create(
+                    to_user=author,
+                    text=message,
+                    type_message='2',
+                    url=article_url
+                )
+        super().save_model(request, obj, form, change)
 
     class Meta:
         model = BlogPost
