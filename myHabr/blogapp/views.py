@@ -86,13 +86,13 @@ class Category(ListView):
 
     def get_queryset(self):
         pk = self.kwargs['pk']
-        blog = Blogs.objects.get(category=pk)
-        return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED, blog=blog.id)
+        blog = Blogs.objects.filter(category=pk)
+        return BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED, blog__in=blog)
 
     def post(self, request, *args, **kwargs):
         pk = self.kwargs['pk']
-        blog = Blogs.objects.get(category=pk)
-        blogs = BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED, blog=blog.id)
+        blog = Blogs.objects.filter(category=pk)
+        blogs = BlogPost.objects.order_by('-create_date').filter(status__in=BlogPost.PUBLISHED, blog__in=blog)
         if self.request.POST.get('pk') == '0':
             new_blogs = [[(blog.likes.count() - blog.dislikes.count()), blog] for blog in blogs]
             new_blogs = sorted(new_blogs, key=itemgetter(0), reverse=True)
