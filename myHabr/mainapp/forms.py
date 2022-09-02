@@ -35,5 +35,5 @@ class BlogPostForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BlogPostForm, self).__init__(*args, **kwargs)
-        blogs = Blogs.objects.filter(user=self.initial['user']).values_list('name', flat=True)
+        blogs = Blogs.objects.filter(user=self.initial['user'])
         self.fields['blog'].queryset = blogs
