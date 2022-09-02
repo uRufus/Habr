@@ -130,6 +130,11 @@ class BlogPostUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = "blogpost/blogpost_update.html"
     success_url = reverse_lazy("blogpost")
 
+    def get_initial(self):
+        user = self.request.user.id
+        self.initial = {"user": user}
+        return self.initial
+
     def test_func(self):
         post = self.get_object()
         if self.request.user == post.author:
