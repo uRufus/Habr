@@ -264,5 +264,5 @@ systemctl restart nginx.service
 shutdown -r now
 ```
 
-### После этого в браузере по адресу https://kibarium.ru открывается проект.
+### После этого в браузере по адресу http://habr.dr0n.ru открывается проект.
 
